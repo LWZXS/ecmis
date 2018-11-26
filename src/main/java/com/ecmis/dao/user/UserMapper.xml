@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.user.UserMapper">
+	
+	<select id="getLoginUser" resultMap="userRole">
+		select * from sys_user 
+			where 
+				loginName=#{loginName} 
+			and 
+				password=#{password}
+	</select>
+	
+	<select id="getById" parameterType="int" resultMap="userRole">
+		select * from sys_user 
+			where 
+				userId=#{userId}
+	</select>
+	
+	<select id="getAll" resultType="user">
+		<include refid="queryStatement"/>
+	</select>
+	
+	<insert id="add" parameterType="user">
+		INSERT INTO sys_user (
+					companyId,
+					userName,
+					loginName,
+					password,
+					phoneNum,
+					officeTel,
+					email,
+					icon,
+					address,
+					creationUser,
+					creationDate,
+					bronDate,
+					officetel,
+					STATUS
+					) 
+				VALUES (
+					#{companyId},
+					#{userName},
+					#{loginName},
+					#{password},
+					#{phoneNum},
+					#{officeTel},
+					#{email},
+					#{icon},
+					#{address},
+					#{creationUser},
+					now(),
+					#{bronDate},
+					#{officetel},
+					#{status}
+				)
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from sys_user 
+			where userId=#{userId}
+	</delete>
+	
+	<update id="update" parameterType="user">
+		UPDATE sys_user SET 
+				companyId=#{companyId},
+				userName=#{userName},
+				loginName=#{loginName},
+				PASSWORD=#{PASSWORD},
+				phoneNum=#{phoneNum},
+				officeTel=#{officeTel},
+				email=#{email},
+				icon=#{icon},
+				address=#{address},
+				modifuUser=#{modifuUser},
+				modifyDate=now(modifyDate),
+				bronDate=#{bronDate},
+				STATUS=#{STATUS}
+			WHERE userId=#{userId}
+		
+	
+	</update>
+	
+	<select id="getUsersByCompany" parameterType="int" resultType="user">
+		select * from sys_user where companyId =#{companyId}
+	</select>
+	
+	<sql id="queryStatement">
+		select * from sys_user
+	</sql>
+	
+	<resultMap type="user" id="userRole">
+		<id column="userId" property="userId" javaType="int"/>
+		<collection property="roles" select="com.ecmis.dao.role.RoleMapper.getByUser" column="userId" ofType="role"/>
+		<collection property="projects" select="com.ecmis.dao.project.ProjectMapper.getByUserId" column="userId" ofType="project"/>
+	</resultMap>
+	
+	<select id="getUserByCondition" resultType="user">
+		select * from sys_user
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="userName!=null and userName!=''">
+				and userName like concat('%',#{userName},'%')
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<if test="companyId!=null">
+				and companyId =#{companyId}
+			</if>
+		</trim>
+		limit #{startRow},#{pageSize}
+	</select>
+	
+	<select id="getUserCountByCondition" resultType="int">
+		select count(1) from sys_user
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="userName!=null and userName!=''">
+				and userName like concat('%',#{userName},'%')
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<if test="companyId!=null">
+				and companyId =#{companyId}
+			</if>
+		</trim>
+	</select>
+	<!-- 连接查询某项目的分发人 -->
+	<select id="getPublishRange" parameterType="int" resultType="user">
+		SELECT su.* FROM sys_user su ,biz_publish_range bp WHERE su.userId=bp.`userId` AND bp.`documentId`=#{documentId}
+	</select>
+	<select id="getJointTrial" parameterType="int" resultType="user">
+		SELECT su.* FROM sys_user su ,biz_joint_trial bj WHERE su.userId=bj.`userId` AND bj.`documentId`=#{documentId}
+	</select>
+</mapper>

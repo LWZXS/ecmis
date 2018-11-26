@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.company.CompanyMapper">
+	
+	<insert id="add" parameterType="company">
+		INSERT INTO `biz_company` (`companyName`,`address`,`telphone`,`creationUser`,`creationDate`,`status`) 
+			VALUES(#{companyName},#{address},#{telphone},#{creationUser},NOW(),1);
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_company where companyId=#{companyId}
+	</delete>
+	
+	<update id="update" parameterType="company">
+		UPDATE `biz_company` SET 
+			`companyName`=#{companyName},
+			`address`=#{address},
+			`telphone`=#{telphone},
+			`modifuUser`=#{modifuUser},
+			`modifyDate`=#{modifyDate},
+			`status`=#{status}
+		WHERE `companyId`=#{companyId}
+	</update>
+	
+	<select id="getById" parameterType="int" resultMap="companyUsers">
+		select * from `biz_company` where `companyId`=#{companyId} 
+	</select>
+	
+	<select id="getAll" resultType="company">
+		select * from `biz_company` order by creationDate desc
+	</select>
+	
+	<select id="getAllAndUsers" resultMap="companyUsers">
+		select * from `biz_company` order by creationDate desc
+	</select>
+	
+	<!-- 加载公司时加载公司的用户 -->
+	<resultMap type="company" id="companyUsers">
+		<id property="companyId" column="companyId" javaType="int"/>
+		<collection property="users" select="com.ecmis.dao.user.UserMapper.getUsersByCompany" column="companyId" ofType="user"/>
+	</resultMap>
+</mapper>

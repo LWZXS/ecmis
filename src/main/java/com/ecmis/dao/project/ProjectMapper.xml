@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.project.ProjectMapper">
+	<select id="getByUserId" parameterType="int" resultType="project">
+		SELECT * FROM biz_project
+		WHERE 
+			`chiefInspectorId`=#{userId} OR 
+			`deputyDirectorId`=#{userId} OR
+			`clerkId`=#{userId} OR 
+			`supervisionEngineerId`=#{userId} 
+			AND STATUS=1 
+		ORDER BY projectId desc
+	</select>
+	
+	<select id="getAll" resultType="project">
+		select * from biz_project ORDER BY projectId desc
+	</select>
+	
+	<select id="getById" parameterType="int" resultType="project">
+		select * from biz_project where projectId=#{projectId} 
+	</select>
+	
+	<insert id="add" parameterType="project">
+		INSERT INTO biz_project (
+			`projectName`,
+			`constructorId`,
+			`builderId`,
+			`supervisorId`,
+			`chiefInspectorId`,
+			`deputyDirectorId`,
+			`supervisionEngineerId`,
+			`clerkId`,
+			`creationUser`,
+			`creationDate`,
+			`status`
+			) 
+			VALUES(
+			#(projectName),
+			#(constructorId),
+			#(builderId),
+			#(supervisorId),
+			#(chiefInspectorId),
+			#(deputyDirectorId),
+			#(supervisionEngineerId),
+			#(clerkId),
+			#(creationUser),
+			NOW(),
+			1
+			)
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_project where projectId=#{projectId}
+	</delete>
+	
+	<update id="update" parameterType="project">
+		UPDATE `biz_project` SET 
+			`projectName`=#{projectName},
+			`constructorId`=#{constructorId},
+			`builderId`=#{builderId},
+			`supervisorId`=#{supervisorId},
+			`chiefInspectorId`=#{chiefInspectorId},
+			`deputyDirectorId`=#{deputyDirectorId},
+			`clerkId`=#{clerkId},
+			`supervisionEngineerId`=#{supervisionEngineerId},
+			`modifuUser`=#{modifuUser},
+			`modifyDate`=now(),
+			`status`=#{status} 
+		where `projectId`=#{projectId}
+		
+	</update>
+	
+	<select id="getByCondition" resultMap="projectDetail">
+		select * from biz_project
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="projectName!=null and projectName!=''">
+				and projectName like concat('%',#{projectName!=},'%')
+			</if>
+		</trim>
+		limit #{startRow},#{pageSize}
+	</select>
+	<select id="getCountByCondition" resultType="int">
+		select count(1) from biz_project
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="projectName!=null and projectName!=''">
+				and projectName like concat('%',#{projectName!=},'%')
+			</if>
+		</trim>
+	</select>
+	
+	<resultMap type="project" id="projectDetail">
+		<id column="projectId" property="projectId" javaType="int"/>
+		<!-- 建设方 -->
+		<association property="builder" select="com.ecmis.dao.company.CompanyMapper.getById" column="builderId"></association>
+		<!-- 施工方 -->
+		<association property="constructor" select="com.ecmis.dao.company.CompanyMapper.getById" column="constructorId"></association>
+		<!-- 监理方 -->
+		<association property="supervisor" select="com.ecmis.dao.company.CompanyMapper.getById" column="supervisorId"></association>
+		<!-- 总监 -->
+		<association property="chiefInspector" select="com.ecmis.dao.user.UserMapper.getById" column="chiefInspectorId"></association>
+		<!-- 副总监 -->
+		<association property="deputyDirector" select="com.ecmis.dao.user.UserMapper.getById" column="deputyDirectorId"></association>
+		<!-- 监理工程师 -->
+		<association property="supervisionEngineer" select="com.ecmis.dao.user.UserMapper.getById" column="supervisionEngineerId"></association>
+		<!-- 文员 -->
+		<association property="clerk" select="com.ecmis.dao.user.UserMapper.getById" column="clerkId"></association>
+	</resultMap>
+</mapper>

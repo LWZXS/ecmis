@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.documenttype.DocumentTypeMapper">
+	<insert id="add" parameterType="documentType">
+		INSERT INTO biz_documenttype (`docTypeName`,`creationUser`,`status`,`creationDate`,`parentTypeId`,`docName`)
+			VALUES(#{docTypeName},#{creationUser},1,NOW(),#{parentTypeId},#{docName});
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_documenttype where docTypeId=#{docTypeId}
+	</delete>
+	
+	<update id="update" parameterType="documentType">
+		UPDATE biz_documenttype SET 
+			`docTypeName`=#{docTypeName},
+			`docName`=#{docName},
+			`modifuUser`=#{modifuUser},
+			`status`=#{status},
+			`modifyDate`=now(),
+			`parentTypeId`=#{parentTypeId}
+		 WHERE `docTypeId`=#{docTypeId}
+	</update>
+	
+	<select id="getById" parameterType="int" resultType="documentType">
+		select * from biz_documenttype where docTypeId=#{docTypeId} and status=1
+	</select>
+	
+	<select id="getAll" resultType="documentType">
+		select * from biz_documenttype where parentTypeId is null and status=1 order by docTypeId
+	</select>
+	
+	<select id="getByParent" parameterType="int" resultType="documentType">
+		select * from biz_documenttype where parentTypeId=#{parentTypeId} and status=1 order by docTypeId
+	</select>
+	
+	<select id="getLikeName" parameterType="string" resultType="documentType">
+		select * from biz_documenttype where docTypeName like CONCAT('%',#{docTypeName},'%') and status=1 order by docTypeId
+	</select>
+	
+	<resultMap type="documentType" id="types">
+		<id property="docTypeId" column="docTypeId" javaType="int"/>
+		<collection property="children" select="com.ecmis.dao.documenttype.DocumentTypeMapper.getByParent" ofType="documentType" column="docTypeId"/>
+	</resultMap>
+</mapper>
