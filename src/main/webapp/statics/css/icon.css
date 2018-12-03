@@ -172,3 +172,15 @@
 .icon-read{
 	background:url('icons/read.png') no-repeat center center;
 }
+.icon-view{
+	background:url('icons/view.png') no-repeat center center;
+}
+.icon-search1{
+	background:url('icons/search1.png') no-repeat center center;
+}
+.icon-refresh{
+	background:url('icons/refresh.png') no-repeat center center;
+}
+.icon-export{
+	background:url('icons/export.png') no-repeat center center;
+}

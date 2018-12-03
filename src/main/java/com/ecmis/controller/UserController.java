@@ -131,6 +131,11 @@ public class UserController {
 		model.addAttribute("msg", msg);
 		return "user/login";
 	}
+	@RequestMapping(value="/login1.html")
+	public String login1(@RequestParam(value="msg",required=false)String msg,Model model){
+		model.addAttribute("msg", msg);
+		return "pages/login";
+	}
 	@RequestMapping(value="/dologin.html")
 	public String doLogin(@RequestParam(value="loginName")String loginName,
 			@RequestParam(value="password")String password,
@@ -215,7 +220,7 @@ public class UserController {
 				@RequestParam(value="status",required=false)Integer status,
 				@RequestParam(value="companyId",required=false)Integer companyId,
 				@RequestParam(value="rows",required=false)Integer rows,
-				@RequestParam(value="page",required=false)Integer page
+						   @RequestParam(value="page",required=false)Integer page
 				){
 		logger.debug("params:status"+status+"&companyId="+companyId+"&rows="+rows+"&page="+page);
 		if(rows==null){

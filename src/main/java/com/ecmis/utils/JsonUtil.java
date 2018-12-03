@@ -43,9 +43,13 @@ public class JsonUtil<T> {
 		map.put("total", pageSupport.getTotalCount());
 		map.put("rows", pageSupport.getList());
 		
-		String json=JSON.toJSONString(map,SerializerFeature.DisableCircularReferenceDetect,
-				SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
-				SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse,SerializerFeature.PrettyFormat);
+		String json=JSON.toJSONString(map,
+				SerializerFeature.DisableCircularReferenceDetect,
+				SerializerFeature.WriteNullStringAsEmpty,
+				SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteNullListAsEmpty,
+				SerializerFeature.WriteNullBooleanAsFalse,
+				SerializerFeature.PrettyFormat);
 		
 		return json;
 	}

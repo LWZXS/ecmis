@@ -2,6 +2,7 @@ package com.ecmis.pojo;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.Objects;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -30,9 +31,12 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;
+	public Role(Integer roleId) {
+		super();
+		this.roleId = roleId;
+	}
 	public Role() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	public Role(Integer roleId, String roleName, Integer creationUser,
 			Integer modifuUser, Integer status, Date creationDate,
@@ -88,6 +92,18 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		Role role = (Role) o;
+		return Objects.equals(roleId, role.roleId);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(roleId);
+	}
 }

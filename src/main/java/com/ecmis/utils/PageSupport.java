@@ -78,5 +78,7 @@ public class PageSupport<T> {
 		this.list = list;
 	}
 	
-	
+	public int getStartRow(){
+		return (currentPageNo-1)*pageSize;
+	}
 }

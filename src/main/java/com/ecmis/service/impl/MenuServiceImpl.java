@@ -48,5 +48,29 @@ public class MenuServiceImpl implements MenuService {
 	public List<MenuResource> findCurrentUserLevel1Menus(Integer userId) {
 		return menuMapper.getCurrentUserLevel1Menus(userId);
 	}
+	@Override
+	public List<MenuResource> findAdminLevel1Menus() {
+		List<MenuResource> adminMenus = menuMapper.getAdminMenus();
 
+		return setChildMenu(adminMenus);
+	}
+
+	//递归查子菜单
+	public List<MenuResource> setChildMenu(List<MenuResource> menuResources){
+		if (menuResources!=null){
+			for(MenuResource menu:menuResources){
+				if ("parent".equals(menu.getType())){
+					menu.setChildren(menuMapper.getByParentMenu(menu.getMenuId()));
+					if (menu.getChildren()!=null){
+						for (MenuResource childMenu:menu.getChildren()){
+							if ("parent".equals(childMenu.getType())){
+								childMenu.setChildren(menuMapper.getByParentMenu(childMenu.getMenuId()));
+							}
+						}
+					}
+				}
+			}
+		}
+		return menuResources;
+	}
 }

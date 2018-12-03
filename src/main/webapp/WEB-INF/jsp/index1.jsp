@@ -112,8 +112,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							/* var text = node.text;
 							var id = node.id;
 							alert(node.attributes.url); */
-							
-							
 							//如果是一级菜单，且url为null，toggle操作
 							if(node.attributes.type=='parent' && node.attributes.url==null){
 								//toggle
@@ -122,13 +120,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							}
 							//增加tab
 							$('#tt').tabs('add',{
-								title: node.text,
-								content: '<div style="padding:5px;width:'+(winWidth-150)+'px; height:'+(winHeight-143)+'px; overflow: auto;">'
-											+'<iframe id="'+node.attributes.type+'Iframe" name="'+node.attributes.type+'Iframe" scrolling="no" frameborder="0"  src="'+node.attributes.url+'" style="width:100%;height:100%;"></iframe>'
-										+'</div>',
-								closable: true,
-								iconCls:'icon-'+node.attributes.icon
-							});
+                                title: node.text,
+                                content: '<div style="padding:5px;width:'+(winWidth-150)+'px; height:'+(winHeight-143)+'px; overflow: auto;">'
+                                +'<iframe id="'+node.attributes.type+'Iframe" name="'+node.attributes.type+'Iframe" scrolling="no" frameborder="0"  src="'+node.attributes.url+'" style="width:100%;height:100%;"></iframe>'
+                                +'</div>',
+                                closable: true,
+                                iconCls:'icon-'+node.attributes.icon
+                            });
 	 					
 	 					}
 					}

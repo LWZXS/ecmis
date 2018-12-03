@@ -124,7 +124,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<input type="hidden" name="flsid" value="<%=strflsid%>" />
 		
 		<input type="hidden" value="<%=mainBody %>" id="mainBody" name="mainBody"> 
-		<input type="hidden" value="<%=basePath %>/upload.jsp" id="url" name="url"> 
+		<input type="hidden" value="<%=basePath %>upload.jsp" id="url" name="url">
 		<input type="hidden" value="" id="field2" name="field2"> 
 		<input type="hidden" value="" id="field3" name="field3"> 
 		<input type="hidden" value="" id="field4" name="field4"> 

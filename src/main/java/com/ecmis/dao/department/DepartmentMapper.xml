@@ -1,0 +1,99 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.department.DepartmentMapper">
+	<insert id="add" parameterType="department" useGeneratedKeys="true" keyProperty="deptId">
+		insert  into `sys_department`(`deptName`,`parentId`,`deptTypeId`,`companyId`,`creationUser`,`creationDate`,`status`,`sortNumber`)
+			values (#{deptName},#{parentId},#{deptTypeId},#{companyId},#{creationUser},now(),1#{status},#{sortNumber})
+	</insert>
+
+	<update id="update" parameterType="department">
+		UPDATE sys_department
+		SET
+		deptName =#{deptName},
+		parentId =#{parentId},
+		deptTypeId =#{deptTypeId},
+		companyId =#{companyId},
+		modifyUser =#{modifyUser}
+		modifyDate =#{modifyDate}
+		status =#{status},
+		sortNumber =#{sortNumber}
+		WHERE deptid=#{deptId}
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from sys_department where deptid=#{deptId}
+	</delete>
+
+	<resultMap id="dept_info" type="department">
+		<id column="deptId" property="deptId"/>
+		<result column="deptName" property="deptName"/>
+		<result column="companyName" property="companyName"/>
+		<result column="deptTypeName" property="deptTypeName"/>
+		<result column="parentDeptName" property="parentDeptName"/>
+		<result column="parentId" property="parentId"/>
+		<result column="deptTypeId" property="deptTypeId"/>
+		<result column="companyId" property="companyId"/>
+		<result column="status" property="status"/>
+		<result column="companyId" property="companyId"/>
+		<collection property="children" ofType="department">
+			<id column="c_deptId" property="deptId"/>
+			<result column="c_deptName" property="deptName"/>
+			<result column="c_parentId" property="parentId"/>
+			<!--<result column="deptTypeId" property="deptTypeId"/>
+			<result column="companyId" property="companyId"/>
+			<result column="status" property="status"/>
+			<result column="companyId" property="companyId"/>-->
+		</collection>
+	</resultMap>
+
+	<select id="getById" parameterType="int" resultMap="dept_info">
+		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName,
+				csd.deptId as c_deptId,csd_deptName as c_deptName,csd.parentId as c_parentId
+			from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd,sys_department csd
+			where sd.deptId=#{deptId}
+			and sd.parentId=psd.deptId
+			and sd.deptTypeId=sdt.deptTypeId
+			and sd.parentId=psd.deptId
+			and sd.deptId=csd.parentId
+	</select>
+
+	<select id="getByDeptNameAndStatusAsPage" resultMap="dept_info">
+		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName,
+		csd.deptId as c_deptId,csd.deptName as c_deptName,csd.parentId as c_parentId
+		from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd,sys_department csd
+		where sd.parentId=psd.deptId
+		and sd.deptTypeId=sdt.deptTypeId
+		and sd.parentId=psd.deptId
+		and sd.deptId=csd.parentId
+		<if test="status!=null">
+			and sd.status=#{status}
+		</if>
+		<if test="deptName!=null and deptName!=''">
+			and sd.deptName like concat('%',#{deptName},'%')
+		</if>
+		limit #{startRow},#{page}
+	</select>
+
+	<select id="getAll" resultType="department">
+		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName
+		from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd
+		where sd.parentId=psd.deptId
+		and sd.deptTypeId=sdt.deptTypeId
+		and sd.parentId=psd.deptId
+	</select>
+
+	<select id="count" resultType="int">
+		select count(1) from sys_department
+		<trim prefix="where" prefixOverrides="and">
+			<if test="status!=null">
+				and sd.status=#{status}
+			</if>
+			<if test="deptName!=null and deptName!=''">
+				and sd.deptName like concat('%',#{deptName},'%')
+			</if>
+		</trim>
+	</select>
+</mapper>

@@ -20,4 +20,6 @@ public interface MenuService {
 	public List<MenuResource> findByParentMenu(Integer parentMenuId);
 	
 	public List<MenuResource> findCurrentUserLevel1Menus(Integer userId);
+
+	public List<MenuResource> findAdminLevel1Menus();
 }
