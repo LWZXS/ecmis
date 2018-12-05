@@ -79,7 +79,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				winWidth = document.body.clientWidth;
 			}
 			
-			//alert(winHeight);
+			//alert("winWidth:winHeight----"+winWidth+":"+winHeight);
 			//alert(winWidth);
  			//tt的宽度
  			//$("#tt").parent().css("width",(winWidth-181)+"px");

@@ -78,15 +78,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 
 	<select id="getAll" resultType="department">
-		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName
-		from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd
-		where sd.parentId=psd.deptId
-		and sd.deptTypeId=sdt.deptTypeId
-		and sd.parentId=psd.deptId
+		select * from sys_department
 	</select>
 
 	<select id="count" resultType="int">
-		select count(1) from sys_department
+		select count(1) from sys_department sd
 		<trim prefix="where" prefixOverrides="and">
 			<if test="status!=null">
 				and sd.status=#{status}

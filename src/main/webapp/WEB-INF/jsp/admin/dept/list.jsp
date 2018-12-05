@@ -1,10 +1,10 @@
 <%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
 
-<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
 <html lang="en">
 <head>
 	<meta charset="UTF-8">
@@ -43,28 +43,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-	<table id="dg" title="部门列表" style="width:100%;height: 80% "
-			data-options="rownumbers:true,singleSelect:true,pagination:true,striped:true,toolbar:'#tb',method:'get'">
+	<table id="dg" title="部门列表" style="width:100%;height: 80%;"
+			data-options="rownumbers:true,singleSelect:true,pagination:true,striped:true,toolbar:'#tb',
+			method:'get',idField:'deptId',selectOnCheck:'true',loadMsg:'正在加载,请稍后...',checkOnSelect:true">
 	</table>
 	<div id="tb">
 		<form action="" id="searchFrm">
-			<label for="deptName" ></label>部门名称<input id="deptName" name="deptName" type="search" placeholder="部门名称..." >
-			状态: 
+            <label for="deptName" style="margin-left: 5px;"></label>部门名称:<input style="height: 18px;" class="textbox" id="deptName" name="deptName" type="search" placeholder="部门名称..." >
+			状态:
 			<select class="easyui-combobox" panelHeight="auto" style="width:100px" name="status" id="status">
 				<option value="">全部</option>
 				<option value="1">正常</option>
 				<option value="2">锁定</option>
 			</select>
-			<br />
-			<a href="javascript:void(0)" id="searchBtn" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search'">查询</a>
+            <a href="javascript:void(0)" id="searchBtn" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search1'">查询</a>
+            <br />
 			<a href="javascript:void(0)" id="addDept" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">增加</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-delete16'">删除</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-update'">修改</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-lock16'">锁定</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-view'">浏览</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-refresh'">刷新</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-export'">导出明细</a>
-			<a href="javascript:void(0)" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search1'">高级查询</a>
+			<a href="javascript:void(0)" id="delete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-delete16'">删除</a>
+			<a href="javascript:void(0)" id="update" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-update'">修改</a>
+			<a href="javascript:void(0)" id="lock" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-lock16'">锁定</a>
+			<a href="javascript:void(0)" id="view" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-view'">浏览</a>
+			<a href="javascript:void(0)" id="refresh" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-refresh'">刷新</a>
+			<a href="javascript:void(0)" id="export" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-export'">导出明细</a>
+			<a href="javascript:void(0)" id="search" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search1'">高级查询</a>
 
 		</form>
 	</div>
@@ -72,10 +73,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<div>
 		<!-- 增加部门Dialog start-->
 		<div id="adddept-dlg" class="easyui-dialog" closed="true" title="新增部门"
-			style="width:480px;height:480px;padding:10px;"
+			style="width:440px;height:380px;padding:10px;"
 				data-options="buttons:'#adddept-buttons'">
 			<div style="margin:20px 0;"></div>
-			<div title="" style="width:440px;">
+			<div title="" style="width:400px;">
 				<div style="padding:10px 60px 20px 60px">
 			    <form id="ff" method="post">
 			    	<table cellpadding="5">
@@ -84,37 +85,41 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    			<td><input class="easyui-textbox" type="text" name="deptName" data-options="required:true,missingMessage:'部门名不能为空',invalidMessage:'输入格式不正确'"></input></td>
 			    		</tr>
 			    		<tr>
-			    			<td>组织类型:</td>
+			    			<td><label for="deptTypeId">组织类型:</label></td>
 			    			<td>
-			    				<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'company/findAll4Select'" name="deptTypeId" id="deptTypeId">
+			    				<%--<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'deptType/easyUiTree.json'" name="deptTypeId" id="deptTypeId">
 			    				
-			    				</select>
+			    				</select>--%>
+                                <input id="deptTypeId" name="deptTypeId" style="width: 132px;"/>
 			    			</td>
 			    		</tr>
 			    		<tr>
-			    			<td>上级部门:</td>
+			    			<td><label for="parentId">上级部门:</label></td>
 			    			<td>
-			    				<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'company/findAll4Select'" name="parentId" id="parentId">
+			    				<%--<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'dept/easyUiTree.json'" name="parentId" id="parentId">
 
-			    				</select>
+			    				</select>--%>
+                                <input id="parentId" name="parentId" style="width: 132px;"/>
 			    			</td>
 			    		</tr>
 			    		<tr>
-			    			<td>所属公司:</td>
+			    			<td><label for="companyId">所属公司:</label></td>
 			    			<td>
 			    				<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'company/findAll4Select'" name="companyId" id="companyId">
 
 			    				</select>
+                                <%--<input id="companyId" name="companyId" style="width: 132px;"/>--%>
 			    			</td>
 			    		</tr>
+                        <tr>
+                            <td><label for="sortNumber">排序:</label></td>
+                            <td><input id="sortNumber" class="easyui-textbox" type="text" name="sortNumber"  /></td>
+                        </tr>
 						<tr>
-							<td>停用:</td>
-							<td><input class="easyui-textbox" type="checkbox" name="status" value="2"/></td>
+							<td><label for="statusFrm">停用:</label></td>
+							<td><input id="statusFrm" class="easyui-checkbox" type="checkbox" name="status" value="2"/></td>
 						</tr>
-						<tr>
-							<td>排序:</td>
-							<td><input type="checkbox" name="sortNumber" /></td>
-						</tr>
+
 			    	</table>
 			    </form>
 			    <div style="text-align:center;padding:5px">
@@ -125,13 +130,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 		</div>
 		<div id="adddept-buttons">
-			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#adduser-dlg').dialog('close')">关闭</a>
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#adddept-dlg').dialog('close')">关闭</a>
 		</div>
 		<!-- 增加部门Dialog end-->
 	</div>
 	<script type="text/javascript">
 		$(function(){
 		
+		    //刷新
+            $("#refresh").click(function () {
+                $('#dg').datagrid('reload');
+            });
+		    
 			$("#addDeptSmt").click(function(){
 				//$.messager.progress();	// display the progress bar
 				$('#ff').submit();
@@ -159,14 +169,26 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    }
 			});
 			
-			//加载公司--jeasyui
-			/* $('#companyId').combobox({
+			/*加载公司--jeasyui*/
+			 $('#companyId').combobox({
 			    url:'company/findAll4Select',
 			    valueField:'id',
 			    textField:'text'
-			}); */
-		
-			/* $.ajax({
+			});
+
+            $('#parentId').combobox({
+                url:'dept/easyUiTree.json',
+                valueField:'id',
+                textField:'text'
+            });
+
+            $('#deptTypeId').combobox({
+                url:'deptType/easyUiTree.json',
+                valueField:'id',
+                textField:'text'
+            });
+
+			/*$.ajax({
 				url:"company/findAll4Select",
 				type:"get",
 				dataType:"json",
@@ -192,15 +214,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    	}
 			    },
 			    onDblClickRow:function(rowIndex,rowData){
+			        //双击做的事
 			    	//alert(rowIndex+rowData.documentId);
-			    	window.location.href='dept/view/'+rowData.deptId;
+			    	//window.location.href='dept/view/'+rowData.deptId;
 			    },
 				columns:[[
-					{field:'deptId',title:'部门编号', width:150,align:'left',resizable:true},
-					{field:'deptName',title:'部门名称', width:220,align:'left',resizable:true},
-					{field:'deptTypeName',title:'组织类型', width:150,align:'left',resizable:true},
-					{field:'parentDeptName',title:'上级部门', width:220,align:'left',resizable:true},
-					{field:'statusName',title:'状态', width:80}
+					{field:'ck', checkbox:true },
+					{field:'deptId',title:'部门编号', width:70,align:'center',resizable:true},
+					{field:'deptName',title:'部门名称', width:360,align:'left',resizable:true},
+					{field:'deptTypeName',title:'组织类型', width:280,align:'left',resizable:true},
+					{field:'parentDeptName',title:'上级部门', width:360,align:'left',resizable:true},
+					{field:'statusName',title:'状态', width:50,align:'center'}
 				]]
 			});
 		
@@ -213,13 +237,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				}
 				s=s.substring(0, s.length-1);
 				$('#dg').datagrid({
-					url:'dept/list.do?'+s
+					url:'dept/list.json?'+s
 				});
 			});	
 			
 			$("#addDept").click(function(){
 				$("#adddept-dlg").dialog("open");
-			});	
+			});
+
+
 		});
 		
 		

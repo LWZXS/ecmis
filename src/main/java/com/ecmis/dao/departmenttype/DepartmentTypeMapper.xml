@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.departmenttype.DepartmentTypeMapper">
+	<insert id="add" parameterType="departmentType" useGeneratedKeys="true" keyProperty="deptTypeId">
+		insert into `sys_dept_type` (`deptTypeName`,`creationUser`,`creationDate`,`status`)
+			values(#{deptTypeName},#{creationUser},now(),#{status})
+	</insert>
+
+	<update id="update" parameterType="departmentType">
+		update `sys_dept_type`
+			set
+			`deptTypeName`=#{deptTypeName},
+			`modifyUser`=#{modifyUser},
+			`modifyDate`=now(),
+			`status` =#{status}
+			where `deptTypeId`=#{deptTypeId};
+	</update>
+
+	<delete id="delete" parameterType="int">
+		delete from sys_dept_type where deptTypeId=#{deptTypeId}
+	</delete>
+
+
+	<select id="getById" parameterType="int" resultType="departmentType">
+		select * from sys_dept_type where deptTypeId=#{deptTypeId}
+	</select>
+
+	<select id="getByDeptTypeByNameAndStatusAsPage" resultType="departmentType">
+		select * from sys_dept_type sdt
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="status!=null">
+				and sdt.status=#{status}
+			</if>
+			<if test="deptTypeName!=null and deptTypeName!=''">
+				and sdt.deptTypeName like concat('%',#{deptTypeName},'%')
+			</if>
+		</trim>
+		limit #{startRow},#{page}
+	</select>
+
+	<select id="getAll" resultType="departmentType">
+		select * from sys_dept_type
+	</select>
+
+	<select id="count" resultType="int">
+		select * from sys_dept_type sdt
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="status!=null">
+				and sdt.status=#{status}
+			</if>
+			<if test="deptTypeName!=null and deptTypeName!=''">
+				and sdt.deptTypeName like concat('%',#{deptTypeName},'%')
+			</if>
+		</trim>
+	</select>
+</mapper>
