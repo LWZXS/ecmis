@@ -11,13 +11,16 @@ public interface DepartmentService {
 
     public int add(Department department);
 
-    public int delete(@Param("deptId") Integer deptId);
+    public int delete(Integer userId,Integer deptId);
+    public int updateStatus(Integer userId,Integer deptId,Integer status);
 
     public int update(Department department);
 
-    public Department findById(@Param("deptId") Integer deptId);
+    public Department findById( Integer deptId);
 
     public PageSupport<Department> findByDeptNameAndStatusAsPage(String deptName,Integer status,Integer pageIndex,Integer pageSize);
 
     public List<Department> findAll();
+    List<Department> findByCompanyId(Integer companyId);
+    int findSortNumberByParentId(Integer parentId);
 }

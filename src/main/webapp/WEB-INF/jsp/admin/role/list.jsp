@@ -10,7 +10,7 @@
 	<meta charset="UTF-8">
     <base href="<%=basePath%>">
     
-    <title>部门结构</title>
+    <title>角色管理</title>
     <jsp:include page="/WEB-INF/jsp/title.jsp"></jsp:include>
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -43,13 +43,13 @@
   </head>
   
   <body>
-	<table id="dg" title="部门列表" style="width:100%;height: 100%;"
+	<table id="dg" title="角色列表" style="width:100%;height: 100%;"
 			data-options="rownumbers:true,singleSelect:true,pagination:true,striped:true,toolbar:'#tb',
 			method:'get',idField:'deptId',loadMsg:'正在加载,请稍后...',checkOnSelect:true">
 	</table>
 	<div id="tb">
 		<form action="" id="searchFrm">
-            <label for="deptName" style="margin-left: 5px;"></label>部门名称:<input style="height: 18px;" class="easyui-textbox" id="deptName" name="deptName" type="search" placeholder="部门名称..." >
+            <label for="roleName" style="margin-left: 5px;"></label>角色名称:<input style="height: 18px;" class="easyui-textbox" id="roleName" name="roleName" type="search" placeholder="角色名称..." >
 			状态:
 			<select class="easyui-combobox" panelHeight="auto" style="width:100px" name="status" id="status">
 				<option value="">全部</option>
@@ -59,7 +59,7 @@
 			</select>
             <a href="javascript:void(0)" id="searchBtn" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search1'">查询</a>
             <br />
-			<a href="javascript:void(0)" id="addDept" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">增加</a>
+			<a href="javascript:void(0)" id="add" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">增加</a>
 			<a href="javascript:void(0)" id="delete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-delete16'">删除</a>
 			<a href="javascript:void(0)" id="update" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-update'">修改</a>
 			<a href="javascript:void(0)" id="lock" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-lock16'">锁定</a>
@@ -72,75 +72,48 @@
 	</div>
 	
 	<div>
-		<!-- 增加部门Dialog start-->
-		<div id="adddept-dlg" class="easyui-dialog" closed="true" title="新增部门"
+		<!-- 增加角色Dialog start-->
+		<div id="add-dlg" class="easyui-dialog" closed="true" title="新增角色"
 			style="width:440px;height:380px;padding:10px;"
-				data-options="buttons:'#adddept-buttons'">
+				data-options="buttons:'#add-buttons'">
 			<div style="margin:20px 0;"></div>
 			<div title="" style="width:400px;">
 				<div style="padding:10px 60px 20px 60px">
 			    <form id="ff" method="post">
-					<input name="deptId" value="" type="hidden" id="deptId"/>
+					<input name="roleId" value="" type="hidden" id="roleId"/>
 			    	<table cellpadding="5">
 			    		<tr>
-			    			<td>部门名称:</td>
-			    			<td><input class="easyui-textbox" type="text" id="a_deptName"  name="deptName" data-options="required:true,missingMessage:'部门名不能为空',invalidMessage:'输入格式不正确'"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td><label for="deptTypeId">组织类型:</label></td>
-			    			<td>
-			    				<%--<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'deptType/easyUiTree.json'" name="deptTypeId" id="deptTypeId">
-			    				
-			    				</select>--%>
-                                <input id="deptTypeId" name="deptTypeId" style="width: 132px;"/>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td><label for="parentId">上级部门:</label></td>
-			    			<td>
-			    				<%--<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'dept/easyUiTree.json'" name="parentId" id="parentId">
-
-			    				</select>--%>
-                                <input id="parentId" name="parentId" style="width: 132px;"/>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td><label for="companyId">所属公司:</label></td>
-			    			<td>
-			    				<%--<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'company/findAll4Select'" name="companyId" id="companyId">
-
-			    				</select>--%>
-                                <input id="companyId" name="companyId" style="width: 132px;"/>
-			    			</td>
+			    			<td>角色名称:</td>
+			    			<td><input class="easyui-textbox" type="text" id="a_roleName"  name="roleName" data-options="required:true,missingMessage:'角色名不能为空',invalidMessage:'输入格式不正确'"/></td>
 			    		</tr>
                         <tr>
                             <td><label for="sortNumber">排序:</label></td>
-                            <td><input id="sortNumber" class="easyui-textbox" type="text" name="sortNumber"  /></td>
+                            <td><input id="sortNumber" class="easyui-textbox" type="text" name="sortNumber" /></td>
                         </tr>
 						<tr>
 							<td><label for="a_status">锁定:</label></td>
 							<td>
-								<select class="easyui-combobox" panelHeight="auto" style="width:132px;" name="status" id="a_status">
-									<option value="1">正常</option>
-									<option value="2">锁定</option>
-									<option value="3">删除</option>
-								</select>
-							</td>
+                                <select class="easyui-combobox" panelHeight="auto" style="width:132px;" name="status" id="a_status">
+                                    <option value="1">正常</option>
+                                    <option value="2">锁定</option>
+                                    <option value="3">删除</option>
+                                </select>
+                            </td>
 						</tr>
 
 			    	</table>
 			    </form>
 			    <div style="text-align:center;padding:5px">
-			    	<a href="javascript:void(0)" class="easyui-linkbutton" id="addDeptSmt">提交</a>
+			    	<a href="javascript:void(0)" class="easyui-linkbutton" id="addSmt">提交</a>
 			    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm();">清除</a>
 			    </div>
 			    </div>
 			</div>
 		</div>
-		<div id="adddept-buttons">
-			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#adddept-dlg').dialog('close')">关闭</a>
+		<div id="add-buttons">
+			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#add-dlg').dialog('close')">关闭</a>
 		</div>
-		<!-- 增加部门Dialog end-->
+		<!-- 增加角色Dialog end-->
 	</div>
 	<script type="text/javascript">
 		$(function(){
@@ -156,12 +129,16 @@
             //删除
             $("#delete").click(function () {
                 //var row=$('#dg').datagrid('getChecked');//获得所有选中的checkbox,是一个数组
-				var dept=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
-               	if (dept && confirm("是否确定删除"+dept.deptName)){
+				var role=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
+                if (role && role.roleName=="系统管理员") {
+                    alert("系统管理员不允许删除!");
+                    return;
+                }
+               	if (role && confirm("是否确定删除"+role.roleName)){
                	    $.ajax({
-						url:"dept/delete.json",
+						url:"role/delete.json",
 						type:"get",
-						data:{"deptId":dept.deptId},
+						data:{"roleId":role.roleId},
 						dataType:"json",
 						success:function (data) {
 							if (data.result==true){
@@ -178,56 +155,67 @@
 
             //修改
             $("#update").click(function () {
-                var dept=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
+                var role=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
+                if (role){
 
-
-                if (dept){
-
-                    $('#adddept-dlg').dialog({
-                        title: '修改部门'
+                    if (role.roleName=="系统管理员"){
+                        alert("系统管理员不允许修改!");
+                        return;
+                    }
+                    $('#add-dlg').dialog({
+                        title: '修改角色'
                     });
-                    //加载上级部门
-                    comboboxDept();
-                    $("#adddept-dlg").dialog("open");
-					$("#deptId").val(dept.deptId);
-                    $("#a_deptName").textbox("setValue", dept.deptName);
-					$('#deptTypeId').combobox('setValue', dept.deptTypeId);
-					$('#parentId').combobox('setValue', dept.parentId);
-					$('#companyId').combobox('setValue', dept.companyId);
-                    $("#sortNumber").textbox("setValue", dept.sortNumber);
-                    $('#a_status').combobox('setValue', dept.status);
+
+                    $("#add-dlg").dialog("open");
+					$("#roleId").val(role.roleId);
+                    $("#a_roleName").textbox("setValue", role.roleName);
+					$('#sortNumber').textbox('setValue', role.sortNumber);
+					$('#a_status').combobox('setValue', role.status);
+
 
                 }
             });
 
             //锁定
 			$("#lock").click(function () {
-                var dept=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
-                if (dept && confirm("是否确定锁定"+dept.deptName)){
-                    $.ajax({
-                        url:"dept/lock.json",
-                        type:"get",
-                        data:{"deptId":dept.deptId},
-                        dataType:"json",
-                        success:function (data) {
-                            if (data.result){
-                                $('#dg').datagrid('reload');
-							}else {
-                                //不成功提示
-                                alert(data.message);
-							}
-                        }
-
-                    })
+                var role=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
+                if (role && role.roleName=="系统管理员") {
+                    alert("系统管理员不允许锁定!");
+                    return;
                 }
+                if (role.status==2){
+                    alert(role.roleName+"已是锁定状态!");
+                    return;
+                }else if (role.status==3){
+                    if (!confirm(role.roleName+"为是删除状态,是否改锁定状态?")){
+                        return;
+                    }
+                } else if (!role || role.status!=1 || !confirm("是否确定锁定"+role.roleName)){
+                    return;
+                }
+                $.ajax({
+                    url:"role/lock.json",
+                    type:"get",
+                    data:{"roleId":role.roleId},
+                    dataType:"json",
+                    success:function (data) {
+                        if (data.result){
+                            $('#dg').datagrid('reload');
+                        }else {
+                            //不成功提示
+                            alert(data.message);
+                        }
+                    }
+
+                })
             });
 
-			$("#addDeptSmt").click(function(){
+			$("#addSmt").click(function(){
 				//$.messager.progress();	// display the progress bar
 				$('#ff').submit();
 			});
 			$('#ff').form({
-			    url:'dept/add.do',
+			    url:'role/add.json',
                 dataType : 'json',
 			    onSubmit: function(){
 			    	var isValid = $(this).form('validate');
@@ -237,13 +225,12 @@
 					return isValid;	// return false will stop the form submission
 					// return false to prevent submit;
 			    },
-
 			    success:function(data){
-
                     var data = eval('(' + data + ')'); // change the JSON string to javascript object
-			    	if(data.result){
+                    //alert(data.result+"");
+					if(data.result=="true"){
                         $('#ff').form('clear');
-                        $("#adddept-dlg").dialog("close");
+                        $("#add-dlg").dialog("close");
                         $('#dg').datagrid('reload');
                         //alert(data.message);
                     }else{
@@ -252,34 +239,11 @@
 					//$.messager.progress('close');
 			    }
 			});
-			
-			/*加载公司--jeasyui*/
-			 $('#companyId').combobox({
-			    url:'company/findAll4Select',
-			    valueField:'id',
-			    textField:'text'
-			});
-			//组织
-            $('#deptTypeId').combobox({
-                url:'deptType/easyUiTree.json',
-                valueField:'id',
-                textField:'text'
-            });
 
-			/*$.ajax({
-				url:"company/findAll4Select",
-				type:"get",
-				dataType:"json",
-				success:function(list){
-					var $company=$("#companyId");
-					for(var i =0;i<list.length;i++){
-						$company.append("<option value='"+list[i].id+"'>"+list[i].text+"</option>");
-					}
-				}
-			}); */
+
 		
 			$('#dg').datagrid({
-				url:'dept/list.json',
+				url:'role/list.json',
 				/* queryParams: {
 					startTime:$('input[name=startTime]').val(),
 					endTime:$('input[name=endTime]').val(),
@@ -298,10 +262,10 @@
 			    },
 				columns:[[
 					{field:'ck', checkbox:true },
-					{field:'deptId',title:'部门编号', width:70,align:'center',resizable:true},
-					{field:'deptName',title:'部门名称', width:360,align:'left',resizable:true},
-					{field:'deptTypeName',title:'组织类型', width:280,align:'left',resizable:true},
-					{field:'parentDeptName',title:'上级部门', width:360,align:'left',resizable:true},
+					{field:'roleId',title:'角色编号', width:100,align:'center',resizable:true},
+					{field:'roleName',title:'角色名称', width:360,align:'left',resizable:true},
+					{field:'creationUserName',title:'创建者', width:280,align:'left',resizable:true},
+					{field:'creationDate',title:'创建时间', width:280,align:'left',resizable:true},
 					{field:'statusName',title:'状态', width:50,align:'center'}
 				]]
 			});
@@ -315,47 +279,31 @@
 				}
 				s=s.substring(0, s.length-1);
 				$('#dg').datagrid({
-					url:'dept/list.json?'+s
+					url:'role/list.json?'+s
 				});
 			});	
 			
-			$("#addDept").click(function(){
-                //加载上级部门
-                comboboxDept();
-                $('#adddept-dlg').dialog({
-                    title: '增加部门'
+			$("#add").click(function(){
+                $('#add-dlg').dialog({
+                    title: '增加角色'
                 });
                 $('#ff').form('clear');
-				$("#adddept-dlg").dialog("open");
+                //设置排序的值
+                $.ajax({
+                    url:"role/getMaxSortNumber.json",
+                    dataType:"json",
+                    success:function (data) {
+                        console.debug("gumy",data.maxSortNumber)
+                        $("#sortNumber").textbox("setValue", eval(data.maxSortNumber+1));
+                    }
+                });
+				$("#add-dlg").dialog("open");
 			});
 
 
 		});
 
-		function comboboxDept() {
-            $('#parentId').combobox({
-                url:'dept/easyUiTree.json',
-                valueField:'id',
-                textField:'text',
-                onSelect:function (record) {
-                    //alert(record.id+""+record.text);
-                    $.ajax({
-                        url:"dept/getSortNumber.json",
-                        type:"get",
-                        data:"parentId="+record.id,
-                        dataType:"json",
-                        success:function (data) {
-                            //alert(data.sortNumber)
-                            //$("input[name=sortNumber]").val(data.sortNumber);
-                            //$("#sortNumber").val(sortNumber);
-                            $("#sortNumber").textbox("setValue", data.sortNumber);
-                        }
 
-                    })
-
-                }
-            });
-        }
 		
 		function clearForm(){
 			$('#ff').form('clear');

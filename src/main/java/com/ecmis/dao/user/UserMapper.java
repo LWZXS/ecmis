@@ -1,6 +1,7 @@
 package com.ecmis.dao.user;
 
 import java.util.List;
+import java.util.Map;
 
 import org.apache.ibatis.annotations.Param;
 
@@ -22,9 +23,19 @@ public interface UserMapper {
 	
 	public List<User> getUsersByCompany(@Param("companyId") Integer companyId);
 	
-	public List<User> getUserByCondition(@Param("userName") String userName, @Param("status") Integer status, @Param("companyId") Integer companyId, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize);
+	public List<User> getUserByCondition(@Param("userName") String userName,
+										 @Param("companyId") Integer companyId,
+										 @Param("deptId") Integer deptId,
+										 @Param("roleId") Integer roleId,
+										 @Param("status") Integer status,
+										 @Param("startRow") Integer startRow,
+										 @Param("pageSize") Integer pageSize);
 	
-	public int getUserCountByCondition(@Param("userName") String userName, @Param("status") Integer status, @Param("companyId") Integer companyId);
+	public int getUserCountByCondition(@Param("userName") String userName,
+									   @Param("companyId") Integer companyId,
+									   @Param("deptId") Integer deptId,
+									   @Param("roleId") Integer roleId,
+									   @Param("status") Integer status);
 	/**
 	 * 查询某文档的分发人
 	 * @param documentId
@@ -37,5 +48,15 @@ public interface UserMapper {
 	 * @return
 	 */
 	public List<User> getJointTrial(@Param("documentId") Integer documentId);
-	
+
+
+	int getUserCountByDeptId(Integer deptId);
+
+	int getUserCountByRoleId(Integer roleId);
+
+	int updateStatus(@Param("modifyUser") Integer modifyUser,
+					 @Param("userId") Integer userId,
+					 @Param("status") Integer status);
+
+	int addRole(Map<String ,Object> params);
 }

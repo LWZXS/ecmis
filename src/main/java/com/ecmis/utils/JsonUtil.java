@@ -10,6 +10,14 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 
 public class JsonUtil<T> {
 
+	public static String getJson(Object object){
+		String json=JSON.toJSONString(object,SerializerFeature.DisableCircularReferenceDetect,
+				SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse,
+				SerializerFeature.PrettyFormat);
+		return json;
+	}
+
 	/**
 	 * 把一个集合转换面JEasyUI的TreeJson
 	 * @param list 
@@ -18,15 +26,14 @@ public class JsonUtil<T> {
 	public String objects2Json(List<T> list,String rootName){
 		
 		List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
+		CommonTreeBean defaultBean=new CommonTreeBean(0, "请选择", "open", null);
+		rootList.add(defaultBean);
 		if(list!=null && list.size()>0){
 			CommonTreeBean root=new CommonTreeBean(0, rootName, "open", null);
 			List<CommonTreeBean> chirlds=new ArrayList<CommonTreeBean>();
 			for (T t : list) {
 				
 			}
-			
-		}else{
-			//集合无数据，提示无数据
 			
 		}
 		

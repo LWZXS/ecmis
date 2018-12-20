@@ -21,5 +21,15 @@ public interface RoleMapper {
 	public List<Role> getAll();
 	
 	public List<Role> getByUser(@Param("userId") Integer userId);
-	
+
+	List<Role> getPageByRoleNameAndStatus(@Param("roleName") String roleName,
+										  @Param("status") Integer status,
+										  @Param("startRow") Integer startRow ,
+										  @Param("pageSize") Integer pageSize);
+
+	int count(@Param("roleName")String roleName,@Param("status")Integer status);
+
+	int getMaxSortNumber();
+
+	int updateStatus(@Param("userId")Integer userId,@Param("roleId")Integer roleId,@Param("status")Integer status);
 }

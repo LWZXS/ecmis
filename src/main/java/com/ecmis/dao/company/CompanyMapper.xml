@@ -30,11 +30,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="getAll" resultType="company">
-		select * from `biz_company` order by creationDate desc
+		select * from `biz_company` where status=1 order by creationDate desc
 	</select>
 	
 	<select id="getAllAndUsers" resultMap="companyUsers">
-		select * from `biz_company` order by creationDate desc
+		select * from `biz_company` where status=1 order by creationDate desc
 	</select>
 	
 	<!-- 加载公司时加载公司的用户 -->

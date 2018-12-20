@@ -6,7 +6,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ecmis.dao.department.DepartmentMapper">
 	<insert id="add" parameterType="department" useGeneratedKeys="true" keyProperty="deptId">
 		insert  into `sys_department`(`deptName`,`parentId`,`deptTypeId`,`companyId`,`creationUser`,`creationDate`,`status`,`sortNumber`)
-			values (#{deptName},#{parentId},#{deptTypeId},#{companyId},#{creationUser},now(),1#{status},#{sortNumber})
+			values (#{deptName},#{parentId},#{deptTypeId},#{companyId},#{createUser},now(),#{status},#{sortNumber})
 	</insert>
 
 	<update id="update" parameterType="department">
@@ -16,16 +16,25 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		parentId =#{parentId},
 		deptTypeId =#{deptTypeId},
 		companyId =#{companyId},
-		modifyUser =#{modifyUser}
-		modifyDate =#{modifyDate}
+		modifyUser =#{modifyUser},
+		modifyDate =#{modifyDate},
 		status =#{status},
 		sortNumber =#{sortNumber}
-		WHERE deptid=#{deptId}
+		WHERE deptId=#{deptId}
 	</update>
 
-	<delete id="delete" parameterType="int">
-		delete from sys_department where deptid=#{deptId}
-	</delete>
+	<update id="delete" parameterType="int">
+		delete from sys_department where deptId=#{deptId}
+		/*update sys_department set status=3,modifyUser=#{userId},modifyDate=now() where deptId=#{deptId}*/
+	</update>
+
+    <update id="updateStatus">
+        update sys_department set status=#{status},modifyUser=#{userId},modifyDate=now() where deptId=#{deptId}
+    </update>
+
+    <select id="getCountByParentId" resultType="int" parameterType="int">
+        select count(1) from sys_department where parentId=#{parentId}
+    </select>
 
 	<resultMap id="dept_info" type="department">
 		<id column="deptId" property="deptId"/>
@@ -49,7 +58,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</collection>
 	</resultMap>
 
-	<select id="getById" parameterType="int" resultMap="dept_info">
+	<select id="getById" parameterType="int" resultType="department">
 		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName,
 				csd.deptId as c_deptId,csd_deptName as c_deptName,csd.parentId as c_parentId
 			from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd,sys_department csd
@@ -60,36 +69,63 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			and sd.deptId=csd.parentId
 	</select>
 
-	<select id="getByDeptNameAndStatusAsPage" resultMap="dept_info">
-		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName,
-		csd.deptId as c_deptId,csd.deptName as c_deptName,csd.parentId as c_parentId
-		from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd,sys_department csd
-		where sd.parentId=psd.deptId
-		and sd.deptTypeId=sdt.deptTypeId
-		and sd.parentId=psd.deptId
-		and sd.deptId=csd.parentId
-		<if test="status!=null">
-			and sd.status=#{status}
+	<select id="getAll" resultType="department">
+		select * from sys_department where status=1 order by sortNumber
+	</select>
+	<select id="getByCompanyId" resultType="department" parameterType="int">
+		select * from sys_department where status=1
+		<if test="companyId!=null">
+			and companyId=#{companyId}
 		</if>
+		order by sortNumber
+	</select>
+
+	<select id="getByDeptNameAndStatusAsPage" resultType="department">
+		SELECT sd.*,psd.`deptName` as parentDeptName,sdt.`deptTypeName`,bc.`companyName` FROM
+		sys_department sd,sys_department psd ,sys_dept_type sdt,biz_company bc
+		WHERE sd.`parentId`=psd.`deptId`
+		AND sd.`deptTypeId`=sdt.`deptTypeId`
+		AND sd.`companyId`=bc.`companyId`
+        <choose>
+            <when test="status!=null">
+                and sd.status=#{status}
+            </when>
+            <when test="status!=null and status==3">
+                and sd.status=3
+            </when>
+            <otherwise>
+                and sd.status!=3
+            </otherwise>
+        </choose>
 		<if test="deptName!=null and deptName!=''">
 			and sd.deptName like concat('%',#{deptName},'%')
 		</if>
+		ORDER BY sd.`creationDate` DESC
 		limit #{startRow},#{page}
-	</select>
-
-	<select id="getAll" resultType="department">
-		select * from sys_department
 	</select>
 
 	<select id="count" resultType="int">
 		select count(1) from sys_department sd
 		<trim prefix="where" prefixOverrides="and">
-			<if test="status!=null">
-				and sd.status=#{status}
-			</if>
+            <choose>
+                <when test="status!=null">
+                    and sd.status=#{status}
+                </when>
+                <when test="status!=null and status==3">
+                    and sd.status=3
+                </when>
+                <otherwise>
+                    and sd.status!=3
+                </otherwise>
+            </choose>
 			<if test="deptName!=null and deptName!=''">
 				and sd.deptName like concat('%',#{deptName},'%')
 			</if>
 		</trim>
+	</select>
+
+	<!--查询排序号码,如果查到加1,否则使用该parentId连接01-->
+	<select id="getSortNumberByParentId" resultType="int" parameterType="int">
+		SELECT ifnull(MAX(sortNumber)+1,concat(#{parentId},'01')) FROM sys_department WHERE parentId=#{parentId}
 	</select>
 </mapper>

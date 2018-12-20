@@ -23,4 +23,6 @@ public interface DepartmentTypeMapper {
 	public List<DepartmentType> getAll();
 
 	public int count(@Param("deptTypeName") String deptTypeName, @Param("status") Integer status);
+
+
 }

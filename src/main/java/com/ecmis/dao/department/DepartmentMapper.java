@@ -23,5 +23,28 @@ public interface DepartmentMapper {
 														 @Param("page")Integer page);
 	public List<Department> getAll();
 
+	public List<Department> getByCompanyId(@Param("companyId")Integer companyId);
 	public int count(@Param("deptName")String deptName, @Param("status")Integer status);
+
+	/**
+	 * 增加时获得排序号填入表单
+	 * @param parentId
+	 * @return
+	 */
+	public int getSortNumberByParentId(Integer parentId);
+
+	/**
+	 * 获得子部门数量
+	 * @param parentId
+	 * @return
+	 */
+	int getCountByParentId(Integer parentId);
+
+	/**
+	 * 更新状态
+	 * @param userId
+	 * @param deptId
+	 * @return
+	 */
+	int updateStatus(@Param("userId")Integer userId,@Param("deptId")Integer deptId,@Param("status")Integer status);
 }

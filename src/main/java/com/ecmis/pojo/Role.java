@@ -27,10 +27,48 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Integer creationUser;
 	private Integer modifuUser;
 	private Integer status;
-	@JSONField(format="yyyy-MM-dd")
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;
+
+	private String creationUserName;
+	private String statusName;
+
+	private Integer sortNumber;
+
+	public Integer getSortNumber() {
+		return sortNumber;
+	}
+
+	public void setSortNumber(Integer sortNumber) {
+		this.sortNumber = sortNumber;
+	}
+
+	public String getCreationUserName() {
+		return creationUserName;
+	}
+
+	public void setCreationUserName(String creationUserName) {
+		this.creationUserName = creationUserName;
+	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName() {
+		if(status!=null){
+			if(status.equals(1)){
+				this.statusName ="正常";
+			}else if(status.equals(2)){
+				this.statusName = "锁定";
+			}else if(status.equals(3)){
+				this.statusName = "删除";
+			}
+		}
+	}
+
 	public Role(Integer roleId) {
 		super();
 		this.roleId = roleId;
@@ -79,6 +117,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	}
 	public void setStatus(Integer status) {
 		this.status = status;
+		setStatusName();
 	}
 	public Date getCreationDate() {
 		return creationDate;

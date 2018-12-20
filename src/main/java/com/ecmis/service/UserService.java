@@ -15,17 +15,28 @@ public interface UserService {
 	
 	public List<User> findAll();
 	
-	public int add(User user);
+	public int add(User user,Integer[] roleIds);
 	
 	public int delete(Integer userId);
 	
 	public int update(User user);
-	
+
+	public int findUserCountByDeptId(Integer deptId);
+
 	public List<User> findUsersByCompany(Integer companyId);
 	
-	public PageSupport<User> findUserByCondition(String userName, Integer status, Integer companyId, Integer pageIndex, Integer pageSize);
+	public PageSupport<User> findUserByCondition(String userName,
+												 Integer companyId,
+												 Integer deptId,
+												 Integer roleId,
+												 Integer status,
+												 Integer pageIndex,
+												 Integer pageSize);
 	
-	public int findUserCountByCondition(String userName, Integer status, Integer companyId);
+	public int findUserCountByCondition(String userName, Integer companyId,
+										Integer deptId,
+										Integer roleId,
+										Integer status);
 	
 	/**
 	 * 查询某文档的分发人
@@ -39,4 +50,17 @@ public interface UserService {
 	 * @return
 	 */
 	public List<User> findJointTrial(Integer documentId);
+
+
+	int findUserCountByRoleId(Integer roleId);
+
+	int updateStatus( Integer modifyUser, Integer userId, Integer status);
+
+	/**
+	 * 删除用户,改变状态
+	 * @param modifyUser 修改者
+	 * @param userId 被删除者
+	 * @return
+	 */
+	int delete(Integer modifyUser,Integer userId);
 }

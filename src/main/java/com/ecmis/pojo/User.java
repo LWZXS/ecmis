@@ -39,16 +39,20 @@ bronDate	bronDate	datetime			FALSE	FALSE	TRUE
 	private String email;
 	private String icon;
 	private String address;
-	
+	private Integer deptId;
 	private Integer companyId;
-	
+
+	private String companyName;
+	private String deptName;
+	private String roleName;
+
 	private Integer creationUser;
 	private Integer modifuUser;
-	@JSONField(format="yyyy-MM-dd")
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	private Date creationDate;
-	@JSONField(format="yyyy-MM-dd")
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	private Date modifyDate;
-	@JSONField(format="yyyy-MM-dd")
+	@JSONField(format="yyyy-MM-dd HH:mm:ss")
 	private Date bronDate;
 	private Integer status;
 	private String statusName;
@@ -65,10 +69,43 @@ bronDate	bronDate	datetime			FALSE	FALSE	TRUE
 		super();
 		// TODO Auto-generated constructor stub
 	}
+
+	public String getCompanyName() {
+		return companyName;
+	}
+
+	public void setCompanyName(String companyName) {
+		this.companyName = companyName;
+	}
+
+	public String getDeptName() {
+		return deptName;
+	}
+
+	public void setDeptName(String deptName) {
+		this.deptName = deptName;
+	}
+
+	public String getRoleName() {
+		return roleName;
+	}
+
+	public void setRoleName(String roleName) {
+		this.roleName = roleName;
+	}
+
+	public Integer getDeptId() {
+		return deptId;
+	}
+
+	public void setDeptId(Integer deptId) {
+		this.deptId = deptId;
+	}
+
 	public User(Integer userId, String userName, String loginName,
-			String password, String phoneNum, String email, String icon,
-			String address, Integer creationUser, Integer modifuUser,
-			Integer status, Date creationDate, Date modifyDate, Date bronDate) {
+				String password, String phoneNum, String email, String icon,
+				String address, Integer creationUser, Integer modifuUser,
+				Integer status, Date creationDate, Date modifyDate, Date bronDate) {
 		super();
 		this.userId = userId;
 		this.userName = userName;
@@ -198,6 +235,8 @@ bronDate	bronDate	datetime			FALSE	FALSE	TRUE
 				this.statusName ="正常";
 			}else if(status.equals(2)){
 				this.statusName = "锁定";
+			}else if(status.equals(3)){
+				this.statusName = "删除";
 			}
 		}
 	}
