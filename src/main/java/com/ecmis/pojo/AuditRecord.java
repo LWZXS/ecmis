@@ -1,10 +1,13 @@
 package com.ecmis.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 import java.util.Date;
 
-import com.alibaba.fastjson.annotation.JSONField;
-
+/**
+ * 待办记录
+ */
 public class AuditRecord implements Serializable{
 
 	private Integer recordId;
