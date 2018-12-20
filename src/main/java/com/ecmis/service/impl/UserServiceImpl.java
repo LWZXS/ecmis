@@ -121,4 +121,9 @@ public class UserServiceImpl implements UserService{
 	public int delete(Integer modifyUser, Integer userId) {
 		return userMapper.updateStatus(modifyUser,userId,3);
 	}
+
+	@Override
+	public int updateCurrentProject(Integer userId, Integer projectId) {
+		return userMapper.updateCurrentProject(userId,projectId);
+	}
 }

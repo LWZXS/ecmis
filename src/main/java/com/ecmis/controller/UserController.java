@@ -369,4 +369,26 @@ public class UserController {
         return JsonUtil.getJson(map);
 
     }
+
+    @RequestMapping(value = "/setCurrentProject.json")
+    @ResponseBody
+    public String setCurrentProject(HttpSession session,@RequestParam("projectId") Integer projectId){
+
+        User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+        Map<String ,Object> map=new HashMap<>();
+        if (currentLoginUser==null){
+            map.put("result",false);
+            map.put("message","您还没有登录,或登录信息过期,请先登录!");
+            return JsonUtil.getJson(map);
+        }
+        int count = userService.updateCurrentProject(currentLoginUser.getUserId(), projectId);
+        if (count>0){
+            map.put("result",true);
+            map.put("message","已成功修改黙认项目!");
+        }else {
+            map.put("result",true);
+            map.put("message","修改黙认项目失败!");
+        }
+        return JsonUtil.getJson(map);
+    }
 }

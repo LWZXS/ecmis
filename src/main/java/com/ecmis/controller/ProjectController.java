@@ -1,10 +1,17 @@
 package com.ecmis.controller;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpSession;
 
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.ecmis.pojo.Department;
+import com.ecmis.utils.CommonTreeBean;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -49,10 +56,40 @@ public class ProjectController {
 		}
 		return Constants.FAIL_JSON;
 	}
-	
-	@RequestMapping(value="/index")
+
+
+	@RequestMapping(value = "/easyUiTree.json")
+	@ResponseBody
+	public Object getDepartmentsAsEasyUITree(HttpSession session){
+		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+		Map<String,Object> map=new HashMap<>();
+		List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
+		CommonTreeBean defaultBean=new CommonTreeBean(0, "请选择", "open", null);
+		rootList.add(defaultBean);
+		if (currentLoginUser==null){
+			return JsonUtil.getJson(map);
+		}
+		List<Project> projectList = currentLoginUser.getProjects();
+		if(projectList!=null && projectList.size()>0){
+			for (Project project : projectList) {
+				CommonTreeBean cb=new CommonTreeBean(project.getProjectId(), project.getProjectName(), "close", null);
+				if (currentLoginUser.getProjectId()==project.getProjectId()){
+					cb.setSelected(true);
+				}
+				rootList.add(cb);
+			}
+		}
+
+		String json=JSON.toJSONString(rootList,SerializerFeature.DisableCircularReferenceDetect,
+				SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
+				SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse,
+				SerializerFeature.PrettyFormat);
+		return json;
+	}
+
+	@RequestMapping(value="/index.html")
 	public String index(){
-		return "project/index";
+		return "project/list";
 		
 	}
 	

@@ -42,6 +42,10 @@ bronDate	bronDate	datetime			FALSE	FALSE	TRUE
 	private Integer deptId;
 	private Integer companyId;
 
+	/**
+	 * 黙认的项目
+	 */
+	private Integer projectId;
 	private String companyName;
 	private String deptName;
 	private String roleName;
@@ -68,6 +72,14 @@ bronDate	bronDate	datetime			FALSE	FALSE	TRUE
 	public User() {
 		super();
 		// TODO Auto-generated constructor stub
+	}
+
+	public Integer getProjectId() {
+		return projectId;
+	}
+
+	public void setProjectId(Integer projectId) {
+		this.projectId = projectId;
 	}
 
 	public String getCompanyName() {

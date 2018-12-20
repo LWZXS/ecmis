@@ -136,4 +136,8 @@
 			</if>
 		</foreach>
 	</insert>
+
+	<update id="updateCurrentProject">
+		update sys_user set projectId=#{projectId} where userId=#{userId}
+	</update>
 </mapper>

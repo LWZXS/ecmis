@@ -101,7 +101,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<li><img src="<%=request.getContextPath() %>/statics/css/icons/file_receive.png"></img><a href="document/receive.html" target="innerIframe">接收文档</a></li>
 			</ul>
 		</div>
-		<div id="content_panel" region="center" title="&nbsp;内部文档" style="width: 100%; height: 100%">
+		<div id="content_panel" region="center" title="" style="width: 100%; height: 100%;">
 			<iframe name="innerIframe" id="innerIframe" scrolling="no" frameborder="0"  src="document/todo.html" style="width:100%;height:100%;"></iframe>
 		</div>
 	</div>

@@ -9,8 +9,16 @@ public class CommonTreeBean {
 	private String text;
 	private String state;
 	private boolean checked;
-	
-	
+	private boolean selected;
+
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
+
 	private Map<String,String> attributes;
 	private List<CommonTreeBean> children;
 	public Integer getId() {

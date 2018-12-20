@@ -59,4 +59,7 @@ public interface UserMapper {
 					 @Param("status") Integer status);
 
 	int addRole(Map<String ,Object> params);
+
+	int updateCurrentProject(@Param("userId") Integer userId,
+							 @Param("projectId") Integer projectId);
 }

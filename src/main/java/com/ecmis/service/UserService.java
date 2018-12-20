@@ -63,4 +63,6 @@ public interface UserService {
 	 * @return
 	 */
 	int delete(Integer modifyUser,Integer userId);
+
+	int updateCurrentProject( Integer userId,Integer projectId);
 }
