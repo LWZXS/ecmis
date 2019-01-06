@@ -46,7 +46,14 @@ public class MenuServiceImpl implements MenuService {
 
 	@Override
 	public List<MenuResource> findCurrentUserLevel1Menus(Integer userId) {
-		return menuMapper.getCurrentUserLevel1Menus(userId);
+		List<MenuResource> menus = menuMapper.getCurrentUserLevel1Menus(userId);
+		if (menus!=null && menus.size()>0){
+			for (MenuResource menuResource:menus){
+				List<MenuResource> children = menuMapper.getCurrentUserLevel2Menus(userId, menuResource.getMenuId());
+				menuResource.setChildren(children);
+			}
+		}
+		return menus;
 	}
 	@Override
 	public List<MenuResource> findAdminLevel1Menus() {
@@ -72,5 +79,10 @@ public class MenuServiceImpl implements MenuService {
 			}
 		}
 		return menuResources;
+	}
+
+	@Override
+	public List<MenuResource> findMenusByMaster(Integer masterId, String masterType) {
+		return menuMapper.getMenusByMaster(masterId,masterType);
 	}
 }

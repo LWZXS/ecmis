@@ -36,17 +36,23 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			-webkit-box-sizing:content-box; /* Safari */
 			-ms-box-sizing:content-box; /* IE */
 		}
- 		
+		#ff table td{
+			height: 36px;
+			line-height: 36px;
+		}
+
 	</style>
 	
   </head>
   
   <body>
 	<table id="dg" title="用户列表" style="width:100%;height: 100% "
-			data-options="rownumbers:true,singleSelect:true,pagination:true,striped:true,toolbar:'#tb',method:'get',loadMsg:'正在加载,请稍后...',checkOnSelect:true">
+		   data-options="rownumbers:true,loadMsg:'正在加载，请稍后......',singleSelect:true,checkOnSelect:true,fitColumns:true,pagination:true,striped:true,showFooter:true,fit:true,toolbar:'#tb',method:'get'">
 	</table>
 	<div id="tb">
 		<form action="" id="searchFrm">
+            <input type="hidden" id="s_pageIndex" name="pageIndex" value="${pageIndex}">
+            <input type="hidden" id="s_pageSize" name="pageSize" value="${pageSize}">
 			<label for="s_companyId" style="margin-left: 5px;">公司:</label>
 			<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text'" name="companyId" id="s_companyId">
 				<option value="">请选择</option>
@@ -60,7 +66,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				<option value="">请选择</option>
 			</select>
 			<label for="userName" style="margin-left: 5px;">用户名称:</label>
-			<input style="height: 18px;" class="easyui-textbox" id="userName" name="userName" type="search" placeholder="用户名称..." >
+			<input style="height: 22px;" class="easyui-textbox" id="userName" name="userName" type="search" placeholder="用户名称..." >
 			<label for="s_status" style="margin-left: 5px;">状态:</label>
 			<select class="easyui-combobox" panelHeight="auto" style="width:100px" name="status" id="s_status">
 				<option value="">全部</option>
@@ -82,119 +88,189 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<div>
 		<!-- 增加用户Dialog start-->
 		<div id="adduser-dlg" class="easyui-dialog" closed="true" title="新增用户" 
-			style="width:480px;height:480px;padding:10px;"
+			style="width:660px;height:400px;padding:10px;"
 				data-options="buttons:'#adduser-buttons'">
-			<div style="margin:20px 0;"></div>
-			<div title="" style="width:440px;">
-				<div style="padding:10px 60px 20px 60px">
+			<div title="" style="width:600px;">
+				<div>
 			    <form id="ff" method="post" enctype="multipart/form-data">
 					<input type="hidden" name="userId" value="" id="userId">
 			    	<table cellpadding="5">
-			    		<tr>
-			    			<td>用户名称:</td>
+			    		<tr >
+			    			<td width="132px" align="center"><label for="a_userName">用户名称:</label></td>
 			    			<td><input class="easyui-textbox" id="a_userName" type="text" name="userName" data-options="required:true,missingMessage:'用户名不能为空',invalidMessage:'输入格式不正确'"/></td>
-			    		</tr>
+							<td width="132px" align="center">登录名称</td>
+							<td><input class="easyui-textbox" id="a_loginName" type="text" name="loginName" data-options="required:true,missingMessage:'登录名不能为空',invalidMessage:'输入格式不正确'"/></td>
+						</tr>
 			    		<tr>
-			    			<td>登录名称:</td>
-			    			<td><input class="easyui-textbox" id="a_loginName" readonly type="text" name="loginName" data-options="required:true,missingMessage:'登录名不能为空',invalidMessage:'输入格式不正确'"/></td>
-			    		</tr>
+			    			<td width="132px" align="center"><label for="a_password">登录密码:</label></td>
+			    			<td><input class="easyui-textbox" id="a_password" type="password" name="password" data-options="required:true,missingMessage:'密码不能为空',invalidMessage:'输入格式不正确'"/></td>
+							<td width="132px" align="center"><label for="a_rePassword">确认密码:</label></td>
+							<td><input class="easyui-textbox" id="a_rePassword" type="password" name="rePassword" data-options="required:true,missingMessage:'确认密码不能为空',invalidMessage:'输入格式不正确'"/></td>
+						</tr>
 			    		<tr>
-			    			<td>登录密码:</td>
-			    			<td><input class="easyui-textbox" id="a_password" type="text" name="password" data-options="required:true,missingMessage:'密码不能为空',invalidMessage:'输入格式不正确'"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td>确认密码:</td>
-			    			<td><input class="easyui-textbox" id="a_rePassword" type="text" name="rePassword" data-options="required:true,missingMessage:'确认密码不能为空',invalidMessage:'输入格式不正确'"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td>手机号码:</td>
+			    			<td width="132px" align="center"><label for="a_phoneNum">手机号码:</label></td>
 			    			<td><input class="easyui-textbox" id="a_phoneNum" type="text" name="phoneNum"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td>办公电话:</td>
-			    			<td><input class="easyui-textbox" id="a_officeTel" type="text" name="officeTel"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td>邮箱:</td>
-			    			<td><input class="easyui-textbox" id="a_email" type="text" name="email" data-options="required:true,validType:'email',missingMessage:'邮箱不能为空',invalidMessage:'邮箱格式不正确'"></input></td>
-			    		</tr>
-			    		<tr>
-			    			<td>地址:</td>
-			    			<td><input class="easyui-textbox" id="a_address" type="text" name="address"></input></td>
-			    		</tr>
-			    		<tr>
-			    			<td>生日:</td>
-			    			<td><input class="easyui-datebox" id="a_bronDate" type="text" name="bronDate"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td>头像:</td>
-			    			<td><input type="file" id="a_id" class="easyui-inputbox" name="file"/></td>
-			    		</tr>
-			    		<tr>
-			    			<td>所属公司:</td>
-			    			<td>
-			    				<select style="width: 132px;" class="easyui-combobox" data-options="required:true,missingMessage:'所属公司不能为空',valueField:'id',textField:'text',url:'company/findAll4Select'" name="companyId" id="companyId">
-			    					<option value="">请选择</option>
-			    				</select>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td>所属部门:</td>
-			    			<td>
-			    				<select style="width: 132px;" class="easyui-combobox" data-options="required:true,missingMessage:'所属部门不能为空',valueField:'id',textField:'text',url:'dept/easyUiTree.json'" name="deptId" id="deptId">
-									<option value="">请选择</option>
-			    				</select>
-			    			</td>
-			    		</tr>
-			    		<tr>
-			    			<td>所属角色:</td>
-			    			<td>
-			    				<select style="width: 132px;" class="easyui-combobox" data-options="required:true,missingMessage:'所属角色不能为空',valueField:'id',textField:'text',multiple:true,url:'role/easyUiTree.json'" name="roleIds" id="roleId">
-									<option value="">请选择</option>
-			    				</select>
-			    			</td>
-			    		</tr>
+							<td width="132px" align="center"><label for="a_officeTel">办公电话:</label></td>
+							<td><input class="easyui-textbox" id="a_officeTel" type="text" name="officeTel"/></td>
+						</tr>
+						<tr>
+							<td width="132px" align="center"><label for="a_email">邮箱:</label></td>
+							<td><input class="easyui-textbox" id="a_email" type="text" name="email" data-options="required:true,validType:'email',missingMessage:'邮箱不能为空',invalidMessage:'邮箱格式不正确'"></input></td>
+							<td width="132px" align="center"><label for="a_address">地址:</label></td>
+							<td><input class="easyui-textbox" id="a_address" type="text" name="address"></input></td>
+						</tr>
+						<tr>
+							<td width="132px" align="center"><label for="a_bronDate">生日:</label></td>
+							<td><input class="easyui-datebox" id="a_bronDate" type="text" name="bronDate"/></td>
+							<td width="132px" align="center">头像:</td>
+							<td width="212px" align="center">
+								<%--<input type="file" id="a_id" class="easyui-inputbox" name="file"/>--%>
+								<input class="easyui-filebox" name="file" data-options="prompt:'请选择图片...'" style="width:212px">
+							</td>
+						</tr>
+						<tr>
+							<td width="132px" align="center"><label for="companyId">所属公司:</label></td>
+							<td>
+								<input id="companyId" name="companyId" style="width: 132px;" data-options="required:true,missingMessage:'所属公司不能为空'"/>
+							</td>
+							<td width="132px" align="center"><label for="deptId">所属部门:</label></td>
+							<td>
+								<input style="width: 132px;" name="deptId" id="deptId" data-options="required:true,missingMessage:'所属部门不能为空'"/>
+							</td>
+						</tr>
+						<tr>
+							<td width="132px" align="center"><label for="roleId">所属角色:</label></td>
+							<td>
+								<input style="width: 132px;" name="roleIds" id="roleId" data-options="required:true,missingMessage:'所属角色不能为空',multiple:true"/>
+							</td>
+							<td width="132px" align="center"><label for="a_status">状态:</label></td>
+							<td>
+								<select style="width: 132px;" class="easyui-combobox"  name="status" id="a_status">
+									<option value="1" selected>正常</option>
+									<option value="2">锁定</option>
+								</select>
+							</td>
+						</tr>
+						<tr>
+							<td  width="264px" align="center" colspan="4">
+								<a href="javascript:void(0)" class="easyui-linkbutton" style="width: 80px" id="addUserSmt">提交</a>
+								&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+								<a href="javascript:void(0)" class="easyui-linkbutton" style="width: 80px" onclick="clearForm();">清除</a>
+							</td>
+
+						</tr>
 			    	</table>
 			    </form>
-			    <div style="text-align:center;padding:5px">
-			    	<a href="javascript:void(0)" class="easyui-linkbutton" id="addUserSmt">提交</a>
-			    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm();">清除</a>
-			    </div>
 			    </div>
 			</div>
 		</div>
-		<div id="adduser-buttons">
+		<%--关闭按扭--%>
+		<%--<div id="adduser-buttons">
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#adduser-dlg').dialog('close')">关闭</a>
-		</div>
+		</div>--%>
 		<!-- 增加用户Dialog end-->
+        <!--查看用户Dialog-->
+        <div id="view-user-dlg" class="easyui-dialog" closed="true" title="用户信息"
+             style="width:360px;height:430px;padding:10px;"
+             data-options="buttons:'#view-user-buttons'">
+            <table cellpadding="5">
+                <tr>
+                    <td width="132px" align="center">头像:</td>
+                    <td width="132px" align="center" id="icon"></td>
+                </tr>
+                <tr >
+                    <td width="132px" align="center"><label for="v_userName">用户名称:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_userName" type="text" name="userName" /></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center">登录名称</td>
+                    <td><input class="easyui-textbox" readonly id="v_loginName" type="text" name="loginName"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_phoneNum">手机号码:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_phoneNum" type="text" name="phoneNum"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_officeTel">办公电话:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_officeTel" type="text" name="officeTel"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_email">邮箱:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_email" type="text" name="email"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_address">地址:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_address" type="text" name="address"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_bronDate">生日:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_bronDate" type="text" name="bronDate"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_company">所属公司:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_company" type="text" name="address"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="v_dept">所属部门:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_dept" type="text" name="address"/></td>
+                </tr>
+                <tr>
+                    <td width="132px" align="center"><label for="a_address">所属角色:</label></td>
+                    <td><input class="easyui-textbox" readonly id="v_role" type="text" name="address"/></td>
+                </tr>
+            </table>
+        </div>
+        <div id="view-user-buttons">
+            <a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#view-user-dlg').dialog('close')">关闭</a>
+        </div>
 	</div>
 	<script type="text/javascript">
 		$(function(){
 
 		    //加载查询角色
 			$("#s_roleId").combobox({
-                url:'role/easyUiTree.json',
+                url:'${pageContext.request.contextPath}/role/easyUiTree.json',
                 valueField:'id',
                 textField:'text'
             });
 		    //加载查询部门
 			$("#s_deptId").combobox({
-                url:'dept/easyUiTree.json',
+                url:'${pageContext.request.contextPath}/dept/easyUiTree.json',
                 valueField:'id',
                 textField:'text'
             });
             /*加载公司--jeasyui*/
             $('#s_companyId').combobox({
-                url:'company/findAll4Select',
+                url:'${pageContext.request.contextPath}/company/findAll4Select',
                 valueField:'id',
                 textField:'text'
             });
 
+		    //加载角色
+			$("#roleId").combobox({
+                url:'${pageContext.request.contextPath}/role/easyUiTree.json',
+                valueField:'id',
+                textField:'text'
+            });
+		    //加载部门
+			$("#deptId").combobox({
+                url:'${pageContext.request.contextPath}/dept/easyUiTree.json',
+                valueField:'id',
+                textField:'text'
+            });
+            /*加载公司--jeasyui*/
+            $('#companyId').combobox({
+                url:'${pageContext.request.contextPath}/company/findAll4Select',
+                valueField:'id',
+                textField:'text'
+            });
+
+			//加载部门
             $('#companyId').combobox({
                 onSelect: function(company){
                     //加载查询部门
                     $("#deptId").combobox({
-                        url:'dept/easyUiTree.json?companyId='+company.id,
+                        url:'${pageContext.request.contextPath}/dept/easyUiTree.json?companyId='+company.id,
                         valueField:'id',
                         textField:'text'
                     });
@@ -206,7 +282,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                 var user=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
                 if (user && confirm("是否确定删除"+user.userName)){
                     $.ajax({
-                        url:"user/delete.json",
+                        url:"${pageContext.request.contextPath}/user/delete.json",
                         type:"get",
                         data:{"userId":user.userId},
                         dataType:"json",
@@ -218,17 +294,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                                 alert(data.message);
                             }
                         }
-
                     })
                 }
             });
+
 
             //锁定
 			$("#lock").click(function () {
                 var user=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
                 if (user && confirm("是否确定锁定"+user.userName)){
                     $.ajax({
-                        url:"user/lock.json",
+                        url:"${pageContext.request.contextPath}/user/lock.json",
                         type:"get",
                         data:{"userId":user.userId},
                         dataType:"json",
@@ -240,7 +316,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                                 alert(data.message);
                             }
                         }
-
                     })
                 }
             });
@@ -250,18 +325,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
             });
 			//修改
             $("#update").click(function(){
-
-
                 var user=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
 				if (user){
-
-				   /* $.each(user,function (index,obj) {
-						console.debug("user--",index+":"+obj)
-                    })*/
                     $('#adduser-dlg').dialog({
                         title: '修改用户'
                     });
-
                     $("#adduser-dlg").dialog("open");
 					$("#a_userName").textbox("setValue", user.userName);
 					$("#a_loginName").textbox("setValue", user.loginName);
@@ -270,12 +338,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					$("#a_officeTel").textbox("setValue", user.officeTel);
 					$("#a_email").textbox("setValue", user.email);
 					$("#a_bronDate").textbox("setValue", user.bronDate);
-					$("#userId").textbox("setValue", user.userId);
+					$("#userId").val(user.userId);
+
                     $("#companyId").combobox('setValue', user.companyId);
                     $("#deptId").combobox('setValue', user.deptId);
-                    $("#roleId").combobox('setValue', user.roleName);
-
-				}
+                    $('#a_status').combobox('setValue', user.status);
+                    console.debug("gumy",user.roles.length);
+                    if(user.roles.length>0){
+                        var roleIds=new Array();
+                        $.each(user.roles,function (index,role) {
+                            roleIds.push(role.roleId)
+							console.debug("gumy",role.roleId);
+                        })
+                        $("#roleId").combobox('setValues', roleIds);
+                    }
+                }
             });
 			//增加
             $("#addUser").click(function(){
@@ -292,7 +369,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				$('#ff').submit();
 			});
 			$('#ff').form({
-			    url:'user/add',
+			    url:'${pageContext.request.contextPath}/user/add',
 			    onSubmit: function(){
 			    	var isValid = $(this).form('validate');
 					if (!isValid){
@@ -314,69 +391,66 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    }
 			});
 
-		
 			$('#dg').datagrid({
-				url:'user/list.json',
-				/* queryParams: {
-					startTime:$('input[name=startTime]').val(),
-					endTime:$('input[name=endTime]').val(),
-					statusId:$('select[name=statusId]').val()
-				}, */
+				url:'${pageContext.request.contextPath}/user/list.json',
 			    onLoadSuccess:function(data){
-			    	
+                    var pageSize=$('#dg').datagrid('options').pageSize;
+                    var pageNumber=$('#dg').datagrid('options').pageNumber;
+                    $("#s_pageIndex").val(pageNumber)
+                    $("#s_pageSize").val(pageSize)
 			    	if(data.result){
 			    		alert("请登录！");
 			    	}
 			    },
-			    onDblClickRow:function(rowIndex,rowData){
-			    	//alert(rowIndex+rowData.documentId);
-			    	window.location.href='document/view/'+rowData.documentId;
-			    },
-			    /*
-			    
-			    <th data-options="field:'userName',width:150,align:'left',resizable:true">用户全名</th>
-				<th data-options="field:'loginName',width:150,align:'left'">登录账号</th>
-				<th data-options="field:'email',width:120,align:'left'">邮箱</th>
-				<th data-options="field:'officeTel',width:120,align:'center',resizable:true,sortable:true,order:'desc'">办公电话</th>
-				<th data-options="field:'phoneNum',width:120,align:'center'">手机号</th>
-				<th data-options="field:'status',width:120,align:'center'">状态</th>
-			    */
+			    onDblClickRow:function(rowIndex,user){
+
+                    $("#v_userName").textbox("setValue",user.userName);
+                    $("#v_loginName").textbox("setValue", user.loginName);
+                    $("#v_phoneNum").textbox("setValue", user.phoneNum);
+                    $("#v_address").textbox("setValue", user.address);
+                    $("#v_officeTel").textbox("setValue", user.officeTel);
+                    $("#v_email").textbox("setValue", user.email);
+                    $("#v_bronDate").textbox("setValue", user.bronDate);
+                    $("#v_userId").textbox("setValue", user.userId);
+                    $("#v_company").textbox('setValue', user.companyName);
+                    $("#v_dept").textbox('setValue', user.deptName);
+                    var roleNames="";
+                    $.each(user.roles,function (index,role) {
+						roleNames+=role.roleName+" ";
+                    })
+                    $("#v_role").textbox('setValue', roleNames);
+                    if (user.icon){
+                        var $img=$("<img src='${pageContext.request.contextPath}/statics/file/user_icon/"+user.icon+"' alt='' width='80px'/>")
+                        $("#icon").empty().append($img);
+                    }else {
+                        $("#icon").empty().append('暂无图片');
+                    }
+                    $('#view-user-dlg').dialog('open');
+                },
 				columns:[[
                     {field:'ck', checkbox:true },
-					{field:'userName',title:'用户全名', width:80,align:'left',resizable:true},
-					{field:'loginName',title:'登录账号', width:120,align:'left',resizable:true},
-					{field:'email',title:'邮箱', width:150,align:'left',resizable:true},
-					{field:'companyName',title:'公司', width:150,align:'left',resizable:true},
-					{field:'deptName',title:'部门', width:180,align:'left',resizable:true},
-					{field:'roleName',title:'角色', width:150,align:'left',resizable:true},
-					{field:'officeTel',title:'办公电话', width:120,align:'center',resizable:true},
-					{field:'phoneNum',title:'手机号', width:120,align:'left',resizable:true},
-					{field:'statusName',title:'状态', width:50}
+					{field:'userName',title:'用户全名', width:10,align:'left',resizable:true},
+					{field:'loginName',title:'登录账号', width:20,align:'left',resizable:true},
+					{field:'email',title:'邮箱', width:25,align:'left',resizable:true},
+					{field:'companyName',title:'公司', width:25,align:'left',resizable:true},
+					{field:'deptName',title:'部门', width:25,align:'left',resizable:true},
+					{field:'roles',title:'角色', width:25,align:'left',resizable:true,
+						formatter: function(value,user,index){
+                            if (user.roles.length>0){
+                                var roleNames="";
+                                $.each(user.roles,function (i,role) {
+									roleNames+=role.roleName+" "
+                                });
+                                return roleNames;
+                            } else {
+                                return value;
+                            }
+                        }},
+					{field:'officeTel',title:'办公电话', width:20,align:'center',resizable:true},
+					{field:'phoneNum',title:'手机号', width:20,align:'left',resizable:true},
+					{field:'statusName',title:'状态', width:10,align:'center'}
 				]]
 			});
-		
-			/*
-			pg.pagination({
-				buttons:[
-				 {
-					iconCls:'icon-search',
-					handler:function(){
-						alert('search');
-					}
-				},{
-					iconCls:'icon-add',
-					handler:function(){
-						alert('add');
-					}
-				},{
-					iconCls:'icon-edit',
-					handler:function(){
-						alert('edit');
-					}
-				} 
-				]
-			});	
-			*/
 			$("#searchBtn").click(function(){
 				var params=$('#searchFrm').serializeArray();
 				var s="";
@@ -386,7 +460,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				}
 				s=s.substring(0, s.length-1);
 				$('#dg').datagrid({
-					url:'user/list.json?'+s
+					url:'${pageContext.request.contextPath}/user/list.json?'+s
 				});
 			});	
 			$("#clear").click(function () {
@@ -395,8 +469,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 
 		});
-		
-		
 		function clearForm(){
 			$('#ff').form('clear');
 		}

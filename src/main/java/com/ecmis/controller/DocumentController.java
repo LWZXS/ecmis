@@ -6,14 +6,11 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletConfig;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -24,7 +21,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
@@ -52,12 +48,9 @@ public class DocumentController {
 	private Logger logger = Logger.getLogger(DocumentController.class);
 	@Resource
 	private DocumentService documentService;
-	
-	
+
 	@Resource
 	private CompanyService companyService;
-	
-	
 
 	/**
 	 * 主页面
@@ -66,7 +59,7 @@ public class DocumentController {
 	 */
 	@RequestMapping(value = "/index.html")
 	public String index() {
-		return "document/index";
+		return "document/inner/index";
 	}
 
 	/**
@@ -153,7 +146,7 @@ public class DocumentController {
 			return "redirect:/user/login.html?msg=P	lease_Login!";
 		}
 
-		return "document/inner/list";
+		return "document/inner/index";
 	}
 
 	/**
@@ -521,8 +514,8 @@ public class DocumentController {
 	@RequestMapping(value = "/list")
 	@ResponseBody
 	public String list(
-			@RequestParam(value = "startTime", required = false) String startTime,
-			@RequestParam(value = "endTime", required = false) String endTime,
+			@RequestParam(value = "startTime", required = false) Date startTime,
+			@RequestParam(value = "endTime", required = false) Date endTime,
 			@RequestParam(value = "docStatusId", required = false) Integer docStatusId,
 			@RequestParam(value = "rows", required = false) Integer rows,
 			@RequestParam(value = "page", required = false) Integer page,
@@ -535,12 +528,9 @@ public class DocumentController {
 		logger.debug("page:" + page);
 		User user = (User) session.getAttribute(Constants.LOGIN_USER);
 
-		Date startDate = DateUtils.parse(startTime, "MM/dd/yyyy");
-		Date endDate = DateUtils.parse(endTime, "MM/dd/yyyy");
-
 		PageSupport<Document> pageSupport = documentService.findByCondition(
 				user.getUserId(), docStatusId, status == null ? 1 : 2,
-				startDate, endDate, page, rows);
+				startTime, endTime, page, rows);
 		// 封装Map
 
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -574,8 +564,8 @@ public class DocumentController {
 	@RequestMapping(value = "/draft.json")
 	@ResponseBody
 	public String draft(
-			@RequestParam(value = "startTime", required = false) String startTime,
-			@RequestParam(value = "endTime", required = false) String endTime,
+			@RequestParam(value = "startTime", required = false) Date startTime,
+			@RequestParam(value = "endTime", required = false) Date endTime,
 			@RequestParam(value = "rows", required = false) Integer rows,
 			@RequestParam(value = "page", required = false) Integer page,
 			@RequestParam(value = "status", required = false) Integer status,
@@ -592,11 +582,9 @@ public class DocumentController {
 		if (page == null) {
 			page = Constants.PAGE_INDEX;
 		}
-		Date startDate = DateUtils.parse(startTime, "MM/dd/yyyy");
-		Date endDate = DateUtils.parse(endTime, "MM/dd/yyyy");
 
 		PageSupport<Document> pageSupport = documentService.findDraft(
-				user.getUserId(), status == null ? 1 : 2, startDate, endDate,
+				user.getUserId(), status == null ? 1 : 2, startTime, endTime,
 				page, rows);
 		// 封装Map
 
@@ -630,8 +618,8 @@ public class DocumentController {
 	@RequestMapping(value = "/havetodo.json")
 	@ResponseBody
 	public String haveTodo(
-			@RequestParam(value = "startTime", required = false) String startTime,
-			@RequestParam(value = "endTime", required = false) String endTime,
+			@RequestParam(value = "startTime", required = false) Date startTime,
+			@RequestParam(value = "endTime", required = false) Date endTime,
 			@RequestParam(value = "docStatusId", required = false) Integer docStatusId,
 			@RequestParam(value = "rows", required = false) Integer rows,
 			@RequestParam(value = "page", required = false) Integer page,
@@ -650,12 +638,9 @@ public class DocumentController {
 		logger.debug("page:" + page);
 		User user = (User) session.getAttribute(Constants.LOGIN_USER);
 
-		Date startDate = DateUtils.parse(startTime, "MM/dd/yyyy");
-		Date endDate = DateUtils.parse(endTime, "MM/dd/yyyy");
-
 		PageSupport<Document> pageSupport = documentService.findByHaveTodo(
-				user.getUserId(), docStatusId, 
-				startDate, endDate, page, rows);
+				user.getUserId(), docStatusId,
+				startTime, startTime, page, rows);
 		// 封装Map
 
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -689,8 +674,8 @@ public class DocumentController {
 	@RequestMapping(value = "/receive.json")
 	@ResponseBody
 	public String receive(
-			@RequestParam(value = "startTime", required = false) String startTime,
-			@RequestParam(value = "endTime", required = false) String endTime,
+			@RequestParam(value = "startTime", required = false) Date startTime,
+			@RequestParam(value = "endTime", required = false) Date endTime,
 			@RequestParam(value = "docStatusId", required = false) Integer docStatusId,
 			@RequestParam(value = "rows", required = false) Integer rows,
 			@RequestParam(value = "page", required = false) Integer page,
@@ -712,12 +697,9 @@ public class DocumentController {
 		logger.debug("page:" + page);
 		User user = (User) session.getAttribute(Constants.LOGIN_USER);
 
-		Date startDate = DateUtils.parse(startTime, "MM/dd/yyyy");
-		Date endDate = DateUtils.parse(endTime, "MM/dd/yyyy");
-
 		PageSupport<Document> pageSupport = documentService.findPublishRange(
 				user.getUserId(), docStatusId, status == null ? 1 : 2,
-				startDate, endDate, page, rows);
+				startTime, endTime, page, rows);
 		// 封装Map
 
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -738,8 +720,8 @@ public class DocumentController {
 	@RequestMapping(value = "/issued.json")
 	@ResponseBody
 	public String issued(
-			@RequestParam(value = "startTime", required = false) String startTime,
-			@RequestParam(value = "endTime", required = false) String endTime,
+			@RequestParam(value = "startTime", required = false) Date startTime,
+			@RequestParam(value = "endTime", required = false) Date endTime,
 			@RequestParam(value = "docStatusId", required = false) Integer docStatusId,
 			@RequestParam(value = "docName", required = false) String documentName,
 			@RequestParam(value = "rows", required = false) Integer rows,
@@ -760,10 +742,7 @@ public class DocumentController {
 		logger.debug("documentName:" + documentName);
 		User user = (User) session.getAttribute(Constants.LOGIN_USER);
 		
-		Date startDate = DateUtils.parse(startTime, "MM/dd/yyyy");
-		Date endDate = DateUtils.parse(endTime, "MM/dd/yyyy");
-		
-		PageSupport<Document> pageSupport = documentService.findIssued(startDate, endDate, documentName, docStatusId, page, rows, user);
+		PageSupport<Document> pageSupport = documentService.findIssued(startTime, endTime, documentName, docStatusId, page, rows, user);
 		// 封装Map
 		
 		Map<String, Object> map = new HashMap<String, Object>();
@@ -1112,24 +1091,21 @@ public class DocumentController {
 	
 	@RequestMapping(value="/pending.json")
 	@ResponseBody
-	public String findPending(@RequestParam(value = "startTime", required = false) String startTime,
-		@RequestParam(value = "endTime", required = false) String endTime,
+	public String findPending(@RequestParam(value = "startTime", required = false) Date startTime,
+		@RequestParam(value = "endTime", required = false) Date endTime,
 		@RequestParam(value = "rows", required = false) Integer rows,
 		@RequestParam(value = "page", required = false) Integer page,
 		@RequestParam(value = "docStatusId", required = false) Integer docStatusId,
 		@RequestParam(value = "status", required = false) Integer status,
 		@RequestParam(value = "documentName", required = false) String documentName,
 		HttpSession session){
-		
-		Date startDate = DateUtils.parse(startTime, "MM/dd/yyyy");
-		Date endDate = DateUtils.parse(endTime, "MM/dd/yyyy");
 		Integer userId=null;
 		if(status!=null && status==2){
 			User currentUser=(User) session.getAttribute(Constants.LOGIN_USER);
 			userId=currentUser.getUserId();
 		}
 		
-		PageSupport<Document> pageSupport = documentService.findPending(docStatusId, status, startDate, endDate, documentName, page, rows, userId);
+		PageSupport<Document> pageSupport = documentService.findPending(docStatusId, status, startTime, endTime, documentName, page, rows, userId);
 
 		Map<String, Object> map = new HashMap<String, Object>();
 		map.put("total", pageSupport.getTotalCount());
@@ -1165,11 +1141,7 @@ public class DocumentController {
 			@RequestParam(value = "status", required = false) Integer status,
 			@RequestParam(value = "documentName", required = false) String documentName,
 			HttpSession session){
-		Date startCreateDate = DateUtils.parse(startCreateTime, "MM/dd/yyyy");
-		Date endCreateDate = DateUtils.parse(endCreateTime, "MM/dd/yyyy");
-		Date startPendedDate = DateUtils.parse(startPendedTime, "MM/dd/yyyy");
-		Date endPendedDate = DateUtils.parse(endPendedTime, "MM/dd/yyyy");
-		
+
 		User currentUser=(User) session.getAttribute(Constants.LOGIN_USER);
 		
 		

@@ -72,9 +72,41 @@
                     ofType="project"/>
     </resultMap>
 
-    <select id="getUserByCondition" resultType="user">
-		select su.*,sd.deptName,sc.companyName,sr.roleName from sys_user su,sys_user_role sur,sys_department sd,biz_company sc,sys_role sr
-		where su.userId=sur.userId and su.deptId=sd.deptId and sc.companyId=su.companyId and sur.roleId=sr.roleId
+	<resultMap id="user_roles" type="user">
+		<id column="userId" property="userId"/>
+		<result column="userName" property="userName"/>
+		<result column="loginName" property="loginName"/>
+		<result column="phoneNum" property="phoneNum"/>
+		<result column="officeTel" property="officeTel"/>
+		<result column="email" property="email"/>
+		<result column="icon" property="icon"/>
+		<result column="address" property="address"/>
+		<result column="deptId" property="deptId"/>
+		<result column="projectId" property="projectId"/>
+		<result column="companyName" property="companyName"/>
+		<result column="deptName" property="deptName"/>
+		<result column="creationUser" property="creationUser"/>
+		<result column="modifuUser" property="modifuUser"/>
+		<result column="companyId" property="companyId"/>
+		<result column="creationDate" property="creationDate"/>
+		<result column="modifyDate" property="modifyDate"/>
+		<result column="status" property="status"/>
+		<result column="bronDate" property="bronDate"/>
+		<collection property="roles" ofType="role">
+			<id property="roleId" column="r_roleId"/>
+			<result property="roleName" column="r_roleName"/>
+			<result property="status" column="r_status"/>
+		</collection>
+
+	</resultMap>
+
+    <select id="getUserByCondition" resultMap="user_roles">
+		select su.*,sd.deptName,sc.companyName,sr.roleId r_roleId,sr.roleName r_roleName,sr.status r_status
+		from sys_user su,sys_user_role sur,sys_department sd,biz_company sc,sys_role sr
+		where su.userId=sur.userId
+		and su.deptId=sd.deptId
+		and sc.companyId=su.companyId
+		and sur.roleId=sr.roleId
 		<if test="companyId!=null and companyId!=0">
 			and su.companyId =#{companyId}
 		</if>
@@ -129,7 +161,7 @@
 	</select>
 
 	<insert id="addRole">
-		insert into sys_user_role values
+		insert into sys_user_role (roleId,userId) values
 		<foreach collection="roleIds" item="roleId" separator=",">
 			<if test="roleId!=null and roleId!=0">
 				(#{roleId},#{userId})
@@ -140,4 +172,8 @@
 	<update id="updateCurrentProject">
 		update sys_user set projectId=#{projectId} where userId=#{userId}
 	</update>
+
+	<delete id="deleteUserRole" parameterType="int">
+		delete from sys_user_role where userId=#{userId}
+	</delete>
 </mapper>

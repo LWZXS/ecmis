@@ -19,7 +19,7 @@ public class CommonTreeBean {
 		this.selected = selected;
 	}
 
-	private Map<String,String> attributes;
+	private Map<String,Object> attributes;
 	private List<CommonTreeBean> children;
 	public Integer getId() {
 		return id;
@@ -57,14 +57,14 @@ public class CommonTreeBean {
 		this.state = state;
 		this.children = children;
 	}
-	public Map<String, String> getAttributes() {
+	public Map<String, Object> getAttributes() {
 		return attributes;
 	}
-	public void setAttributes(Map<String, String> attributes) {
+	public void setAttributes(Map<String, Object> attributes) {
 		this.attributes = attributes;
 	}
 	public CommonTreeBean(Integer id, String text, String state,
-			boolean checked, Map<String, String> attributes,
+			boolean checked, Map<String, Object> attributes,
 			List<CommonTreeBean> children) {
 		super();
 		this.id = id;

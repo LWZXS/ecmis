@@ -63,15 +63,15 @@ function save(status){
 	    		case 'success':
 	    			if(status==1){
 	    				alert("文档发送成功");
-	    				window.location.href="/ecmis/document/issued.html";
+	    				window.location.href="document/issued.html";
 	    			}else{
 	    				alert("保存草稿成功");
-	    				window.location.href="/ecmis/document/draft.html";
+	    				window.location.href="document/draft.html";
 	    			}
 	    			break;
 	    		case 'notLogin':
 	    			alert("请先登录！");
-	    			window.parent.parent.parent.location.href='/ecmis/user/login.html';
+	    			window.parent.parent.parent.location.href='user/login.html';
 	    			break;
 	    		case 'notProject':
 	    			alert("选择项目！");
@@ -168,7 +168,7 @@ function getSelectedType(source,targetId,targetText,dialogObj){
 					}
 				}else if(data.result=='notLogin'){
 					alert("请先登录！");
-					window.parent.parent.parent.location.href='/ecmis/user/login.html';
+					window.parent.parent.parent.location.href='user/login.html';
 				}
 			
 			}
@@ -197,7 +197,7 @@ function getSelectedType(source,targetId,targetText,dialogObj){
 var isLoadSubjectTerm;
 function loadSubjectTerm(){
 	$("#subjectTermTree").tree({
-		url : "subjectTerm/findAll",//请求路径，id为根节点的id  
+		url : "subjectTerm/findAll",//请求路径，id为根节点的id
 		onLoadSuccess : function(node, data) {
 			isLoadSubjectTerm=true;
 			var tree = $(this);
@@ -214,7 +214,7 @@ function loadSubjectTerm(){
 //加载文档类型
 function loadTypeTree(){
 	$("#typeTree").tree({
-		url : "documentType/findAll?param="+$.trim($("#searchType").val()),//请求路径，id为根节点的id  
+		url : "documentType/findAll?param="+$.trim($("#searchType").val()),//请求路径，id为根节点的id
 		onLoadSuccess : function(node, data) {
 			var tree = $(this);
 			if (data) {
@@ -232,7 +232,7 @@ var isLoadAuditorTree;//是否已加载审核人的tree
 //加载审核人
 function loadAuditorTree(){
 	$("#auditorTree").tree({
-		url : "user/findAuditor",//请求路径，id为根节点的id  
+		url : "user/findAuditor",//请求路径，id为根节点的id
 		onLoadSuccess : function(node, data) {
 			isLoadAuditorTree=true;
 			var tree = $(this);
@@ -254,7 +254,7 @@ var isLoadJointTrialTree;//是否已加载 会审的tree
 function jointTrialTree(){
 	////loadTree($("#joint_trial_tree"),"user/findAuditor");
 	$("#joint_trial_tree").tree({
-		url : "user/findAuditor",//请求路径，id为根节点的id  
+		url : "user/findAuditor",//请求路径，id为根节点的id
 		onLoadSuccess : function(node, data) {
 			isLoadJointTrialTree=true;
 			var tree = $(this);

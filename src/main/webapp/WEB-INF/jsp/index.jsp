@@ -68,8 +68,13 @@
                 }
             });
 
+           /* $('#tt').tree({
+                url:'/menu/findMenus.json'
+            });*/
+
             //加载左侧tree
             $("#menuTree").tree({
+                url:'${pageContext.request.contextPath}/menu/findMenus.json',
                 onClick:function(node){
                     if (node){
                         if($('#tt').tabs('exists',node.text)){
@@ -134,13 +139,13 @@
         </div>
     </div>
     <%--南--%>
-    <div data-options="region:'south',title:'',split:false" style="height:36px;">
+    <div data-options="region:'south',title:'',split:false" style="height:36px;background-color: #E1E7F1;">
         <div align="center" style="line-height: 34px;">版权所有:广东天安工程监理有限公司</div>
     </div>
     <%--<div data-options="region:'east',title:'East',split:true" style="width:100px;"></div>--%>
     <%--西--%>
     <div data-options="region:'west',title:'导航菜单',split:true" style="width:150px;background-color: #E1E7F1;">
-        <ul id="menuTree" class="easyui-tree" data-options="url:'menu/findMenus.json',method:'get',animate:true,lines:true"></ul>
+        <ul id="menuTree" class="easyui-tree" data-options="method:'get',animate:true,lines:true"></ul>
     </div>
     <%--中--%>
     <div data-options="region:'center',title:''">

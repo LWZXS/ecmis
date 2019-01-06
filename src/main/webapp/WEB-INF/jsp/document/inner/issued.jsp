@@ -1,47 +1,7 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>已发文档</title>
-	<jsp:include page="/WEB-INF/jsp/title.jsp"></jsp:include>
-	
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/easyui.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/icon.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/demo.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/localcss/common.css" type="text/css"></link>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.min.js"></script>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.easyui.min.js"></script>
-	<style type="text/css">
-		*{
-			margin: 0;
-			padding: 0;
-		}
-		
-	</style>
-	
-	<script type="text/javascript">
-		
-	</script>
-  </head>
-  
-  <body>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:import url="../common/header.jsp"></c:import>
+<div data-options="region:'center',title:''" style="padding:5px;background:#eee;">
 	<table id="dg" title="已发文档" style="width:100%;height:100%"
 			data-options="rownumbers:true,loadMsg:'正在加载,请稍后......',fitColumns:true,beforePageText:'第',afterPageText:'页 共{pages}',displayMsg:'显示{from}到{to}共{total}条记录',singleSelect:true,pagination:true,striped:true,toolbar:'#tb',method:'get'">
 		<thead>
@@ -64,18 +24,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			文档名称: <input class="easyui-textbox" style="width:100px" name="docName">
 			文档状态: <input id="cc" style="width:100px" class="easyui-combobox" name="docStaId">
 			<!-- <select class="easyui-combobox" name="docStatusId" id="docStatusId" style="width:110px" >
-				
 			</select> -->
 			<a href="javascript:void(0)" id="searchBtn" class="easyui-linkbutton" iconCls="icon-search">查询</a>
 		</form>
 	</div>
-	
-	
+</div>
 	<script type="text/javascript">
 		$(function(){
 			//使用前端框架
 			$('#cc').combobox({
-			    url:'documentStatus/docStatusList.json',
+			    url:'${pageContext.request.contextPath}/documentStatus/docStatusList.json',
 			    valueField:'id',
 			    textField:'text'
 			});
@@ -101,13 +59,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				var params=$("#issuedFrm").serialize();
 				alert(params);
 				$('#dg').datagrid({
-					url:'document/issued.json?'+params
+					url:'${pageContext.request.contextPath}/document/issued.json?'+params
 				});
 			});
 		
 			//加载数据
 			$('#dg').datagrid({
-				url:'document/issued.json',
+				url:'${pageContext.request.contextPath}/document/issued.json',
 				queryParams: {
 					docStatusId:$("input[name=docStatusId]").val(),
 					docName:$("input[name=documentName]").val()
@@ -117,7 +75,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    	
 			    },
 			    onDblClickRow:function(rowIndex,rowData){
-			    	window.location.href='/ecmis/document/issued/'+rowData.documentId+'/issued';
+			    	window.location.href='${pageContext.request.contextPath}/document/issued/'+rowData.documentId+'/issued';
 			    },
 				columns:[[
 					{field:'documentName',title:'文档名称', width:260,align:'left',resizable:true},
@@ -156,5 +114,4 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			
 		})
 	</script>
-  </body>
-</html>	
+<c:import url="../common/footer.jsp"></c:import>

@@ -41,17 +41,15 @@ public class MenuController {
 		}else {
 			menus = menuService.findCurrentUserLevel1Menus(user.getUserId());
 		}
-
-
-
 		List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
 		
 		for (MenuResource menu : menus) {
 			CommonTreeBean tree=new CommonTreeBean(menu.getMenuId(), menu.getMenuName(), "close", null);
-			Map<String,String> treeAttri=new HashMap<String, String>();
+			Map<String,Object> treeAttri=new HashMap<String, Object>();
 			treeAttri.put("url", menu.getUrl());
 			treeAttri.put("icon", menu.getIcon());
 			treeAttri.put("type", menu.getType());
+
 			if (menu.getType().equals("parent")){
 				treeAttri.put("isParent","true");
 			}
@@ -61,7 +59,7 @@ public class MenuController {
 				for (MenuResource childMenu : menu.getChildren()) {
 					CommonTreeBean childTree=new CommonTreeBean(childMenu.getMenuId(), childMenu.getMenuName(), "close", null);
 					
-					Map<String,String> attributes=new HashMap<String, String>();
+					Map<String,Object> attributes=new HashMap<String, Object>();
 					attributes.put("url", childMenu.getUrl());
 					attributes.put("icon", childMenu.getIcon());
 					attributes.put("type", childMenu.getType());
@@ -71,7 +69,7 @@ public class MenuController {
 							List<CommonTreeBean> level3MenusTree=new ArrayList<CommonTreeBean>();
 							for (MenuResource level3Menu : childMenu.getChildren()) {
 								CommonTreeBean level3MenuTree = new CommonTreeBean(level3Menu.getMenuId(), level3Menu.getMenuName(), "close", null);
-								Map<String,String> attributesLevel3=new HashMap<String, String>();
+								Map<String,Object> attributesLevel3=new HashMap<String, Object>();
 								attributesLevel3.put("url", level3Menu.getUrl());
 								attributesLevel3.put("icon", level3Menu.getIcon());
 								attributesLevel3.put("type", level3Menu.getType());
@@ -99,4 +97,6 @@ public class MenuController {
 		}*/
 		
 	}
+
+
 }

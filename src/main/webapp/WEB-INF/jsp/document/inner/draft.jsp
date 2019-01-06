@@ -1,50 +1,7 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>草稿</title>
-    <link rel="shortcut icon" href="/public/css/images/logo32px.png">
-	<link rel="apple-touch-icon" href="/public/css/images/images/logo57px.png">
-	<link rel="apple-touch-icon" sizes="72x72" href="/public/css/images/images/logo72px.png">
-	<link rel="apple-touch-icon" sizes="114x114" href="/public/css/images/images/logo114px.png">
-	
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/easyui.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/icon.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/demo.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/localcss/common.css" type="text/css"></link>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.min.js"></script>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.easyui.min.js"></script>
-	<style type="text/css">
-		*{
-			margin: 0;
-			padding: 0;
-		}
-		
-	</style>
-	
-	<script type="text/javascript">
-		
-	</script>
-  </head>
-  
-  <body>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:import url="../common/header.jsp"></c:import>
+<div data-options="region:'center',title:''" style="padding:5px;background:#eee;">
 	<table id="dg" title="草稿" style="width:100%;height: 100%"
 			data-options="rownumbers:true,loadMsg:'正在加载，请稍后......',singleSelect:true,pagination:true,striped:true,toolbar:'#tb',method:'get'">
 		<thead>
@@ -60,7 +17,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		</thead>
 	</table>
 	<div id="tb" style="padding:2px 5px;">
-		<form action="document/pending.json" id="pendingFrm">
+		<form action="${pageContext.request.contextPath}/document/pending.json" id="pendingFrm">
 			<input type="hidden" name="docStatusId" value="1">
 			<input type="hidden" name="status" value="2">
 			开始时间: <input class="easyui-datebox" style="width:110px" name="startTime">
@@ -70,22 +27,21 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<span id='test'></span>
 		</form>
 	</div>
-	
-	
+</div>
 	<script type="text/javascript">
 		$(function(){
 		
 			$("#searchBtn").click(function(){
 				//alert($("#pendingFrm").serialize());
 				$('#dg').datagrid({
-					url:'document/pending.json?'+$("#pendingFrm").serialize()
+					url:'${pageContext.request.contextPath}/document/pending.json?'+$("#pendingFrm").serialize()
 					/* ,queryParams: $("#pendingFrm").serializeArray() */
 				});
 			});
 		
 			//加载数据
 			$('#dg').datagrid({
-				url:'document/pending.json',
+				url:'${pageContext.request.contextPath}/document/pending.json',
 				queryParams: {
 					docStatusId:$("input[name=docStatusId]").val(),
 					status:$("input[name=status]").val()
@@ -95,7 +51,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    	
 			    },
 			    onDblClickRow:function(rowIndex,rowData){
-			    	window.location.href='/ecmis/document/view/'+rowData.documentId+'/draft';
+			    	window.location.href='${pageContext.request.contextPath}/document/view/'+rowData.documentId+'/draft';
 			    },
 				columns:[[
 					{field:'documentName',title:'文档名称', width:260,align:'left',resizable:true},
@@ -134,5 +90,4 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			
 		})
 	</script>
-  </body>
-</html>	
+<c:import url="../common/footer.jsp"></c:import>

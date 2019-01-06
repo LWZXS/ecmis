@@ -22,6 +22,10 @@ public interface MenuResourceMapper {
 	public List<MenuResource> getByParentMenu(@Param("parentMenuId") Integer parentMenuId);
 	
 	public List<MenuResource> getCurrentUserLevel1Menus(@Param("userId") Integer userId);
+	public List<MenuResource> getCurrentUserLevel2Menus(@Param("userId") Integer userId,
+														@Param("parentMenuId")Integer parentMenuId);
 
 	public List<MenuResource> getAdminMenus();
+
+	List<MenuResource> getMenusByMaster(@Param("masterId")Integer masterId,@Param("masterType")String masterType);
 }

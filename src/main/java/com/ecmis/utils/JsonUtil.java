@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 
 public class JsonUtil<T> {
 
@@ -32,7 +33,6 @@ public class JsonUtil<T> {
 			CommonTreeBean root=new CommonTreeBean(0, rootName, "open", null);
 			List<CommonTreeBean> chirlds=new ArrayList<CommonTreeBean>();
 			for (T t : list) {
-				
 			}
 			
 		}

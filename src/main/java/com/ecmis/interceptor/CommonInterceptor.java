@@ -64,8 +64,7 @@ public class CommonInterceptor extends HandlerInterceptorAdapter{
         if(user == null){
         	//log.info("Interceptor：跳转到login页面！");
         	request.setAttribute("msg", INFO);
-        	request.getRequestDispatcher("/WEB-INF/jsp/user/gotologin.jsp").forward(request, response);
-        	
+        	request.getRequestDispatcher("/user/login.html").forward(request, response);
         	return false;
         }else{
             return true;  

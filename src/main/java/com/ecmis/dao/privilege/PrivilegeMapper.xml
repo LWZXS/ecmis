@@ -5,5 +5,18 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.ecmis.dao.privilege.PrivilegeMapper">
 	
-	
+	<update id="grantPrivilege">
+        INSERT INTO sys_privilege (`masterId`,`masterType`,`resourceId`,`resourceType`,`creationUser`,`creationDate`,`status`)
+        VALUES
+        <foreach collection="resourceIds" separator="," item="resourceId">
+            (#{masterId},#{masterType},#{resourceId},#{resourceType},#{creationUser},now(),1)
+        </foreach>
+
+    </update>
+    <!--<delete id="revokeFromMaster">
+        /*DELETE FROM sys_privilege WHERE masterId=#{masterId} AND masterType=#{masterType}*/
+    </delete>-->
+    <update id="revokeFromMaster">
+        update sys_privilege set status=2 ,modifuUser=#{modifuUser},modifyDate =now() WHERE masterId=#{masterId} AND masterType=#{masterType}
+    </update>
 </mapper>

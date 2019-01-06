@@ -1,44 +1,7 @@
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>已办文件</title>
-    
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/easyui.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/icon.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/demo.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/localcss/common.css" type="text/css"></link>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.min.js"></script>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.easyui.min.js"></script>
-	<style type="text/css">
-		*{
-			margin: 0;
-			padding: 0;
-		}
-		
-	</style>
-	
-  </head>
-  
-  <body>
-	<table id="dg" title="个人代办" style="width:100%;height:100%"
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<c:import url="../common/header.jsp"></c:import>
+<div data-options="region:'center',title:''" style="padding:5px;background:#eee;">	<table id="dg" title="已办文件" style="width:100%;height:100%"
 			data-options="rownumbers:true,loadMsg:'正在加载，请稍后......',fitColumns:true,singleSelect:true,pagination:true,striped:true,toolbar:'#tb',method:'get'">
 		<thead>
 			<tr>
@@ -71,6 +34,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<span id='test'></span>
 		</form>
 	</div>
+</div>
 	<script type="text/javascript">
 		$(function(){
 			$('#dg').datagrid({
@@ -139,5 +103,4 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			});		
 		})
 	</script>
-  </body>
-</html>	
+<c:import url="../common/footer.jsp"></c:import>

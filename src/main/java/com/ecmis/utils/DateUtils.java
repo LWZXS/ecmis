@@ -5,7 +5,7 @@ import java.util.Date;
 
 public class DateUtils {
 
-	public static Date parse(String source,String pattern){
+	public static Date parse1(String source,String pattern){
 		try {
 			Date date=new SimpleDateFormat(pattern).parse(source);
 			return date;

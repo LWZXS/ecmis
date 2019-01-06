@@ -52,11 +52,11 @@ bronDate	bronDate	datetime			FALSE	FALSE	TRUE
 
 	private Integer creationUser;
 	private Integer modifuUser;
-	@JSONField(format="yyyy-MM-dd HH:mm:ss")
+	@JSONField(format="yyyy-MM-dd")
 	private Date creationDate;
-	@JSONField(format="yyyy-MM-dd HH:mm:ss")
+	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;
-	@JSONField(format="yyyy-MM-dd HH:mm:ss")
+	@JSONField(format="yyyy-MM-dd")
 	private Date bronDate;
 	private Integer status;
 	private String statusName;

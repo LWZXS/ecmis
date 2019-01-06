@@ -19,7 +19,7 @@ public interface UserService {
 	
 	public int delete(Integer userId);
 	
-	public int update(User user);
+	public int update(User user,Integer[] roleIds );
 
 	public int findUserCountByDeptId(Integer deptId);
 

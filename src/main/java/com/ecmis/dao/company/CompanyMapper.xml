@@ -6,8 +6,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 <mapper namespace="com.ecmis.dao.company.CompanyMapper">
 	
 	<insert id="add" parameterType="company">
-		INSERT INTO `biz_company` (`companyName`,`address`,`telphone`,`creationUser`,`creationDate`,`status`) 
-			VALUES(#{companyName},#{address},#{telphone},#{creationUser},NOW(),1);
+		INSERT INTO `biz_company` (`companyName`,`address`,`telphone`,`creationUser`,`creationDate`,`status`,`companyTypeId`)
+			VALUES(#{companyName},#{address},#{telphone},#{creationUser},NOW(),1,#{companyTypeId});
 	</insert>
 	
 	<delete id="delete" parameterType="int">
@@ -21,6 +21,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			`telphone`=#{telphone},
 			`modifuUser`=#{modifuUser},
 			`modifyDate`=#{modifyDate},
+			`companyTypeId`=#{companyTypeId},
 			`status`=#{status}
 		WHERE `companyId`=#{companyId}
 	</update>

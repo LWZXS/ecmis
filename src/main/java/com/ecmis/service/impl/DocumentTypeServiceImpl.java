@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import com.ecmis.utils.PageSupport;
 import org.springframework.stereotype.Service;
 
 import com.ecmis.dao.documenttype.DocumentTypeMapper;
@@ -73,4 +74,45 @@ public class DocumentTypeServiceImpl implements DocumentTypeService {
 		return list;
 	}
 
+	@Override
+	public PageSupport<DocumentType> findPageByNameAndStatus(String docTypeName, Integer status,Integer levelId, Integer pageIndex, Integer pageSize) {
+		PageSupport<DocumentType> pageSupport=new PageSupport<>();
+
+		int totalCount = documentTypeMapper.count(docTypeName, status,levelId);
+		pageSupport.setTotalCount(totalCount);
+		pageSupport.setPageSize(pageSize);
+		pageSupport.setCurrentPageNo(pageIndex);
+		if (totalCount>0){
+			List<DocumentType> list = documentTypeMapper.getPageByNameAndStatus(docTypeName, status,levelId, pageSupport.getStartRow(), pageSize);
+			pageSupport.setList(list);
+		}
+		return pageSupport;
+	}
+
+	@Override
+	public int count(String docTypeName, Integer status) {
+		return 0;
+	}
+
+	@Override
+	public List<DocumentType> findParents() {
+		return documentTypeMapper.getParents();
+	}
+
+	@Override
+	public int findChildMaxId(Integer docTypeId) {
+		return documentTypeMapper.getChildMaxId(docTypeId);
+	}
+
+	@Override
+	public int checkId(Integer docTypeId) {
+		return documentTypeMapper.checkId(docTypeId);
+	}
+
+	@Override
+	public int updateStatus(Integer status, Integer docTypeId, Integer updateBy) {
+		List<Integer> childDocTypeIds = documentTypeMapper.getChildDocTypeIds(docTypeId);
+		int count = documentTypeMapper.updateStatus(status, childDocTypeIds, updateBy);
+		return count;
+	}
 }

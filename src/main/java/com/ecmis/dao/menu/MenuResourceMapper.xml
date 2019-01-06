@@ -9,23 +9,44 @@
 		select * from sys_menu where parentMenuId=#{parentMenuId} and status=1
 	</select>
 
-    <select id="getCurrentUserLevel1Menus" parameterType="int" resultMap="menuChild">
-		SELECT sm.* FROM sys_menu sm ,
-		                  sys_privilege sp ,
-		                  sys_role sr,
-		                  sys_user su,
-		                  sys_user_role sur
-		    WHERE sm.`status`=1
-		    AND sm.`parentMenuId` IS NULL
-		    AND su.userId=#{userId}
-		    AND su.`userId`=sur.`userId`
-		  	AND sur.`roleId`=sr.`roleId`
-		    AND sp.`resourceId`=sm.`menuId`
-		    AND sp.`resourceType`='menu'
-		    AND sr.`roleId`=sp.`masterId`
-		    AND sp.`masterType`='role'
-		    OR sp.`masterId`=su.`userId`
-		    AND sp.`masterType`='user'
+	<select id="getCurrentUserLevel2Menus" resultType="menuResource" flushCache="true">
+		SELECT DISTINCT
+			  sm.*
+			FROM
+			  sys_privilege sp,
+			  sys_menu sm
+			WHERE sp.status = 1
+			  AND sm.status=1
+			  AND sm.menuId = sp.resourceId
+			  AND sp.resourceType = 'menu'
+			  AND parentMenuId =#{parentMenuId}
+			  AND sp.masterId IN
+			  (SELECT
+				sur.`roleId`
+			  FROM
+				sys_user_role sur
+			  WHERE sur.userId = #{userId}) and sp.masterType='role'
+			  OR sp.masterId=#{userId} AND masterType='user'
+	</select>
+
+    <select id="getCurrentUserLevel1Menus" parameterType="int" resultType="menuResource" flushCache="true">
+		SELECT DISTINCT
+			  sm.*
+			FROM
+			  sys_privilege sp,
+			  sys_menu sm
+			WHERE sp.status = 1
+			  and sm.status=1
+			  AND sm.menuId = sp.resourceId
+			  AND sp.resourceType = 'menu'
+			  AND parentMenuId IS NULL
+			  AND sp.masterId IN
+			  (SELECT
+				sur.`roleId`
+			  FROM
+				sys_user_role sur
+			  WHERE sur.userId = #{userId}) and sp.masterType='role'
+			  OR sp.masterId=#{userId} AND masterType='user'
 	</select>
     <resultMap type="menuResource" id="menuChild">
         <id property="menuId" column="menuId" javaType="int"/>
@@ -57,4 +78,36 @@
     <select id="getAdminMenus" resultType="menuResource">
 		select * from sys_menu where status =1 and  parentMenuId is null
     </select>
+
+	<select id="getMenusByMaster" resultType="menuResource" flushCache="true">
+
+		<choose>
+			<when test="masterType!=null and masterType=='role'">
+				select sm.* from sys_menu sm ,sys_privilege sp
+				where
+				sm.`menuId`=sp.`resourceId`
+				and sp.status=1
+				and sm.status=1
+				and sp.`resourceType`='menu'
+				and masterId=#{masterId}
+				and masterType=#{masterType}
+			</when>
+			<otherwise>
+				SELECT sm.* FROM sys_menu sm ,sys_privilege sp
+				WHERE sp.`masterId`=#{masterId}
+				and sp.status=1
+				and sm.status=1
+				AND sp.`masterType`='user'
+				AND sm.`menuId`=sp.`resourceId`
+				AND sp.`resourceType`='menu'
+				OR sp.`masterType`='role'
+				AND sp.`masterId` IN(SELECT roleId FROM sys_user_role su WHERE su.`userId`=#{masterId})
+				AND sm.`menuId`=sp.`resourceId`
+				AND sp.`resourceType`='menu'
+				AND sp.`status`=1
+				AND sm.`status`=1
+			</otherwise>
+		</choose>
+
+	</select>
 </mapper>

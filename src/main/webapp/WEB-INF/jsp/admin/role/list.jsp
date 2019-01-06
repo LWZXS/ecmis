@@ -44,12 +44,11 @@
   
   <body>
 	<table id="dg" title="角色列表" style="width:100%;height: 100%;"
-			data-options="rownumbers:true,singleSelect:true,pagination:true,striped:true,toolbar:'#tb',
-			method:'get',idField:'deptId',loadMsg:'正在加载,请稍后...',checkOnSelect:true">
+		   data-options="rownumbers:true,loadMsg:'正在加载，请稍后......',singleSelect:true,checkOnSelect:true,fitColumns:true,pagination:true,striped:true,showFooter:true,fit:true,toolbar:'#tb',method:'get'">
 	</table>
 	<div id="tb">
 		<form action="" id="searchFrm">
-            <label for="roleName" style="margin-left: 5px;"></label>角色名称:<input style="height: 18px;" class="easyui-textbox" id="roleName" name="roleName" type="search" placeholder="角色名称..." >
+            <label for="roleName" style="margin-left: 5px;"></label>角色名称:<input style="height: 22px;" class="easyui-textbox" id="roleName" name="roleName" type="search" placeholder="角色名称..." >
 			状态:
 			<select class="easyui-combobox" panelHeight="auto" style="width:100px" name="status" id="status">
 				<option value="">全部</option>
@@ -104,8 +103,8 @@
 			    	</table>
 			    </form>
 			    <div style="text-align:center;padding:5px">
-			    	<a href="javascript:void(0)" class="easyui-linkbutton" id="addSmt">提交</a>
-			    	<a href="javascript:void(0)" class="easyui-linkbutton" onclick="clearForm();">清除</a>
+			    	<a href="javascript:void(0)" style="width: 80px;" class="easyui-linkbutton" id="addSmt">提交</a>
+			    	<a href="javascript:void(0)" style="width: 80px;" class="easyui-linkbutton" onclick="clearForm();">清除</a>
 			    </div>
 			    </div>
 			</div>
@@ -136,7 +135,7 @@
                 }
                	if (role && confirm("是否确定删除"+role.roleName)){
                	    $.ajax({
-						url:"role/delete.json",
+						url:"${pageContext.request.contextPath}/role/delete.json",
 						type:"get",
 						data:{"roleId":role.roleId},
 						dataType:"json",
@@ -194,7 +193,7 @@
                     return;
                 }
                 $.ajax({
-                    url:"role/lock.json",
+                    url:"${pageContext.request.contextPath}/role/lock.json",
                     type:"get",
                     data:{"roleId":role.roleId},
                     dataType:"json",
@@ -215,7 +214,7 @@
 				$('#ff').submit();
 			});
 			$('#ff').form({
-			    url:'role/add.json',
+			    url:'${pageContext.request.contextPath}/role/add.json',
                 dataType : 'json',
 			    onSubmit: function(){
 			    	var isValid = $(this).form('validate');
@@ -243,7 +242,7 @@
 
 		
 			$('#dg').datagrid({
-				url:'role/list.json',
+				url:'${pageContext.request.contextPath}/role/list.json',
 				/* queryParams: {
 					startTime:$('input[name=startTime]').val(),
 					endTime:$('input[name=endTime]').val(),
@@ -262,11 +261,11 @@
 			    },
 				columns:[[
 					{field:'ck', checkbox:true },
-					{field:'roleId',title:'角色编号', width:100,align:'center',resizable:true},
-					{field:'roleName',title:'角色名称', width:360,align:'left',resizable:true},
-					{field:'creationUserName',title:'创建者', width:280,align:'left',resizable:true},
-					{field:'creationDate',title:'创建时间', width:280,align:'left',resizable:true},
-					{field:'statusName',title:'状态', width:50,align:'center'}
+					{field:'roleId',title:'角色编号', width:10,align:'center',resizable:true},
+					{field:'roleName',title:'角色名称', width:40,align:'left',resizable:true},
+					{field:'creationUserName',title:'创建者', width:30,align:'left',resizable:true},
+					{field:'creationDate',title:'创建时间', width:30,align:'left',resizable:true},
+					{field:'statusName',title:'状态', width:10,align:'center'}
 				]]
 			});
 		
@@ -279,7 +278,7 @@
 				}
 				s=s.substring(0, s.length-1);
 				$('#dg').datagrid({
-					url:'role/list.json?'+s
+					url:'${pageContext.request.contextPath}/role/list.json?'+s
 				});
 			});	
 			
@@ -290,7 +289,7 @@
                 $('#ff').form('clear');
                 //设置排序的值
                 $.ajax({
-                    url:"role/getMaxSortNumber.json",
+                    url:"${pageContext.request.contextPath}/role/getMaxSortNumber.json",
                     dataType:"json",
                     success:function (data) {
                         console.debug("gumy",data.maxSortNumber)

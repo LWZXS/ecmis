@@ -63,11 +63,7 @@ public class RoleController {
             map.put("message","角色名不能为空!");
             return JsonUtil.getJson(map);
         }
-        if (roleService.count(role.getRoleName(),null)>0){
-            map.put("result","false");
-            map.put("message","角色名已经存在!");
-            return JsonUtil.getJson(map);
-        }
+
 
         if (role.getStatus()==null|| role.getStatus()==0){
             role.setStatus(1);
@@ -79,6 +75,11 @@ public class RoleController {
             count=roleService.update(role);
             msg="修改角色";
         }else {
+            if (roleService.count(role.getRoleName(),null)>0){
+                map.put("result","false");
+                map.put("message","角色名已经存在!");
+                return JsonUtil.getJson(map);
+            }
             role.setCreationUser(currentLoginUser.getUserId());
             count= roleService.add(role);
         }
@@ -181,6 +182,42 @@ public class RoleController {
             for (Role role : list) {
                 CommonTreeBean cb=new CommonTreeBean(role.getRoleId(), role.getRoleName(), "close", null);
                 rootList.add(cb);
+            }
+        }
+
+        String json=JSON.toJSONString(rootList,SerializerFeature.DisableCircularReferenceDetect,
+                SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse,
+                SerializerFeature.PrettyFormat);
+        logger.debug(json);
+        return json;
+    }
+
+
+    @RequestMapping(value = "/easyUiTreeAsPrivilege.json")
+    @ResponseBody
+    public Object getAllRolesAsPrivilege(){
+        List<Role> list = roleService.findAll();
+        //根节点
+        List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
+
+        //杆
+        CommonTreeBean defaultBean=new CommonTreeBean(0, "角色列表", "open", null);
+        Map<String,Object> attributesLevel1=new HashMap<String, Object>();
+        attributesLevel1.put("isParent",true);
+        rootList.add(defaultBean);
+        List<CommonTreeBean> childList=new ArrayList<CommonTreeBean>();
+        defaultBean.setChildren(childList);
+        defaultBean.setAttributes(attributesLevel1);
+        //rootList.add(defaultBean);
+        if(list!=null && list.size()>0){
+            for (Role role : list) {
+                if ("系统管理员".equals(role.getRoleName())){
+                    continue;
+                }
+                //枝
+                CommonTreeBean cb=new CommonTreeBean(role.getRoleId(), role.getRoleName(), "close", null);
+                childList.add(cb);
             }
         }
 

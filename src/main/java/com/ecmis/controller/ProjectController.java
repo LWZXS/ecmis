@@ -89,26 +89,15 @@ public class ProjectController {
 
 	@RequestMapping(value="/index.html")
 	public String index(){
-		return "project/list";
+		return "admin/project/list";
 		
 	}
 	
-	@RequestMapping(value="/list.html")
-	public String list(){
-		return "project/list";
-		
-	}
-	@RequestMapping(value="/list.do")
+	@RequestMapping(value="/list.json")
 	@ResponseBody
 	public String find(@RequestParam(value="projectName",required=false)String projectName,
-			@RequestParam(value="rows",required=false)Integer rows,
-			@RequestParam(value="page",required=false)Integer page){
-		if(rows==null){
-			rows=Constants.PAGE_SIZE;
-		}
-		if(page==null){
-			page=Constants.PAGE_INDEX;
-		}
+			@RequestParam(value="rows",required=false,defaultValue = "10")Integer rows,
+			@RequestParam(value="page",required=false,defaultValue = "1")Integer page){
 		PageSupport<Project> pageSupport = projectService.findByCondition(projectName, page, rows);
 		
 		String json = JsonUtil.list2PageJson(pageSupport);

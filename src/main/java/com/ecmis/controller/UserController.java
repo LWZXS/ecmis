@@ -17,10 +17,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.alibaba.fastjson.JSON;
@@ -52,7 +49,7 @@ public class UserController {
         List<User> list = userService.findAll();
         List<CommonTreeBean> rootList = new ArrayList<CommonTreeBean>();
         CommonTreeBean root = new CommonTreeBean(0, "用户列表", "open", null);
-        Map<String, String> attri = new HashMap<String, String>();
+        Map<String, Object> attri = new HashMap<String, Object>();
         attri.put("isParent", "true");
         root.setAttributes(attri);
         List<CommonTreeBean> childs = new ArrayList<CommonTreeBean>();
@@ -78,7 +75,7 @@ public class UserController {
         List<User> publishRangeUsers = userService.findPublishRange(documentId);
         List<CommonTreeBean> rootList = new ArrayList<CommonTreeBean>();
         CommonTreeBean root = new CommonTreeBean(0, "用户列表", "open", null);
-        Map<String, String> attri = new HashMap<String, String>();
+        Map<String, Object> attri = new HashMap<String, Object>();
         attri.put("isParent", "true");
         root.setAttributes(attri);
         List<CommonTreeBean> childs = new ArrayList<CommonTreeBean>();
@@ -106,7 +103,7 @@ public class UserController {
         List<User> jointTrialUsers = userService.findJointTrial(documentId);
         List<CommonTreeBean> rootList = new ArrayList<CommonTreeBean>();
         CommonTreeBean root = new CommonTreeBean(0, "用户列表", "open", null);
-        Map<String, String> attri = new HashMap<String, String>();
+        Map<String, Object> attri = new HashMap<String, Object>();
         attri.put("isParent", "true");
         root.setAttributes(attri);
         List<CommonTreeBean> childs = new ArrayList<CommonTreeBean>();
@@ -212,8 +209,11 @@ public class UserController {
     }
 
     @RequestMapping("/list.html")
-    public String list(HttpSession session) {
+    public String list(@RequestParam(value = "pageIndex",required = false,defaultValue = "1") Integer pageIndex,
+                       @RequestParam(value = "pageSize",required = false,defaultValue = "10") Integer pageSize,Model model) {
 
+        model.addAttribute("pageIndex",pageIndex);
+        model.addAttribute("pageSize",pageSize);
         return "user/list";
     }
 
@@ -227,7 +227,6 @@ public class UserController {
                            @RequestParam(value = "rows", required = false) Integer rows,
                            @RequestParam(value = "page", required = false) Integer page
     ) {
-        logger.debug("params:status" + status + "&companyId=" + companyId + "&rows=" + rows + "&page=" + page);
         if (rows == null) {
             rows = Constants.PAGE_SIZE;
         }
@@ -252,14 +251,14 @@ public class UserController {
             map.put("message","登录超时,请重新登录!");
             return JsonUtil.getJson(map);
         }
-        if (!attach.isEmpty()) {
+        if (attach!=null &&!attach.isEmpty()) {
             // 有文件上传
-            String path = session.getServletContext().getRealPath(Constants.INNER_ATTACHMENT_PATH);
+            String path = session.getServletContext().getRealPath(Constants.USER_ICON);
             String oldFileName = attach.getOriginalFilename();// 原文件名
             String prefix = FilenameUtils.getExtension(oldFileName);// 原文件后缀
 
-            int filesize = Constants.MAX_FILE_UPLOAD_SIZE;
-            if (attach.getSize() > filesize) {// 上传大小不得超过 500k
+            int fileSize = Constants.MAX_FILE_UPLOAD_SIZE;
+            if (attach.getSize() > fileSize) {// 上传大小不得超过 500k
                 // request.setAttribute("uploadFileError", " * 上传大小不得超过 2M");
                 // return
                 // "{\"result\":\"上传大小不得超过 "+(Constants.MAX_FILE_UPLOAD_SIZE/1024/1024)+"M\"}";
@@ -299,12 +298,20 @@ public class UserController {
                 //return "上传格式不正确，请上传图片";
             }
         }
-        user.setCreationUser(currentLoginUser.getUserId());
-        user.setStatus(1);
-        int count = userService.add(user,roleIds);
+
+        int count =0;
+        if (user.getUserId()!=null){
+            user.setModifuUser(currentLoginUser.getUserId());
+            count = userService.update(user,roleIds);
+            map.put("message","修改用户成功!");
+        }else {
+            user.setCreationUser(currentLoginUser.getUserId());
+            user.setStatus(1);
+            count = userService.add(user,roleIds);
+            map.put("message","增加用户成功!");
+        }
         if (count > 0) {
             map.put("result",true);
-            map.put("message","增加用户成功!");
             return JsonUtil.getJson(map);
             //return "success";
         }
@@ -318,8 +325,6 @@ public class UserController {
     @ResponseBody
     public String lock(@RequestParam(value = "userId") Integer userId,HttpSession session){
         User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
-
-
         Map<String ,Object> map=new HashMap<>();
         if (currentLoginUser==null){
             map.put("result",false);
@@ -391,4 +396,62 @@ public class UserController {
         }
         return JsonUtil.getJson(map);
     }
+
+    @RequestMapping(value = "/easyUiTree.json")
+    @ResponseBody
+    public Object getAllRoles(){
+        List<User> list = userService.findAll();
+        List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
+
+        //集合无数据，提示无数据
+        CommonTreeBean defaultBean=new CommonTreeBean(0, "请选择", "open", null);
+        rootList.add(defaultBean);
+        if(list!=null && list.size()>0){
+            for (User user : list) {
+                CommonTreeBean cb=new CommonTreeBean(user.getUserId(), user.getUserName(), "close", null);
+                rootList.add(cb);
+            }
+        }
+
+        String json=JSON.toJSONString(rootList,SerializerFeature.DisableCircularReferenceDetect,
+                SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse,
+                SerializerFeature.PrettyFormat);
+        logger.debug(json);
+        return json;
+    }
+
+    @RequestMapping(value = "/easyUiTreeAsPrivilege.json")
+    @ResponseBody
+    public Object getAllRolesAsPrivilege(){
+        List<User> list = userService.findAll();
+        List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
+
+        //集合无数据，提示无数据
+        CommonTreeBean defaultBean=new CommonTreeBean(0, "用户列表", "open", null);
+        Map<String,Object> attributesLevel1=new HashMap<String, Object>();
+        attributesLevel1.put("isParent",true);
+        rootList.add(defaultBean);
+        List<CommonTreeBean> childList=new ArrayList<CommonTreeBean>();
+        defaultBean.setChildren(childList);
+        defaultBean.setAttributes(attributesLevel1);
+        //rootList.add(defaultBean);
+        if(list!=null && list.size()>0){
+            for (User user : list) {
+                if ("系统管理员".equals(user.getUserName())){
+                    continue;
+                }
+                CommonTreeBean cb=new CommonTreeBean(user.getUserId(), user.getUserName(), "close", null);
+                childList.add(cb);
+            }
+        }
+
+        String json=JSON.toJSONString(rootList,SerializerFeature.DisableCircularReferenceDetect,
+                SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
+                SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse,
+                SerializerFeature.PrettyFormat);
+        logger.debug(json);
+        return json;
+    }
+
 }

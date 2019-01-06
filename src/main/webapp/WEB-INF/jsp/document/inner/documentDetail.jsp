@@ -1,68 +1,9 @@
 <%@page import="com.ecmis.pojo.Document"%>
-<%@ page language="java" import="java.util.*" pageEncoding="utf-8"%>
 <%@taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>文档详细</title>
-    
-	<meta http-equiv="pragma" content="no-cache">
-	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/easyui.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/icon.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/demo.css" type="text/css"></link>
-	
-	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/localcss/common.css" type="text/css"></link>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.min.js"></script>
-	
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.easyui.min.js"></script>
-	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/localjs/flow.js"></script>
-	<style type="text/css">
-	
-		*{
-			box-sizing:border-box;
-			-moz-box-sizing:border-box;   /*Firefox*/
-			-webkit-box-sizing:border-box;  /*Ssfari*/
-			-ms-box-sizing:border-box;
-		
-		}
-		.filebtns{
-			position: absolute;
-			top: 5px;
-			right: 30px;
-			z-index: 1;
-		}
-		.areabtn{
-			height: 44px;
-			vertical-align: middle;
-			margin-top: -38px;
-		}
-		.singlet{
-			height: 24px;
-		}
-		.multiple{
-			height: 98px;
-		}
-		
-	</style>
-
-  </head>
-  
-  <body>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<c:import url="../common/header.jsp"></c:import>
+<div data-options="region:'center',title:''" style="padding:5px;background:#eee;">
 	<div id="cc" class="easyui-layout" style="width:100%;height:100%;">
 		<div data-options="region:'center'" style="background:#eee;">
 		    <div class="easyui-panel" style="width:100% ;  position: relative; height: 100%;" id="content">
@@ -77,7 +18,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					
 					<div title="基本信息" style="padding:10px;">
 						<div style="width: 100%; margin: 0 auto;" align="center" >
-							<form id="ff" class="easyui-form" method="post" data-options="novalidate:true" action="document/update.do" enctype="multipart/form-data">
+							<form id="ff" class="easyui-form" method="post" data-options="novalidate:true" action="${pageContext.request.contextPath}/document/update.do" enctype="multipart/form-data">
 								<textarea style="display: none" name="phrasesVal"></textarea>
 								<input type="hidden" name="docStatusId" value="${doc.documentStatus.docStatusId }" />
 								<input type="hidden" name="documentId" value="${doc.documentId }" />
@@ -166,7 +107,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 										<c:choose>
 											<c:when test="${not empty doc.attachment }">
 								    			<%-- <td><a href="<%= request.getContextPath()%>/statics/file/${doc.attachment }">附件</a></td> --%>
-								    			<td colspan="3"><a href="document/download?fileName=${doc.attachment }">${doc.attachment }</a></td>
+								    			<td colspan="3"><a href="${pageContext.request.contextPath}/document/download?fileName=${doc.attachment }">${doc.attachment }</a></td>
 											</c:when>
 											<c:otherwise>
 								    			<td colspan="3">无</td>
@@ -222,7 +163,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							</c:otherwise>
 						</c:choose>
 						<a href="javascript:void(0)" id="readMainBody" class="easyui-linkbutton" iconCls="icon-update">查看正文</a>
-						<form id="readFrm" class="easyui-form" method="post" data-options="novalidate:true" action="document/read.do" enctype="multipart/form-data">
+						<form id="readFrm" class="easyui-form" method="post" data-options="novalidate:true" action="${pageContext.request.contextPath}/document/read.do" enctype="multipart/form-data">
 							<input type="hidden" name="documentId" value="${doc.documentId }" />
 							<input type="hidden" name="docStatusId" value="${doc.documentStatus.docStatusId }" />
 							<input type="hidden" name="opr" value="${opr }" />
@@ -309,7 +250,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div id="back-dlg" class="easyui-dialog" closed="true" title="回退创建人" style="width:360px;height:400px;padding:10px;"
 				data-options="buttons:'#back-buttons'">
 			<div class="easyui-panel" style="padding:5px" title="请输入回退原因">
-				<form id="backFrm" class="easyui-form" method="post" data-options="novalidate:true" action="document/update.do">
+				<form id="backFrm" class="easyui-form" method="post" data-options="novalidate:true" action="${pageContext.request.contextPath}/document/update.do">
 					<input type="hidden" name="documentId" value="${doc.documentId }"/>
 					<input type="hidden" name="docStatusId" id="back-docStatusId" value="${doc.documentStatus.docStatusId }"/>
 					<input type="hidden" id="back-docStatusId1" value="${doc.documentStatus.docStatusId }"/>
@@ -326,7 +267,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<!-- 流程Dialog  flow start -->
 		<div id="flow-dlg" class="easyui-dialog" closed="true" title="流程" style="width:940px;height:400px;padding:10px;"
 				data-options="buttons:'#flow-buttons'">
-			<iframe name="flowIframe" id="flowIframe" scrolling="no" frameborder="0"  src="document/flow.html?docStatusId=${doc.documentStatus.docStatusId }" style="width:100%;height:100%;"></iframe>
+			<iframe name="flowIframe" id="flowIframe" scrolling="no" frameborder="0"  src="${pageContext.request.contextPath}/document/flow.html?docStatusId=${doc.documentStatus.docStatusId }" style="width:100%;height:100%;"></iframe>
 		</div>
 		<div id="flow-buttons">
 			<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#flow-dlg').dialog('close');">关闭</a>
@@ -334,6 +275,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<!-- 流程Dialog  flow end -->
 		
 	</div>
+</div>
   	<script type="text/javascript">
   		var eastIsDisplay=false;
   		var publishRangeIsLoad=false;
@@ -398,7 +340,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   			$("#publish_rangeBtnLoad").click(function(){
   				$("#publish_range-dlg").dialog("open");
   				if(!publishRangeIsLoad){
-					publishRangeIsLoad=loadTree($("#publish_range_tree"),"user/findPublishRangeCheckedTree.json?documentId="+$("[name=documentId]").val(),false);
+					publishRangeIsLoad=loadTree($("#publish_range_tree"),"${pageContext.request.contextPath}/user/findPublishRangeCheckedTree.json?documentId="+$("[name=documentId]").val(),false);
 				}
   			
   			});
@@ -406,13 +348,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   			$("#jointTrial_BtnLoad").click(function(){
   				$("#joint_trial-dlg").dialog("open");
   				if(!jointTrial){
-					jointTrial=loadTree($("#joint_trial_tree"),"user/findByJointTrialCheckedTree.json?documentId="+$("[name=documentId]").val(),false);
+					jointTrial=loadTree($("#joint_trial_tree"),"${pageContext.request.contextPath}/user/findByJointTrialCheckedTree.json?documentId="+$("[name=documentId]").val(),false);
 				}
   			});
   			//归档
   			$("#pending").click(function(){
   				$('#readFrm').form('submit', {
-					    url:"document/pending.do",
+					    url:"${pageContext.request.contextPath}/document/pending.do",
 					    onSubmit: function(){
 					    	if($("#phrasesVal").val()==""){
 					    		return confirm("是否确定不输入意见？");
@@ -424,11 +366,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					    	switch(data){
 					    		case 'success':
 					    			alert("归档成功");
-									window.location.href="/ecmis/document/pending.html";
+									window.location.href="${pageContext.request.contextPath}/document/pending.html";
 					    			break;
 					    		case 'notLogin':
 					    			alert("请先登录！");
-					    			window.parent.parent.parent.location.href='/ecmis/user/login.html';
+					    			window.parent.parent.parent.location.href='${pageContext.request.contextPath}/user/login.html';
 					    			break;
 					    		default:
 					    			alert(data);
@@ -455,11 +397,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					    	switch(data){
 					    		case 'success':
 					    			alert("已阅成功");
-									window.location.href="/ecmis/document/todo.html";
+									window.location.href="${pageContext.request.contextPath}/document/index.html";
 					    			break;
 					    		case 'notLogin':
 					    			alert("请先登录！");
-					    			window.parent.parent.parent.location.href='/ecmis/user/login.html';
+					    			top.location.href='${pageContext.request.contextPath}/user/login.html';
 					    			break;
 					    		default:
 					    			alert(data);
@@ -497,7 +439,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					$("[name=phrasesVal]").val($phrasesVal.val());
 					
 					$('#ff').form('submit', {
-					    url:"document/update.do",
+					    url:"${pageContext.request.contextPath}/document/update.do",
 					    onSubmit: function(){
 					    	//验证
 							//alert($("#docTypeId").val());
@@ -531,11 +473,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					    	switch(data){
 					    		case 'success':
 				    				alert("操作成功");
-									window.location.href="/ecmis/document/todo.html";
+									window.location.href="${pageContext.request.contextPath}/document/index.html";
 					    			break;
 					    		case 'notLogin':
 					    			alert("请先登录！");
-					    			window.parent.parent.parent.location.href='/ecmis/user/login.html';
+					    			window.parent.parent.parent.location.href='${pageContext.request.contextPath}/user/login.html';
 					    			break;
 					    		case 'notProject':
 					    			alert("选择项目！");
@@ -560,7 +502,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					$('#tt').tabs('add',{
 						title: '正文',
 						content: '<div style="padding:5px;width:100%;height:100%;">'
-									+'<iframe height="100%" width="100%" src="documentType/putTodoWordPath?mainBody=${doc.mainBody }&opr=read"></iframe>'
+									+'<iframe height="100%" width="100%" src="${pageContext.request.contextPath}/documentType/putTodoWordPath?mainBody=${doc.mainBody }&opr=read"></iframe>'
 								+'</div>',
 						closable: true,
 						iconCls:'icon-main-body'
@@ -576,7 +518,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					$('#tt').tabs('add',{
 						title: '正文',
 						content: '<div style="padding:5px;width:100%;height:100%;">'
-									+'<iframe height="100%" width="100%" src="documentType/putTodoWordPath?mainBody=${doc.mainBody }&opr=read"></iframe>'
+									+'<iframe height="100%" width="100%" src="${pageContext.request.contextPath}/documentType/putTodoWordPath?mainBody=${doc.mainBody }&opr=read"></iframe>'
 								+'</div>',
 						closable: true,
 						iconCls:'icon-main-body'
@@ -605,7 +547,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   			$("#phrasesBtn").click(function(){
   				$("#phrases-dlg").dialog("open");
   				$("#phrases_tree").tree({
-					url : "phrases/list.json",//请求路径，id为根节点的id  
+					url : "${pageContext.request.contextPath}/phrases/list.json",//请求路径，id为根节点的id
 					onLoadSuccess : function(node, data) {
 						var tree = $(this);
 						if (data) {
@@ -621,7 +563,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   			
   			//审核记录
   			$('#dg').datagrid({
-				url:'auditRecord/findByDocument.json',
+				url:'${pageContext.request.contextPath}/auditRecord/findByDocument.json',
 				queryParams: {
 					rows:10,
 					page:1,
@@ -694,7 +636,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		//回退发件人
 		function doBack(){
 			$('#backFrm').form('submit', {
-			    url:"document/back.do",
+			    url:"${pageContext.request.contextPath}/document/back.do",
 			    onSubmit: function(){
 			    	if($("#backPhrasesVal").val()==""){
 			    		alert("请输入原因！");
@@ -707,11 +649,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			    	switch(data){
 			    		case 'success':
 			    			alert("退回成功");
-							window.location.href="/ecmis/document/todo.html";
+							window.location.href="${pageContext.request.contextPath}/document/index.html";
 			    			break;
 			    		case 'notLogin':
 			    			alert("请先登录！");
-			    			window.parent.parent.parent.location.href='/ecmis/user/login.html';
+			    			top.location.href='${pageContext.request.contextPath}/user/login.html';
 			    			break;
 			    		default:
 			    			alert(data);
@@ -721,5 +663,4 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			});
 		}
   	</script>
-  </body>
-</html>
+<c:import url="../common/footer.jsp"/>

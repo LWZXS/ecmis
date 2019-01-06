@@ -67,7 +67,7 @@ public class PageSupport<T> {
 	}
 
 	public void setTotalPageCount() {
-		this.totalPageCount = totalCount%pageSize==0?totalCount/pageSize:totalCount%pageSize+1;
+		this.totalPageCount = totalCount%pageSize==0?totalCount/pageSize:totalCount/pageSize+1;
 	}
 
 	public List<T> getList() {

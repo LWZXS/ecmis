@@ -9,10 +9,10 @@ public class DepartmentType {
     private String deptTypeName;
 
     private Integer createUser;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format="yyyy-MM-dd")
     private Date creationDate;
     private Integer modifyUser;
-    @JSONField(format="yyyy-MM-dd HH:mm:ss")
+    @JSONField(format="yyyy-MM-dd")
     private Date modifyDate;
     private Integer status;
 

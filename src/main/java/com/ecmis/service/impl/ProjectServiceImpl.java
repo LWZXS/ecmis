@@ -50,7 +50,7 @@ public class ProjectServiceImpl implements ProjectService {
 	@Override
 	public PageSupport<Project> findByCondition(String projectName,
 			Integer pageIndex, Integer pageSize) {
-		List<Project> list = projectMapper.getByCondition(projectName, (pageIndex-1)*pageSize, pageSize);
+		List<Project> list = projectMapper.getByCondition1(projectName, (pageIndex-1)*pageSize, pageSize);
 		
 		int totalCount = projectMapper.getCountByCondition(projectName);
 		

@@ -22,8 +22,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
   </head>
   <%
-  	//response.sendRedirect("/ecmis/user/login.html");
-  	//return;
+  	response.sendRedirect(request.getContextPath()+"/user/login.html");
+  	return;
    %>
   <body>
    	我的工作台

@@ -10,6 +10,8 @@ import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.ecmis.utils.*;
+import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,15 +23,13 @@ import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ecmis.pojo.DocumentType;
 import com.ecmis.pojo.User;
 import com.ecmis.service.DocumentTypeService;
-import com.ecmis.utils.CommonTreeBean;
-import com.ecmis.utils.Constants;
-import com.ecmis.utils.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping(value="/documentType")
-public class DocumentTypeConntroller {
+public class DocumentTypeController {
 
-	private Logger logger=Logger.getLogger(DocumentTypeConntroller.class);
+	private Logger logger=Logger.getLogger(DocumentTypeController.class);
 	@Resource
 	private DocumentTypeService documentTypeService;
 	
@@ -55,7 +55,7 @@ public class DocumentTypeConntroller {
 			for (DocumentType chirldTypeLevel1 : list) {
 				//1级
 				CommonTreeBean level1CTB=new CommonTreeBean(chirldTypeLevel1.getDocTypeId(), chirldTypeLevel1.getDocTypeName(), "open", null);
-				Map<String,String> attributes=new HashMap<String, String>();
+				Map<String,Object> attributes=new HashMap<String, Object>();
 				attributes.put("parentId", chirldTypeLevel1.getParentTypeId()==null?"":chirldTypeLevel1.getParentTypeId()+"");
 				attributes.put("docName", chirldTypeLevel1.getDocName());
 				attributes.put("isParent", "true");
@@ -65,7 +65,7 @@ public class DocumentTypeConntroller {
 					for (DocumentType chirldTypeLevel2 : chirldTypeLevel1.getChildren()) {
 						//2级
 						CommonTreeBean level2CTB=new CommonTreeBean(chirldTypeLevel2.getDocTypeId(), chirldTypeLevel2.getDocTypeName(), "closed", null);
-						Map<String,String> chirldAttributes=new HashMap<String, String>();
+						Map<String,Object> chirldAttributes=new HashMap<String, Object>();
 						chirldAttributes.put("parentId", chirldTypeLevel2.getParentTypeId()==null?"":chirldTypeLevel2.getParentTypeId()+"");
 						chirldAttributes.put("docName", chirldTypeLevel2.getDocName());
 						chirldAttributes.put("isParent", "true");
@@ -76,7 +76,7 @@ public class DocumentTypeConntroller {
 								//3级
 								CommonTreeBean level3CTB=new CommonTreeBean(chirldTypeLevel3.getDocTypeId(), chirldTypeLevel3.getDocTypeName(), "closed", null);
 								//属性
-								Map<String,String> chirldAttributes3=new HashMap<String, String>();
+								Map<String,Object> chirldAttributes3=new HashMap<String, Object>();
 								chirldAttributes3.put("parentId", chirldTypeLevel3.getParentTypeId()==null?"":chirldTypeLevel3.getParentTypeId()+"");
 								chirldAttributes3.put("docName", chirldTypeLevel3.getDocName());
 								chirldAttributes3.put("isParent", "true");
@@ -89,7 +89,7 @@ public class DocumentTypeConntroller {
 									
 									for (DocumentType chirldTypeLevel4 : chirldTypeLevel3.getChildren()) {
 										CommonTreeBean level4CTB=new CommonTreeBean(chirldTypeLevel4.getDocTypeId(), chirldTypeLevel4.getDocTypeName(), "close", null);
-										Map<String,String> chirldAttributes4=new HashMap<String, String>();
+										Map<String,Object> chirldAttributes4=new HashMap<String, Object>();
 										chirldAttributes4.put("docName", chirldTypeLevel4.getDocName());
 										level4CTB.setAttributes(chirldAttributes4);
 										level4CTBs.add(level4CTB);
@@ -249,5 +249,162 @@ public class DocumentTypeConntroller {
 		}
 		
 	}
-	
+
+	/**
+	 * 显示主页
+	 * @return
+	 */
+	@RequestMapping(value = "/index.html")
+	public String index(){
+		return "admin/documentType/index";
+	}
+
+
+	/**
+	 * 分页查询
+	 * @param documentTypeName
+	 * @param status
+	 * @param page
+	 * @param rows
+	 * @return
+	 */
+	@RequestMapping("/list.json")
+	@ResponseBody
+	public String list(@RequestParam(value="documentTypeName",required=false)String documentTypeName,
+					   @RequestParam(value="status",required=false)Integer status,
+					   @RequestParam(value="levelId",required=false)Integer levelId,
+					   @RequestParam(value="page",required=false,defaultValue = "1")Integer page,
+					   @RequestParam(value="rows",required=false,defaultValue = "10")Integer rows){
+		PageSupport<DocumentType> pageSupport = documentTypeService.findPageByNameAndStatus(documentTypeName, status,levelId, page, rows);
+
+		String json = JsonUtil.list2PageJson(pageSupport);
+		return json;
+	}
+
+	/**
+	 * 可以做为父级集合,level={1,2,3}
+	 * @return
+	 */
+	@RequestMapping(value = "/getParents.json")
+	@ResponseBody
+	public String getParents(){
+		List<DocumentType> parents = documentTypeService.findParents();
+		String json = JsonUtil.getJson(parents);
+		return json;
+	}
+	@RequestMapping(value = "/findChildMaxId.json")
+	@ResponseBody
+	public String findChildMaxId(@RequestParam(value = "docTypeId") Integer docTypeId){
+		int childMaxId = documentTypeService.findChildMaxId(docTypeId);
+		return "{\"childMaxId\":"+childMaxId+"}";
+	}
+	@RequestMapping(value = "/checkId.json")
+	@ResponseBody
+	public String checkId(@RequestParam(value = "docTypeId") Integer docTypeId){
+		int count = documentTypeService.checkId(docTypeId);
+		if (count>0){
+			return "{\"result\":true}";
+		}
+		return "{\"result\":false}";
+	}
+
+	@RequestMapping(value = "/add.json")
+	@ResponseBody
+	public String save(DocumentType documentType,
+					   @RequestParam(value = "file",required = false) MultipartFile attach,
+					   @RequestParam(value = "opr")String opr,HttpSession session){
+		//System.out.println(documentType);
+		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+		Map<String,Object> map=new HashMap<>();
+		if (currentLoginUser == null) {
+			map.put("result",false);
+			map.put("message","登录超时,请重新登录!");
+			return JsonUtil.getJson(map);
+		}
+		if (attach!=null &&!attach.isEmpty()) {
+			// 有文件上传
+			String path = session.getServletContext().getRealPath(Constants.DOCUMENT_TYPE_PATH);
+			String oldFileName = attach.getOriginalFilename();// 原文件名
+			String prefix = FilenameUtils.getExtension(oldFileName);// 原文件后缀
+
+			if (attach.getSize() >Constants.MAX_DOC_FILE_UPLOAD_SIZE) {// 上传大小不得超过 500k
+				// request.setAttribute("uploadFileError", " * 上传大小不得超过 2M");
+				// return
+				// "{\"result\":\"上传大小不得超过 "+(Constants.MAX_FILE_UPLOAD_SIZE/1024/1024)+"M\"}";
+				map.put("result",false);
+				map.put("message","上传大小不得超过 "+ (Constants.MAX_FILE_UPLOAD_SIZE / 1024 / 1024) + "M");
+				return JsonUtil.getJson(map);
+				//return "上传大小不得超过 "  + (Constants.MAX_FILE_UPLOAD_SIZE / 1024 / 1024) + "M";
+			} else if (prefix.equalsIgnoreCase("doc")
+					|| prefix.equalsIgnoreCase("docx")) {
+				String fileName = "documenttype"+documentType.getDocTypeId()+"." + prefix;//命名规则:documenttype连上id
+
+				File targetFile = new File(path, fileName);
+				if (!targetFile.exists()) {
+					targetFile.mkdirs();
+				}
+				try {
+					// 保存
+					attach.transferTo(targetFile);
+					// 保存文件名
+					documentType.setDocName(fileName);
+				} catch (Exception e) {
+					e.printStackTrace();
+					map.put("result",false);
+					map.put("message","上传文档失败");
+					return JsonUtil.getJson(map);
+				}
+			} else {
+				// 上传图片格式不正确
+				map.put("result",false);
+				map.put("message","上传格式不正确，请上传Office文档.");
+				return JsonUtil.getJson(map);
+				//return "上传格式不正确，请上传图片";
+			}
+		}
+
+		int count =0;
+		if ("update".equals(opr)){
+			documentType.setModifuUser(currentLoginUser.getUserId());
+			count = documentTypeService.update(documentType);
+			map.put("message","修改文档类型成功!");
+		}else {
+			documentType.setCreationUser(currentLoginUser.getUserId());
+			if (documentType.getStatus()==null){
+				documentType.setStatus(1);
+			}
+			count = documentTypeService.add(documentType);
+			map.put("message","增加文档类型成功!");
+		}
+		if (count > 0) {
+			map.put("result",true);
+			return JsonUtil.getJson(map);
+			//return "success";
+		}
+		map.put("result",false);
+		map.put("message","增加文档类型出现异常,请联系管理员");
+		return JsonUtil.getJson(map);
+	}
+
+	@RequestMapping(value = "/updateStatus.json")
+	@ResponseBody
+	public String updateStatus(@RequestParam(value = "status") Integer status,@RequestParam(value = "docTypeId")Integer docTypeId,
+							   HttpSession session){
+		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+		Map<String,Object> map=new HashMap<>();
+		if (currentLoginUser == null) {
+			map.put("result",false);
+			map.put("message","登录超时,请重新登录!");
+			return JsonUtil.getJson(map);
+		}
+		int count = documentTypeService.updateStatus(status, docTypeId, currentLoginUser.getUserId());
+		if (count>0){
+			map.put("result",true);
+			map.put("message","更新成功!");
+		}else {
+			map.put("result",false);
+			map.put("message","更新文档类型出现异常,请联系管理员");
+		}
+		return JsonUtil.getJson(map);
+	}
 }

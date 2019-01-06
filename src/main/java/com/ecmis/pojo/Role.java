@@ -27,7 +27,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Integer creationUser;
 	private Integer modifuUser;
 	private Integer status;
-	@JSONField(format="yyyy-MM-dd HH:mm:ss")
+	@JSONField(format="yyyy-MM-dd")
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;

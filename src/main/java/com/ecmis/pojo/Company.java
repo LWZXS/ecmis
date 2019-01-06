@@ -32,7 +32,16 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;
-	
+	private Integer companyTypeId;
+
+	public Integer getCompanyTypeId() {
+		return companyTypeId;
+	}
+
+	public void setCompanyTypeId(Integer companyTypeId) {
+		this.companyTypeId = companyTypeId;
+	}
+
 	private List<User> users;
 	public Company() {
 		super();

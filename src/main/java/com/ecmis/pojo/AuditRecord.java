@@ -15,8 +15,8 @@ public class AuditRecord implements Serializable{
 	private Integer userId;
 	private String phrases;
 	private Integer docStatusId;
-	
-	@JSONField(format="yyyy/MM/dd HH:mm:ss")
+
+	@JSONField(format="yyyy-MM-dd")
 	private Date creationDate;
 	private String opration;
 	private String oprationUser;

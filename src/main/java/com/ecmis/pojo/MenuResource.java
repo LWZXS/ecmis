@@ -3,6 +3,7 @@ package com.ecmis.pojo;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import com.alibaba.fastjson.annotation.JSONField;
 
@@ -131,6 +132,18 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	public void setType(String type) {
 		this.type = type;
 	}
-	
-	
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o) return true;
+		if (o == null || getClass() != o.getClass()) return false;
+		MenuResource that = (MenuResource) o;
+		return Objects.equals(menuId, that.menuId);
+	}
+
+	@Override
+	public int hashCode() {
+
+		return Objects.hash(menuId);
+	}
 }

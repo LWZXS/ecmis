@@ -96,7 +96,6 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	 * 创建日期
 	 */
 	@JSONField(format="yyyy-MM-dd")
-	@DateTimeFormat(pattern="MM/dd/yyyy")
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;

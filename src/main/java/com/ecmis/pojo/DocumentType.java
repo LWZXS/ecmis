@@ -35,7 +35,18 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	public List<DocumentType> children;
 	
 	public Integer levelId;
-	
+
+	private String statusName;
+	private String parentDocTypeName;//上级名
+
+	public String getParentDocTypeName() {
+		return parentDocTypeName;
+	}
+
+	public void setParentDocTypeName(String parentDocTypeName) {
+		this.parentDocTypeName = parentDocTypeName;
+	}
+
 	public Integer getLevelId() {
 		return levelId;
 	}
@@ -58,6 +69,23 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 		this.creationDate = creationDate;
 		this.modifyDate = modifyDate;
 	}
+
+	public String getStatusName() {
+		return statusName;
+	}
+
+	public void setStatusName() {
+		if(status!=null){
+			if(status.equals(1)){
+				this.statusName ="正常";
+			}else if(status.equals(2)){
+				this.statusName = "锁定";
+			}else if(status.equals(3)){
+				this.statusName = "删除";
+			}
+		}
+	}
+
 	public Integer getDocTypeId() {
 		return docTypeId;
 	}
@@ -87,6 +115,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	}
 	public void setStatus(Integer status) {
 		this.status = status;
+		setStatusName();
 	}
 	public Date getCreationDate() {
 		return creationDate;

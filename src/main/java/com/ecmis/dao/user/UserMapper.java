@@ -62,4 +62,11 @@ public interface UserMapper {
 
 	int updateCurrentProject(@Param("userId") Integer userId,
 							 @Param("projectId") Integer projectId);
+
+	/**
+	 * 删除用户角色,sys_user_role
+	 * @param userId
+	 * @return
+	 */
+	int deleteUserRole(@Param("userId") Integer userId);
 }

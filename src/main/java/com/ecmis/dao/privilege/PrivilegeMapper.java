@@ -10,7 +10,7 @@ import com.ecmis.pojo.Privilege;
 public interface PrivilegeMapper {
 
 	
-	public int add(Privilege privilege);
+	/*public int add(Privilege privilege);
 	
 	public int delete(@Param("privilegeId") Integer privilegeId);
 	
@@ -18,6 +18,16 @@ public interface PrivilegeMapper {
 	
 	public Privilege getById(@Param("privilegeId") Integer privilegeId);
 	
-	public List<Privilege> getAll();
+	public List<Privilege> getAll();*/
+
+	int grantPrivilege(@Param("creationUser")Integer creationUser,
+					   @Param("masterId")Integer masterId,
+						@Param("masterType")String masterType,
+						@Param("resourceIds")Integer[] resourceIds,
+						@Param("resourceType")String resourceType);
+
+	int revokeFromMaster(@Param("modifuUser")Integer modifyUser,
+						@Param("masterId")Integer masterId,
+					   @Param("masterType")String masterType);
 	
 }

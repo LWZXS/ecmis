@@ -4,6 +4,7 @@ import java.util.List;
 
 
 import com.ecmis.pojo.MenuResource;
+import org.apache.ibatis.annotations.Param;
 
 public interface MenuService {
 	
@@ -22,4 +23,6 @@ public interface MenuService {
 	public List<MenuResource> findCurrentUserLevel1Menus(Integer userId);
 
 	public List<MenuResource> findAdminLevel1Menus();
+
+	List<MenuResource> findMenusByMaster(Integer masterId, String masterType);
 }

@@ -6,6 +6,8 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import com.ecmis.pojo.Role;
+import com.ecmis.service.RoleService;
 import com.sun.corba.se.impl.oa.toa.TOA;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +22,8 @@ public class UserServiceImpl implements UserService{
 	
 	@Resource
 	private UserMapper userMapper;
+	@Resource
+	private RoleService roleService;
 	
 	@Override
 	public User login(String loginName, String password) {
@@ -55,8 +59,18 @@ public class UserServiceImpl implements UserService{
 	}
 
 	@Override
-	public int update(User user) {
-		return userMapper.update(user);
+	public int update(User user,Integer[] roleIds ) {
+		//删除现有的角色
+		int count = userMapper.deleteUserRole(user.getUserId());
+		//增加新角色
+		Map<String,Object> map=new HashMap<>();
+		map.put("userId",user.getUserId());
+		map.put("roleIds",roleIds);
+		count+=userMapper.addRole(map);
+		//更新用户状态
+		count+=userMapper.update(user);
+
+		return count;
 	}
 
 	@Override
@@ -79,6 +93,12 @@ public class UserServiceImpl implements UserService{
 		pageSupport.setCurrentPageNo(pageIndex);
 		if (totalCount>0){
 			List<User> list = userMapper.getUserByCondition(userName,companyId,deptId,roleId, status, pageSupport.getStartRow(), pageSize);
+			/*if (list!=null){
+				for (User user :list){
+					List<Role> roles = roleService.findByUser(user.getUserId());
+					user.setRoles(roles);
+				}
+			}*/
 			pageSupport.setList(list);
 		}
 		return pageSupport;
