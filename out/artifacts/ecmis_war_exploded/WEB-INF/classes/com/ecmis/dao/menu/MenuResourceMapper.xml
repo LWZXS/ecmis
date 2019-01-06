@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.menu.MenuResourceMapper">
+
+    <select id="getByParentMenu" parameterType="int" resultType="menuResource">
+		select * from sys_menu where parentMenuId=#{parentMenuId} and status=1
+	</select>
+
+	<select id="getCurrentUserLevel2Menus" resultType="menuResource" flushCache="true">
+		SELECT DISTINCT
+			  sm.*
+			FROM
+			  sys_privilege sp,
+			  sys_menu sm
+			WHERE sp.status = 1
+			  AND sm.status=1
+			  AND sm.menuId = sp.resourceId
+			  AND sp.resourceType = 'menu'
+			  AND parentMenuId =#{parentMenuId}
+			  AND sp.masterId IN
+			  (SELECT
+				sur.`roleId`
+			  FROM
+				sys_user_role sur
+			  WHERE sur.userId = #{userId}) and sp.masterType='role'
+			  OR sp.masterId=#{userId} AND masterType='user'
+	</select>
+
+    <select id="getCurrentUserLevel1Menus" parameterType="int" resultType="menuResource" flushCache="true">
+		SELECT DISTINCT
+			  sm.*
+			FROM
+			  sys_privilege sp,
+			  sys_menu sm
+			WHERE sp.status = 1
+			  and sm.status=1
+			  AND sm.menuId = sp.resourceId
+			  AND sp.resourceType = 'menu'
+			  AND parentMenuId IS NULL
+			  AND sp.masterId IN
+			  (SELECT
+				sur.`roleId`
+			  FROM
+				sys_user_role sur
+			  WHERE sur.userId = #{userId}) and sp.masterType='role'
+			  OR sp.masterId=#{userId} AND masterType='user'
+	</select>
+    <resultMap type="menuResource" id="menuChild">
+        <id property="menuId" column="menuId" javaType="int"/>
+        <collection property="children"
+					select="com.ecmis.dao.menu.MenuResourceMapper.getByParentMenu" column="menuId"
+                    ofType="menuResource"></collection>
+    </resultMap>
+
+	<resultMap id="menuChild1" type="menuResource">
+		<id property="menuId" column="menuId" javaType="int"/>
+		<result property="parentMenuId" column="parentMenuId"/>
+		<result property="menuName" column="menuName"/>
+		<result property="parentMenuId" column="parentMenuId"/>
+		<result property="url" column="url"/>
+		<result property="icon" column="icon"/>
+		<result property="type" column="type"/>
+		<result property="status" column="status"/>
+		<collection property="children" ofType="menuResource">
+			<id property="menuId" column="menuId" javaType="int"/>
+			<result property="parentMenuId" column="parentMenuId"/>
+			<result property="menuName" column="menuName"/>
+			<result property="parentMenuId" column="parentMenuId"/>
+			<result property="url" column="url"/>
+			<result property="icon" column="icon"/>
+			<result property="type" column="type"/>
+			<result property="status" column="status"/>
+		</collection>
+	</resultMap>
+    <select id="getAdminMenus" resultType="menuResource">
+		select * from sys_menu where status =1 and  parentMenuId is null
+    </select>
+
+	<select id="getMenusByMaster" resultType="menuResource" flushCache="true">
+
+		<choose>
+			<when test="masterType!=null and masterType=='role'">
+				select sm.* from sys_menu sm ,sys_privilege sp
+				where
+				sm.`menuId`=sp.`resourceId`
+				and sp.status=1
+				and sm.status=1
+				and sp.`resourceType`='menu'
+				and masterId=#{masterId}
+				and masterType=#{masterType}
+			</when>
+			<otherwise>
+				SELECT sm.* FROM sys_menu sm ,sys_privilege sp
+				WHERE sp.`masterId`=#{masterId}
+				and sp.status=1
+				and sm.status=1
+				AND sp.`masterType`='user'
+				AND sm.`menuId`=sp.`resourceId`
+				AND sp.`resourceType`='menu'
+				OR sp.`masterType`='role'
+				AND sp.`masterId` IN(SELECT roleId FROM sys_user_role su WHERE su.`userId`=#{masterId})
+				AND sm.`menuId`=sp.`resourceId`
+				AND sp.`resourceType`='menu'
+				AND sp.`status`=1
+				AND sm.`status`=1
+			</otherwise>
+		</choose>
+
+	</select>
+</mapper>

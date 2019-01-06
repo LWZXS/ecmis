@@ -1,0 +1,143 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.documenttype.DocumentTypeMapper">
+	<insert id="add" parameterType="documentType">
+		INSERT INTO biz_documenttype (`docTypeId`,`docTypeName`,`creationUser`,`status`,`creationDate`,`parentTypeId`,`docName`,`levelId`)
+			VALUES(#{docTypeId},#{docTypeName},#{creationUser},1,NOW(),#{parentTypeId},#{docName},#{levelId});
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_documenttype where docTypeId=#{docTypeId}
+	</delete>
+	
+	<update id="update" parameterType="documentType">
+		UPDATE biz_documenttype
+			<trim prefix="set" suffixOverrides="," >
+				<if test="docTypeName!=null and docTypeName!=''">
+					`docTypeName`=#{docTypeName},
+				</if>
+				<if test="docName!=null and docName!=''">
+					`docName`=#{docName},
+				</if>
+				<if test="modifuUser!=null">
+					`modifuUser`=#{modifuUser},
+				</if>
+				<if test="status!=null">
+					`status`=#{status},
+				</if>
+				<if test="levelId!=null">
+					`levelId`=#{levelId},
+				</if>
+				<if test="parentTypeId!=null">
+					`parentTypeId`=#{parentTypeId}
+				</if>
+				<if test="1==1">
+					`modifyDate`=now(),
+				</if>
+			</trim>
+		 WHERE `docTypeId`=#{docTypeId}
+	</update>
+
+	<update id="updateStatus">
+		update biz_documenttype
+		set `status`=#{status},`modifuUser`=#{updateBy},`modifyDate`=now()
+		where
+		`docTypeId`in
+		  <foreach collection="docTypeIds" item="docTypeId" separator="," open="(" close=")">
+			  #{docTypeId}
+		  </foreach>
+	</update>
+
+	<select id="getById" parameterType="int" resultType="documentType">
+		select * from biz_documenttype where docTypeId=#{docTypeId} and status=1
+	</select>
+	
+	<select id="getAll" resultType="documentType">
+		select * from biz_documenttype where parentTypeId is null and status=1 order by docTypeId
+	</select>
+	
+	<select id="getByParent" parameterType="int" resultType="documentType">
+		select * from biz_documenttype where parentTypeId=#{parentTypeId} and status=1 order by docTypeId
+	</select>
+	
+	<select id="getLikeName" parameterType="string" resultType="documentType">
+		select * from biz_documenttype where docTypeName like CONCAT('%',#{docTypeName},'%') and status=1 order by docTypeId
+	</select>
+	
+	<resultMap type="documentType" id="types">
+		<id property="docTypeId" column="docTypeId" javaType="int"/>
+		<collection property="children" select="com.ecmis.dao.documenttype.DocumentTypeMapper.getByParent" ofType="documentType" column="docTypeId"/>
+	</resultMap>
+
+	<select id="getPageByNameAndStatus" resultType="documentType">
+		<if test="levelId==null or levelId==1">
+			SELECT *,NULL parentDocTypeName  FROM `biz_documenttype` WHERE `levelId`=1
+			<if test="status!=null and status!=0">
+				and status=#{status}
+			</if>
+			<if test="docTypeName!=null and docTypeName!=''">
+				and docTypeName like concat('%',#{docTypeName},'%')
+			</if>
+			UNION ALL
+		</if>
+		SELECT bd.*,CONCAT(pbd.`docTypeName`,'(',pbd.docTypeId,')') parentDocTypeName FROM `biz_documenttype` bd ,`biz_documenttype` pbd
+		WHERE bd.`parentTypeId`=pbd.`docTypeId`
+        <if test="status!=null and status!=0">
+            and bd.status=#{status}
+        </if>
+        <if test="levelId!=null and levelId!=0">
+            and bd.levelId=#{levelId}
+        </if>
+        <if test="docTypeName!=null and docTypeName!=''">
+            and bd.docTypeName like concat('%',#{docTypeName},'%')
+        </if>
+		order by docTypeId,status
+		limit #{startRow},#{pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		select count(1) from biz_documenttype
+		<trim prefixOverrides="and|or" prefix="where">
+			<if test="status!=null and status!=0">
+				and status=#{status}
+			</if>
+			<if test="levelId!=null and levelId!=0">
+				and levelId=#{levelId}
+			</if>
+			<if test="docTypeName!=null and docTypeName!=''">
+				and docTypeName like concat('%',#{docTypeName},'%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="getParents" resultType="documentType">
+		SELECT `docTypeId`,CONCAT(`docTypeName`,'(',docTypeId,')') docTypeName,levelId FROM biz_documenttype WHERE levelId != 4
+	</select>
+
+	<select id="getChildMaxId" parameterType="int" resultType="int">
+		SELECT IFNULL(MAX(docTypeId),0) FROM biz_documenttype where parentTypeId=#{docTypeId}
+	</select>
+
+	<select id="checkId" resultType="int" parameterType="int">
+		select count(1) from biz_documenttype where docTypeId=#{docTypeId}
+	</select>
+
+	<select id="getChildDocTypeIds" parameterType="int" resultType="int">
+		SELECT docTypeId FROM biz_documenttype WHERE `parentTypeId`=#{docTypeId}
+			UNION ALL
+			SELECT docTypeId FROM biz_documenttype WHERE `parentTypeId` IN (
+				SELECT docTypeId FROM biz_documenttype WHERE `parentTypeId`=#{docTypeId}
+			)
+			UNION ALL
+			SELECT docTypeId FROM biz_documenttype WHERE `parentTypeId` IN (
+				SELECT docTypeId FROM biz_documenttype WHERE `parentTypeId` IN (
+					SELECT docTypeId FROM biz_documenttype WHERE `parentTypeId`=#{docTypeId}
+				)
+			)
+			UNION ALL
+			SELECT #{docTypeId} docTypeId
+	</select>
+</mapper>

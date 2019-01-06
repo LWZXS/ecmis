@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.auditrecord.AuditRecordMapper">
+	<!-- 增加记录 -->
+	<insert id="add" parameterType="auditRecord">
+		INSERT INTO biz_audit_record (
+			documentId,
+			userId,
+			phrases,
+			docStatusId,
+			opration,
+			oprationUser,
+			description,
+			creationDate) 
+		VALUES(
+			#{documentId},
+			#{userId},
+			#{phrases},
+			#{docStatusId},
+			#{opration},
+			#{oprationUser},
+			#{description},
+			NOW()
+		)
+	</insert>
+	
+	<select id="getById" parameterType="int" resultType="auditRecord">
+		select * from biz_audit_record where recordId=#{recordId}
+	</select>
+	
+	<select id="getByDocument" parameterType="int" resultType="auditRecord">
+		select * from biz_audit_record where documentId=#{documentId} limit #{startRow},#{pageSize}
+	</select>
+	
+	<select id="getCountByDocument" parameterType="int" resultType="int">
+		select count(1) from biz_audit_record where documentId=#{documentId}
+	</select>
+	
+</mapper>

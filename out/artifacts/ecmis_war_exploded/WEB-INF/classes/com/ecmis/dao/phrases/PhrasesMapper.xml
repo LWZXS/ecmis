@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.phrases.PhrasesMapper">
+	<insert id="add" parameterType="phrases">
+		INSERT INTO biz_phrases (phrasesVal,userId,STATUS) VALUES (#{phrasesVal},#{userId},1)
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_phrases where phrasesId=#{phrasesId}
+	</delete>
+	
+	<update id="update" parameterType="phrases">
+		update biz_phrases set phrases=#{phrasesVal} where phrasesId=#{phrasesId}
+	</update>
+	
+	<select id="getByCondition" parameterType="int" resultMap="phrasesMap">
+		select * from biz_phrases
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="userId!=null">
+				and userId=#{userId}
+			</if>
+		</trim>
+	</select>
+	<resultMap type="phrases" id="phrasesMap">
+		<id property="phrasesId" column="phrasesId" javaType="int"/>
+		<result property="phrasesVal" column="phrases" javaType="string"/>
+	</resultMap>
+</mapper>

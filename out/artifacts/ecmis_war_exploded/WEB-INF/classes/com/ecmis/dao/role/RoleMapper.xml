@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.role.RoleMapper">
+	<insert id="add" parameterType="role">
+		INSERT INTO sys_role (
+				roleName,
+				creationUser,
+				creationDate,
+				sortNumber,
+				STATUS
+			) 
+			VALUES(
+				#{roleName},
+				#{creationUser},
+				now(),
+				#{sortNumber},
+				#{status}
+			)
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from sys_role where roleId=#{roleId}
+	</delete>
+	
+	<update id="update" parameterType="role">
+		UPDATE sys_role SET 
+			roleName=#{roleName},
+			modifuUser=#{modifuUser},
+			modifyDate=NOW(),
+			sortNumber=sortNumber,
+			STATUS=#{status}
+		WHERE roleId=#{roleId}
+	
+	</update>
+
+	<update id="updateStatus">
+		UPDATE sys_role SET
+			modifuUser=#{userId},
+			modifyDate=NOW(),
+			STATUS=#{status}
+		WHERE roleId=#{roleId}
+	</update>
+
+	<select id="getById" parameterType="int" resultType="role">
+		select * form sys_role where roleId=#{roleId}
+	</select>
+	
+	<select id="getAll" resultType="role">
+		select * from sys_role where status=1 order by sortNumber
+	</select>
+	
+	<select id="getByUser" parameterType="int" resultType="role">
+		SELECT * FROM sys_role WHERE roleId IN (SELECT roleId FROM sys_user_role WHERE userId=#{userId}) order by sortNumber
+	</select>
+
+	<resultMap id="role_user" type="role">
+		<id property="roleId" column="roleId"/>
+		<result property="roleName" column="roleName"/>
+		<result property="creationUser" column="creationUser"/>
+		<result property="status" column="status"/>
+		<result property="creationDate" column="creationDate"/>
+		<result property="modifuUser" column="modifuUser"/>
+		<result property="modifyDate" column="modifyDate"/>
+		<result property="sortNumber" column="sortNumber"/>
+		<result property="creationUserName" column="creationUserName"/>
+
+	</resultMap>
+
+	<select id="getPageByRoleNameAndStatus" resultType="role">
+		select sr.*,su.userName as creationUserName from sys_role sr,sys_user su where su.userId=sr.creationUser
+		<choose>
+			<when test="status!=null">
+				and sr.status=#{status}
+			</when>
+			<when test="status!=null and status==3">
+				and sr.status=3
+			</when>
+			<otherwise>
+				and sr.status!=3
+			</otherwise>
+		</choose>
+		<if test="roleName!=null and roleName!=''">
+			and sr.roleName like concat('%',#{roleName},'%')
+		</if>
+		order by sr.sortNumber
+		limit #{startRow},#{pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+		select count(1) from sys_role
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="status!=null and status!=0">
+				and status=#{status}
+			</if>
+			<if test="roleName!=null and roleName!=''">
+				and roleName like concat('%',#{roleName},'%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="getMaxSortNumber" resultType="int">
+		select max(sortNumber) from sys_role
+	</select>
+</mapper>

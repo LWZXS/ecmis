@@ -1,0 +1,634 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.document.DocumentMapper">
+	<insert id="add" parameterType="document" keyProperty="documentId" useGeneratedKeys="true">
+		INSERT INTO biz_document (`docCode`,`docStatusId`,`docTypeId`,`subjectTermName`,`documentName`,`tailAfter`,`importanceDegree`,`originalCode`,`description`,
+		     `attachment`,`projectId`,`contract`,`address`,`docSource`,`creationUser`,`mainBody`,`creationDate`,`status`,`auditorId`,`approverId`) 
+			VALUES(#{docCode},#{docStatusId},#{docTypeId},#{subjectTermName},#{documentName},#{tailAfter},#{importanceDegree},#{originalCode},
+			#{description},#{attachment},#{projectId},#{contract},#{address},#{docSource},#{creationUser},#{mainBody},#{creationDate},#{status},#{auditorId},#{approverId});
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_document where documentId=#{documentId}
+	</delete>
+	
+	<update id="update" parameterType="document">
+		UPDATE biz_document SET 
+			`docCode`=#{docCode},
+			`docStatusId`=#{docStatusId},
+			`docTypeId`=#{docTypeId},
+			`subjectTermName`=#{subjectTermName},
+			`documentName`=#{documentName},
+			`tailAfter`=#{tailAfter},
+			`importanceDegree`=#{importanceDegree},
+			`originalCode`=#{originalCode},
+			`description`=#{description},
+			`attachment`=#{attachment},
+			`scanningCopy`=#{scanningCopy},
+			`contract`=#{contract},
+			<if test="mainBody!=null and mainBody!=''">
+			`mainBody`=#{mainBody},
+			</if>
+			`address`=#{address},
+			`docSource`=#{docSource},
+			`modifuUser`=#{modifuUser},
+			`status`=#{status},
+			`modifyDate`=#{modifyDate},
+			`projectId`=#{projectId},
+			`auditorId`=#{auditorId},
+			`approverId`=#{approverId} 
+		WHERE `documentId`=#{documentId}
+	</update>
+	
+	<update id="updatePending">
+		UPDATE biz_document SET `docStatusId`=#{docStatusId} WHERE `documentId`=#{documentId}
+	
+	</update>
+	<!-- 详情 -->
+	<resultMap type="document" id="documentMap">
+		<id property="documentId" column="documentId" javaType="int"/>
+		<association property="documentStatus" column="docStatusId" select="com.ecmis.dao.documentstatus.DocumentStatusMapper.getById"></association>
+		<association property="creator" column="creationUser" select="com.ecmis.dao.user.UserMapper.getById"></association>
+		<association property="subjectTerm" column="subjectTermId" select="com.ecmis.dao.subjectterm.SubjectTermMapper.getById"></association>
+		<association property="company" column="docSource" select="com.ecmis.dao.company.CompanyMapper.getById"></association>
+		<association property="documentType" column="docTypeId" select="com.ecmis.dao.documenttype.DocumentTypeMapper.getById"></association>
+	</resultMap>
+	<!-- 详情，需要发布和会审时 -->
+	<resultMap type="document" id="documentMap1">
+		<id property="documentId" column="documentId" javaType="int"/>
+		<association property="documentStatus" column="docStatusId" select="com.ecmis.dao.documentstatus.DocumentStatusMapper.getById"></association>
+		<association property="creator" column="creationUser" select="com.ecmis.dao.user.UserMapper.getById"></association>
+		<association property="auditor" column="auditorId" select="com.ecmis.dao.user.UserMapper.getById"></association>
+		<association property="approver" column="approverId" select="com.ecmis.dao.user.UserMapper.getById"></association>
+		<association property="company" column="docSource" select="com.ecmis.dao.company.CompanyMapper.getById"></association>
+		<association property="docType" column="docTypeId" select="com.ecmis.dao.documenttype.DocumentTypeMapper.getById"></association>
+		
+		<collection property="publishRange" column="documentId" select="com.ecmis.dao.user.UserMapper.getPublishRange" ofType="user"></collection>
+		<collection property="jointTrial" column="documentId" select="com.ecmis.dao.user.UserMapper.getJointTrial" ofType="user"></collection>
+		
+		
+		<!-- <collection property="auditRecords" column="documentId" select="com.ecmis.dao.auditrecord.AuditRecordMapper.getByDocument" ofType="auditRecord"></collection> -->
+	</resultMap>
+	
+	<select id="getById" parameterType="int" resultMap="documentMap1">
+		select * from biz_document where `documentId`=#{documentId}
+	</select>
+	
+	<select id="getAll" resultMap="documentMap">
+		select * from biz_document
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+		</trim>
+	</select>
+	
+	<select id="getByCreator" parameterType="int" resultMap="documentMap">
+		select * from biz_document where creationUser=#{creationUser}
+	</select>
+	<select id="getByProject" parameterType="int" resultMap="documentMap">
+		select * from biz_document where projectId=#{projectId}
+	</select>
+	<select id="getByAuditor" parameterType="int" resultMap="documentMap">
+		select * from biz_document where auditorId=#{auditorId}
+	</select>
+	<select id="getByApprover" parameterType="int" resultMap="documentMap">
+		select * from biz_document where approverId=#{approverId}
+	</select>
+	<select id="getByCurrentUser" parameterType="int" resultMap="documentMap">
+		select * from biz_document where creationUser=#{userId} or auditorId=#{userId} or approverId=#{userId}
+	</select>
+	<!-- 插入会审 -->
+	<insert id="addJointTrials">
+		insert into biz_joint_trial (userId,documentId) values(#{userId},#{documentId})
+	</insert>
+	<!-- 插入分发 -->
+	<insert id="addPublishRanges">
+		insert into biz_publish_range (userId,documentId) values(#{userId},#{documentId})
+	</insert>
+	<!-- 待办 -->
+	<select id="getByCondition" resultMap="documentMap">
+		SELECT * FROM biz_document where  
+			auditorId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =2
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR approverId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =4
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR documentId IN (
+				SELECT bj.documentId FROM biz_joint_trial bj WHERE bj.userId=#{userId} AND bj.status=1
+		    ) 
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =3
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<!-- 注饰部分可以查到分发 -->
+			<!-- OR documentId IN (SELECT 
+			    bp.documentId FROM biz_publish_range bp WHERE bp.userId = #{userId} AND bp.status=1
+			) 
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =5
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if> -->
+			
+			OR creationUser=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			AND docStatusId=8
+			<if test="status!=null">
+				and status=#{status}
+			</if> 
+		 ORDER BY creationDate DESC
+		 LIMIT #{startRow},#{pageSize}
+		
+	</select>
+	<!-- 待办 计数 -->
+	<select id="getCountByCondition" resultType="int">
+		SELECT COUNT(1) FROM biz_document where  
+			auditorId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =2
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR approverId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =4
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR documentId IN (
+				SELECT bj.documentId FROM biz_joint_trial bj WHERE bj.userId=#{userId} AND bj.status=1
+		    ) 
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =3
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			<!-- 可以查到分发 -->
+			<!-- OR documentId IN (SELECT 
+			    bp.documentId FROM biz_publish_range bp WHERE bp.userId = #{userId} AND bp.status=1
+			) 
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId==-1">
+						AND docStatusId =5
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if> -->
+			
+			OR creationUser=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			AND docStatusId=8
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+		
+	</select>
+	
+	<!-- 已办 
+	<select id="getByHaveTodo" resultMap="documentMap">
+		SELECT * FROM biz_document where 
+			auditorId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			AND docStatusId >2
+			OR approverId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			AND docStatusId >4
+			OR documentId IN (
+				SELECT bj.documentId FROM biz_joint_trial bj WHERE bj.userId=#{userId}
+		    ) 
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			AND docStatusId >3
+			OR documentId IN (
+				SELECT bp.documentId FROM biz_publish_range bp WHERE bp.userId=#{userId}
+		    )  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			AND docStatusId >5
+		 ORDER BY creationDate DESC
+		 LIMIT #{startRow},#{pageSize}
+		
+	</select>
+	已办数量 
+	<select id="getCountByHaveTodo" resultType="int">
+		SELECT count(1) FROM biz_document where 
+			auditorId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId!=1">
+						AND docStatusId !=#{docStatusId}
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+				
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR approverId=#{userId}  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId!=1">
+						AND docStatusId !=#{docStatusId}
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR documentId IN (
+				SELECT bj.documentId FROM biz_joint_trial bj WHERE bj.userId=#{userId}
+		    ) 
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId!=1">
+						AND docStatusId !=#{docStatusId}
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+			OR documentId IN (
+				SELECT bp.documentId FROM biz_publish_range bp WHERE bp.userId=#{userId}
+		    )  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+			<if test="docStatusId!=null">
+				<choose>
+					<when test="docStatusId!=1">
+						AND docStatusId !=#{docStatusId}
+					</when>
+					<otherwise>
+						AND docStatusId=#{docStatusId}
+					</otherwise>
+				</choose>
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>
+		
+	</select>
+	-->
+	
+	<!-- 已办 2017-12-28 -->
+	<select id="getByHaveTodo" resultMap="documentMap">
+			SELECT bd.* FROM biz_document bd, biz_audit_record bar 
+			<trim prefix="where" prefixOverrides="and|or">
+				bd.documentId=bar.documentId
+				AND bar.userId=#{userId}
+				AND bd.creationUser!=#{userId}
+				<if test="docStatusId!=null">
+					and bd.`docStatusId`=#{docStatusId}
+				</if>
+				<if test="startTime!=null and endTime!=null">
+					AND bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+				</if>
+			</trim> 
+			ORDER BY bd.creationDate DESC
+			LIMIT #{startRow},#{pageSize}
+	</select>
+	<!-- 已办 2017-12-28 -->
+	<select id="getCountByHaveTodo" resultType="int">
+		SELECT COUNT(1) FROM biz_document bd, biz_audit_record bar 
+		<trim prefix="where" prefixOverrides="and|or">
+			bd.documentId=bar.documentId
+			AND bar.userId=#{userId}
+			AND bd.creationUser!=#{userId}
+			<if test="docStatusId!=null">
+				AND bd.docStatusId=#{docStatusId}
+			</if>
+			<if test="startTime!=null and endTime!=null">
+				AND bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+		</trim> 
+	</select>
+	
+	<!-- 获得分发人的文档 -->
+	<select id="getPublishRange" resultMap="documentMap">
+		SELECT bd.* FROM biz_document bd,biz_publish_range bp WHERE bp.`documentId`=bd.`documentId`
+		<if test="docStatusId!=null">
+			and bd.`docStatusId`=#{docStatusId}
+		</if>
+		<if test="status!=null">
+			and bd.`status`=#{status} 
+		</if>
+		<if test="startTime!=null and endTime!=null">
+			and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+		</if>
+		<if test="userId!=null">
+			and bp.`userId`=#{userId}
+		</if>
+		 ORDER BY creationDate DESC
+		 LIMIT #{startRow},#{pageSize}
+	</select>
+	<!-- 获得分发人数 -->
+	<select id="getCountByPublishRange" resultType="int">
+		SELECT count(bd.documentId) FROM biz_document bd,biz_publish_range bp WHERE bp.`documentId`=bd.`documentId`
+		<if test="docStatusId!=null">
+			and bd.`docStatusId`=#{docStatusId}
+		</if>
+		<if test="status!=null">
+			and bd.`status`=#{status} 
+		</if>
+		<if test="startTime!=null and endTime!=null">
+			and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+		</if>
+		<if test="userId!=null">
+			and bp.`userId`=#{userId}
+		</if>
+	</select>
+	
+	<!-- 获得草稿（分页） -->
+	<select id="getDraft" resultMap="documentMap">
+		SELECT * FROM biz_document 
+		<trim prefix="where" prefixOverrides="or|and">
+			<if test="userId!=null">
+				and creationUser =#{userId} 
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if> 
+		</trim>
+		ORDER BY creationDate DESC 
+		LIMIT #{startRow},#{pageSize}
+	</select>
+	<!-- 草稿数 -->
+	<select id="getCountDraft" resultType="int">
+		SELECT count(1) FROM biz_document 
+		<trim prefix="where" prefixOverrides="or|and">
+			<if test="userId!=null">
+				and creationUser =#{userId} 
+			</if>
+			<if test="status!=null">
+				and status=#{status}
+			</if>  
+			<if test="startTime!=null and endTime!=null">
+				AND creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if> 
+		</trim>
+	</select>
+	
+	<!-- 会审人数 -->
+	<select id="getAuditingCount" resultType="int">
+		SELECT COUNT(1) FROM biz_joint_trial
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="documentId!=null">
+				and documentId=#{documentId}
+			</if>
+			<if test="status!=null">
+				and STATUS=#{status}
+			</if>
+		</trim>
+	</select>
+	
+	<!-- 审核 -->
+	<update id="auditing" parameterType="document">
+		UPDATE biz_document SET 
+			documentName=#{documentName},
+			docStatusId=#{docStatusId},
+			subjectTermName=#{subjectTermName},
+			description=#{description},
+			scanningCopy=#{scanningCopy},
+			modifuUser=#{modifuUser}, 
+			modifyDate=now()
+		WHERE documentId=#{documentId}
+	</update>
+	
+	<!-- 回退发件人 -->
+	<update id="back" parameterType="int">
+		UPDATE biz_document SET 
+			docStatusId=#{docStatusId},
+			modifuUser=#{modifyUser}, 
+			modifyDate=now()
+		WHERE documentId=#{documentId}
+	</update>
+	<!-- 待归档文档 -->
+	<select id="getPending" resultMap="documentMap">
+		SELECT bd.* FROM biz_document bd
+		<trim prefix="where" prefixOverrides="and|or">
+		
+			<if test="userId!=null">
+				and bd.`creationUser`=#{userId}
+			</if>
+			
+			<if test="docStatusId!=null">
+				and bd.`docStatusId`=#{docStatusId}
+			</if>
+			<if test="status!=null">
+				and bd.`status`=#{status} 
+			</if>
+			<if test="documentName!=null and documentName!=''">
+				and bd.`documentName` like concat('%',#{documentName} ,'%')
+			</if>
+			<if test="startTime!=null and endTime!=null">
+				and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+		</trim>
+		 ORDER BY creationDate DESC
+		 LIMIT #{startRow},#{pageSize}
+	</select>
+	
+	<select id="getPendingCount" resultType="int">
+		SELECT count(1) FROM biz_document bd
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="userId!=null">
+				and bd.`creationUser`=#{userId}
+			</if>
+			<if test="docStatusId!=null">
+				and bd.`docStatusId`=#{docStatusId}
+			</if>
+			<if test="status!=null">
+				and bd.`status`=#{status} 
+			</if>
+			<if test="documentName!=null and documentName!=''">
+				and bd.`documentName` like concat('%',#{documentName} ,'%')
+			</if>
+			<if test="startTime!=null and endTime!=null">
+				and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+		</trim>
+	</select>
+	<!-- 已发 -->
+	<select id="getIssued" resultMap="documentMap">
+		SELECT bd.* FROM biz_document bd
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="userId!=null">
+				and bd.`creationUser`=#{userId}
+			</if>
+			
+			<if test="docStatusId!=null">
+				and bd.`docStatusId`=#{docStatusId}
+			</if>
+			
+			<if test='documentName!=null and documentName!=""'>
+				and bd.`documentName` like concat('%',#{documentName} ,'%')
+			</if>
+			
+			<if test="startTime!=null and endTime!=null">
+				and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+		</trim>
+		 ORDER BY creationDate DESC
+		 LIMIT #{startRow},#{pageSize}
+	</select>
+	<select id="getIssuedCount" resultType="int">
+		SELECT count(1) FROM biz_document bd
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="userId!=null">
+				and bd.`creationUser`=#{userId}
+			</if>
+			<if test="docStatusId!=null">
+				and bd.`docStatusId`=#{docStatusId}
+			</if>
+			<if test='documentName!=null and documentName!=""'>
+				and bd.`documentName` like concat('%',#{documentName} ,'%')
+			</if>
+			<if test="startTime!=null and endTime!=null">
+				and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
+			</if>
+		</trim>
+	</select>
+	
+</mapper>
