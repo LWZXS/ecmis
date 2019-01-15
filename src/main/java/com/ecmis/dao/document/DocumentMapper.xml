@@ -8,7 +8,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		INSERT INTO biz_document (`docCode`,`docStatusId`,`docTypeId`,`subjectTermName`,`documentName`,`tailAfter`,`importanceDegree`,`originalCode`,`description`,
 		     `attachment`,`projectId`,`contract`,`address`,`docSource`,`creationUser`,`mainBody`,`creationDate`,`status`,`auditorId`,`approverId`) 
 			VALUES(#{docCode},#{docStatusId},#{docTypeId},#{subjectTermName},#{documentName},#{tailAfter},#{importanceDegree},#{originalCode},
-			#{description},#{attachment},#{projectId},#{contract},#{address},#{docSource},#{creationUser},#{mainBody},#{creationDate},#{status},#{auditorId},#{approverId});
+			#{description},#{attachment},#{projectId},#{contract},#{address},#{docSource},#{creationUser},#{mainBody},now(),#{status},#{auditorId},#{approverId});
 	</insert>
 	
 	<delete id="delete" parameterType="int">
@@ -36,7 +36,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			`docSource`=#{docSource},
 			`modifuUser`=#{modifuUser},
 			`status`=#{status},
-			`modifyDate`=#{modifyDate},
+			`modifyDate`=now(),
 			`projectId`=#{projectId},
 			`auditorId`=#{auditorId},
 			`approverId`=#{approverId} 
@@ -59,6 +59,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<!-- 详情，需要发布和会审时 -->
 	<resultMap type="document" id="documentMap1">
 		<id property="documentId" column="documentId" javaType="int"/>
+		<result property="docSource" column="docsource"/>
 		<association property="documentStatus" column="docStatusId" select="com.ecmis.dao.documentstatus.DocumentStatusMapper.getById"></association>
 		<association property="creator" column="creationUser" select="com.ecmis.dao.user.UserMapper.getById"></association>
 		<association property="auditor" column="auditorId" select="com.ecmis.dao.user.UserMapper.getById"></association>

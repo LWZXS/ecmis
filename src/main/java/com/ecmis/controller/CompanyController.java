@@ -1,20 +1,20 @@
 package com.ecmis.controller;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ecmis.pojo.Company;
 import com.ecmis.service.CompanyService;
 import com.ecmis.utils.CommonTreeBean;
+import com.ecmis.utils.JsonUtil;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value="/company")
@@ -86,5 +86,12 @@ public class CompanyController {
 				SerializerFeature.PrettyFormat);
 		logger.debug(json);
 		return json;
+	}
+
+	@RequestMapping(value = "/getByCompanyTypeId.json")
+	@ResponseBody
+	public String getByCompanyTypeId(@RequestParam("companyTypeId") Integer companyTypeId){
+		List<Company> companies = companyService.findByType(companyTypeId);
+		return JsonUtil.getJson(companies);
 	}
 }

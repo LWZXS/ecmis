@@ -62,7 +62,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 					</thead>
 				</table>
 				<div id="tb" style="padding:2px 5px;">
-					<form action="document/pended.json" id="pendedFrm">
+					<form action="document/pended.json" id="s_pendedFrm">
 						<input type="hidden" name="docStatusId" value="9">
 						<input type="hidden" name="status" value="1">
 						<input type="hidden" name="docTypeId" id="docTypeId" value="">
@@ -78,28 +78,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 		</div>
 	</div>
-	<!-- 查询Dialog start    searchDialog -->
-	<div id="search-dlg" class="easyui-dialog" closed="true" title="会审" style="width:360px;height:400px;padding:10px;"
-			data-options="buttons:'#search-buttons'">
-		<div class="easyui-panel" style="padding:5px">
-			<form action="document/pended.json" id="pendedFrm">
-				文档名称: <input class="easyui-textbox" style="width:110px" name="documentName">
-				<input type="hidden" name="docStatusId" value="9">
-				<input type="hidden" name="status" value="1">
-				<input type="hidden" name="docTypeId" id="docTypeId" value="">
-				开始时间: <input class="easyui-datebox" style="width:110px" name="startTime">
-				结束时间: <input class="easyui-datebox" style="width:110px" name="endTime">
-				开始时间: <input class="easyui-datebox" style="width:110px" name="startTime">
-				结束时间: <input class="easyui-datebox" style="width:110px" name="endTime">
-			</form>
-			
-		</div>
-	</div>
-	<div id="search-buttons">
-		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:searchPended();">确定</a>
-		<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#search-dlg').dialog('close');">取消</a>
-	</div>
-	<!-- 查询Dialog end    searchDialog -->
+
 	<script type="text/javascript">
 		$(function(){
 			//加载文档类型
@@ -197,37 +176,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		function searchPended(){
 			//提交表单
-			
 			//关闭dialog
 			$('#search-dlg').dialog('close');
 		}
-	</script>
-	 <script type="text/javascript">
-		var winHeight;
-		var winWidth;
-		var dgWidth;
-		var dgHeight;
-		if (window.innerHeight){
-			winHeight = window.innerHeight;
-			winWidth = window.innerWidth;
-			dgHeight=winHeight;
-		}else if ((document.body) && (document.body.clientHeight)){
-			winHeight = document.body.clientHeight;
-			winWidth = document.body.clientWidth;
-			dgHeight=winHeight-107;
-			dgWidth=winWidth-20;
-		}
-		alert("winWidth:"+winWidth+"---------winHeight"+winHeight);
-		$(function(){
-			$("#main").css("height",winHeight);
-			$("#west_panel").css("height",winHeight-67);
-			$("#content_panel").css("height",winHeight-67);
-			
-			//$("#content_panel").css("width",winWidth-200);
-			//alert($("#dg").parent().css("height"));
-			//alert($("#dg").parent().parent().css("height"));
-			//alert($("#dg").parent().parent().parent().css("height"));
-		});
 	</script>
   </body>
 </html>

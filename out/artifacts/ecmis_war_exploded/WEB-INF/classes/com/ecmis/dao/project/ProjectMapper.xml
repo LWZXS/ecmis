@@ -24,32 +24,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<insert id="add" parameterType="project">
-		INSERT INTO biz_project (
-			`projectName`,
-			`constructorId`,
-			`builderId`,
-			`supervisorId`,
-			`chiefInspectorId`,
-			`deputyDirectorId`,
-			`supervisionEngineerId`,
-			`clerkId`,
-			`creationUser`,
-			`creationDate`,
-			`status`
-			) 
-			VALUES(
-			#(projectName),
-			#(constructorId),
-			#(builderId),
-			#(supervisorId),
-			#(chiefInspectorId),
-			#(deputyDirectorId),
-			#(supervisionEngineerId),
-			#(clerkId),
-			#(creationUser),
-			NOW(),
-			1
-			)
+		INSERT INTO `biz_project` (`projectName`,`constructorId`,`builderId`,`supervisorId`,`chiefInspectorId`,`deputyDirectorId`,`supervisionEngineerId`,`clerkId`,`creationUser`,`creationDate`,`status`)
+						VALUES(#{projectName},#{constructorId},#{builderId},#{supervisorId},#{chiefInspectorId},#{deputyDirectorId},#{supervisionEngineerId},#{clerkId},#{creationUser},now(),#{status})
 	</insert>
 	
 	<delete id="delete" parameterType="int">
@@ -64,8 +40,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			`supervisorId`=#{supervisorId},
 			`chiefInspectorId`=#{chiefInspectorId},
 			`deputyDirectorId`=#{deputyDirectorId},
-			`clerkId`=#{clerkId},
 			`supervisionEngineerId`=#{supervisionEngineerId},
+			`clerkId`=#{clerkId},
 			`modifyUser`=#{modifyUser},
 			`modifyDate`=now(),
 			`status`=#{status} 
@@ -86,7 +62,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		select count(1) from biz_project
 		<trim prefix="where" prefixOverrides="and|or">
 			<if test="projectName!=null and projectName!=''">
-				and projectName like concat('%',#{projectName!=},'%')
+				and projectName like concat('%',#{projectName},'%')
 			</if>
 		</trim>
 	</select>
@@ -153,4 +129,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<!-- 文员 -->
 		<association property="clerk" select="com.ecmis.dao.user.UserMapper.getById" column="clerkId"></association>
 	</resultMap>
+
+	<select id="getCheckProject" resultType="int" parameterType="String">
+		select count(1) from biz_project where projectName=#{projectName}
+	</select>
 </mapper>

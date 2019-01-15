@@ -1,15 +1,13 @@
 package com.ecmis.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.ecmis.dao.project.ProjectMapper;
 import com.ecmis.pojo.Project;
 import com.ecmis.service.ProjectService;
 import com.ecmis.utils.PageSupport;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class ProjectServiceImpl implements ProjectService {
@@ -70,4 +68,8 @@ public class ProjectServiceImpl implements ProjectService {
 		return projectMapper.getCountByCondition(projectName);
 	}
 
+	@Override
+	public int findCheckProject(String projectName) {
+		return projectMapper.getCheckProject(projectName);
+	}
 }

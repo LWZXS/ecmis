@@ -17,4 +17,6 @@ public interface CompanyService {
 	public List<Company> findAll();
 	
 	public List<Company> findAllAndUsers();
+
+	List<Company> findByType(Integer companyTypeId);
 }

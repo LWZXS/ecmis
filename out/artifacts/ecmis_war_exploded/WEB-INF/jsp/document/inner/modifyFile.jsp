@@ -347,15 +347,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				    		</tr>
 				    		<tr>
 				    			<td>批准人:</td>
-				    			<td>
+				    			<td colspan="3">
 				    				<input type="hidden" name="approverId" id="approverId" value="${doc.approver.userId }">
 				    				<input class="file-input" id="approverName" value="${doc.approver.userName }"/>
 				    				<input type="button" id="approverBtnLoad" value="...">
 				    			</td>
-				    			<td>修改日期:</td>
+				    			<%--<td>修改日期:</td>
 				    			<td>
 				    				<input type="text" id="creationDate" name="modifyDate" >
-				    			</td>
+				    			</td>--%>
 				    		</tr>
 				    		<tr>
 				    			<td>分发范围:</td>
@@ -411,7 +411,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			</div>
 				
 			</div>
-			<!-- 流程Dialog  flow start -->
+		<%--	<!-- 流程Dialog  flow start -->
 			<div id="flow-dlg" class="easyui-dialog" closed="true" title="流程" style="width:940px;height:400px;padding:10px;"
 					data-options="buttons:'#flow-buttons'">
 				<iframe name="flowIframe" id="flowIframe" scrolling="no" frameborder="0"  src="document/flow.html?docStatusId=${doc.documentStatus.docStatusId }" style="width:100%;height:100%;"></iframe>
@@ -419,17 +419,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			<div id="flow-buttons">
 				<a href="javascript:void(0)" class="easyui-linkbutton" onclick="javascript:$('#flow-dlg').dialog('close');">关闭</a>
 			</div>
-			<!-- 流程Dialog  flow end -->
+			<!-- 流程Dialog  flow end -->--%>
 		</div>
 		
 		<script type="text/javascript">
 			$(function(){
 				$('#dg').datagrid({
-					url:'auditRecord/findByDocument.json',
+					url:'${pageContext.request.contextPath}/auditRecord/findByDocument.json',
 					queryParams: {
 						rows:10,
 						page:1,
-						documentId:<%=((Document)request.getAttribute("doc")).getDocumentId() %>
+						documentId:${doc.documentId}
 					},
 				    onLoadSuccess:function(data){
 				    	//alert("ok");
@@ -444,6 +444,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						{field:'creationDate',title:'时间', width:180,align:'left',resizable:true}
 					]] */
 				});
+
+				/*加载公司--jeasyui*/
+				$('#docSource').combobox({
+					url: '${pageContext.request.contextPath}/company/getByCompanyTypeId.json?companyTypeId=1',
+					valueField: 'companyId',
+					textField: 'companyName'
+				});
+                $('#docSource').combobox("setValue",${doc.docSource});
 			
 			})
 			

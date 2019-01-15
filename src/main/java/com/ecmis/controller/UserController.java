@@ -1,37 +1,32 @@
 package com.ecmis.controller;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
-import org.apache.commons.io.FilenameUtils;
-import org.apache.log4j.Logger;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
 import com.ecmis.pojo.Project;
 import com.ecmis.pojo.Role;
 import com.ecmis.pojo.User;
 import com.ecmis.service.UserService;
-import com.ecmis.utils.CommonTreeBean;
-import com.ecmis.utils.Constants;
-import com.ecmis.utils.JsonUtil;
-import com.ecmis.utils.PageSupport;
-import com.ecmis.utils.RandomUtils;
-import com.ecmis.utils.SecurityUtils;
+import com.ecmis.utils.*;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.log4j.Logger;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -454,4 +449,59 @@ public class UserController {
         return json;
     }
 
+    @RequestMapping(value = "/getUserByCompany.json")
+    @ResponseBody
+    public String getUserByCompany(@RequestParam(value = "companyId") Integer companyId){
+        List<User> userList = userService.findUsersByCompany(companyId);
+        String json = JsonUtil.getJson(userList);
+        return json;
+    }
+
+    @RequestMapping(value = "/checkPassword.json")
+    @ResponseBody
+    public String checkPassword(HttpSession session,@RequestParam(value = "password") String password){
+        User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+        Map<String ,Object> map=new HashMap<>();
+        if (currentLoginUser==null){
+            map.put("result",false);
+            map.put("message","您还没有登录,或登录信息过期,请先登录!");
+            return JsonUtil.getJson(map);
+        }
+        if (currentLoginUser.getPassword().equals(password)){
+            map.put("result",true);
+        }else {
+            map.put("result",false);
+        }
+        return JsonUtil.getJson(map);
+    }
+
+    @RequestMapping(value = "/updatePassword.json")
+    @ResponseBody
+    public String updatePassword(HttpSession session,
+                                 @RequestParam(value = "oldPassword") String oldPassword,
+                                 @RequestParam(value = "newPassword")String newPassword){
+        User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+        Map<String ,Object> map=new HashMap<>();
+        if (currentLoginUser==null){
+            map.put("result",false);
+            map.put("message","您还没有登录,或登录信息过期,请先登录!");
+            return JsonUtil.getJson(map);
+        }
+        if (!currentLoginUser.getPassword().equals(oldPassword)){
+            map.put("result",false);
+            map.put("message","旧密码不正确!");
+            return JsonUtil.getJson(map);
+        }
+        int count = userService.updatePassword(currentLoginUser.getUserId(), newPassword);
+        if (count>0){
+            map.put("result",true);
+            map.put("message","修改密码成功!");
+            currentLoginUser.setPassword(newPassword);
+        }else {
+            map.put("result",false);
+            map.put("message","修改密码失败!");
+        }
+
+        return JsonUtil.getJson(map);
+    }
 }

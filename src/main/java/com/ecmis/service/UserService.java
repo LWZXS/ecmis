@@ -1,11 +1,9 @@
 package com.ecmis.service;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
 import com.ecmis.pojo.User;
 import com.ecmis.utils.PageSupport;
+
+import java.util.List;
 
 public interface UserService {
 	
@@ -65,4 +63,6 @@ public interface UserService {
 	int delete(Integer modifyUser,Integer userId);
 
 	int updateCurrentProject( Integer userId,Integer projectId);
+
+	int updatePassword(Integer userId, String password);
 }

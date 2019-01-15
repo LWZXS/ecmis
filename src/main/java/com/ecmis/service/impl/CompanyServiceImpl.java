@@ -44,4 +44,9 @@ public class CompanyServiceImpl implements CompanyService {
 	public List<Company> findAllAndUsers(){
 		return companyMapper.getAllAndUsers();
 	}
+
+	@Override
+	public List<Company> findByType(Integer companyTypeId) {
+		return companyMapper.getByType(companyTypeId);
+	}
 }

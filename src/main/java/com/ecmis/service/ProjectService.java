@@ -1,12 +1,10 @@
 package com.ecmis.service;
 
-import java.util.List;
-
-import org.apache.ibatis.annotations.Param;
-
-
 import com.ecmis.pojo.Project;
 import com.ecmis.utils.PageSupport;
+import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface ProjectService {
 
@@ -25,4 +23,6 @@ public int add(Project project);
 	public PageSupport<Project> findByCondition(String projectName, Integer pageIndex, Integer pageSize);
 	
 	public int findCountByCondition(String projectName);
+
+	int findCheckProject(@Param("projectName") String projectName);
 }

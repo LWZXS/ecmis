@@ -43,4 +43,8 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<id property="companyId" column="companyId" javaType="int"/>
 		<collection property="users" select="com.ecmis.dao.user.UserMapper.getUsersByCompany" column="companyId" ofType="user"/>
 	</resultMap>
+
+	<select id="getByType" resultType="company">
+		select * from biz_company where companyTypeId=#{companyTypeId}
+	</select>
 </mapper>

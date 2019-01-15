@@ -20,4 +20,6 @@ public interface CompanyMapper {
 	public List<Company> getAllAndUsers();
 	
 	public List<Company> getAll();
+
+	List<Company> getByType(@Param("companyTypeId")Integer companyTypeId);
 }

@@ -138,11 +138,11 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
 
   <body class="easyui-layout">
-  <div data-options="region:'north',title:'',split:false" style="height:44px; line-height: 42px" >
+<%--  <div data-options="region:'north',title:'',split:false" style="height:44px; line-height: 42px" >
 	  <a href="${pageContext.request.contextPath}/document/inner.html" target="contentIframe" onclick="selectCurr(this);" class="easyui-linkbutton" option="innerFile" data-options="plain:true" style="margin:0 20px;">内部文档</a>|
 	  <a href="${pageContext.request.contextPath}/document/pigeonhole.html" target="contentIframe" onclick="selectCurr(this)" option="pigeonholeFile" class="easyui-linkbutton" data-options="plain:true" style="margin:0 20px;">归档文档</a>|
 	  <a href="${pageContext.request.contextPath}/document/system.html" target="contentIframe" onclick="selectCurr(this)" class="easyui-linkbutton" option="systemSet" data-options="plain:true" style="margin:0 20px;">系统设置</a>
-  </div>
+  </div>--%>
   <div data-options="region:'west',title:'发件管理',split:true" style="width:150px;">
 	  <p style="padding:5px;margin:0;">请选择您要的操作:</p>
 	  <ul class="LeftMenu">
@@ -168,7 +168,6 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	  </ul>
   </div>
   <div data-options="region:'center',title:'新建文档'" style="padding:5px;background:#eee;">
-	<div class="easyui-panel" style="width:100% ;  position: relative; height: 100%;">
 		<span class="filebtns">
 			<!-- <a href="javascript:void(0);" id="flow" class="easyui-linkbutton" datas="documentId:'',docStatusId:''" data-options="plain:true,iconCls:'icon-flow'">流程</a> -->
 			<a href="javascript:void(0);" onclick="save(2);"  data-options="plain:true,iconCls:'icon-save'">保存待发</a>
@@ -307,7 +306,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				    			<td>
 				    				<!-- <input class="file-input" type="text" name="docSource"/> -->
 				    				<!-- <input class="easyui-textbox" type="text" name="docSource" data-options="required:true"/> -->
-									<select name=docSource style="width: 198px;" id="docSource">
+									<select name="docSource" style="width: 198px;" id="docSource">
 									</select>
 								</td>
 				    		</tr>
@@ -371,15 +370,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 				    		</tr>
 				    		<tr>
 				    			<td>批准人:</td>
-				    			<td>
+				    			<td colspan="3">
 				    				<input type="hidden" name="approverId" id="approverId">
 				    				<input class="file-input" id="approverName"/>
 				    				<button id="approverBtnLoad">...</button>
 				    			</td>
-				    			<td>创建日期:</td>
+				    			<%--<td>创建日期:</td>
 				    			<td>
 				    				<input type="text" id="creationDate" name="creationDate" required="required">
-				    			</td>
+				    			</td>--%>
 				    		</tr>
 				    		<tr>
 				    			<td>分发范围:</td>
@@ -419,7 +418,17 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			
 		</div>
 		
-	</div>
   </div>
+  <script type="text/javascript">
+	  $(function () {
+          /*加载公司--jeasyui*/
+          $('#docSource').combobox({
+              url: '${pageContext.request.contextPath}/company/getByCompanyTypeId.json?companyTypeId=1',
+              valueField: 'companyId',
+              textField: 'companyName'
+          });
+
+      })
+  </script>
   </body>
 </html>

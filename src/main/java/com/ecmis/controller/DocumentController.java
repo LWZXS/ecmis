@@ -1,20 +1,16 @@
 package com.ecmis.controller;
 
-import java.io.BufferedInputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
+import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.ecmis.pojo.Company;
+import com.ecmis.pojo.Document;
+import com.ecmis.pojo.Project;
+import com.ecmis.pojo.User;
+import com.ecmis.service.CompanyService;
+import com.ecmis.service.DocumentService;
+import com.ecmis.utils.Constants;
+import com.ecmis.utils.PageSupport;
+import com.ecmis.utils.RandomUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
@@ -25,18 +21,15 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ecmis.pojo.Company;
-import com.ecmis.pojo.Document;
-import com.ecmis.pojo.Project;
-import com.ecmis.pojo.User;
-import com.ecmis.service.CompanyService;
-import com.ecmis.service.DocumentService;
-import com.ecmis.utils.Constants;
-import com.ecmis.utils.DateUtils;
-import com.ecmis.utils.PageSupport;
-import com.ecmis.utils.RandomUtils;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import java.io.*;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -87,7 +80,7 @@ public class DocumentController {
 
 	/**
 	 * 待归档
-	 * 
+	 * 待归档文件
 	 * @return
 	 */
 	@RequestMapping(value = "/pending.html")
@@ -96,25 +89,41 @@ public class DocumentController {
 
 	}
 
+	/**
+	 * 已发文件
+	 * @return
+	 */
 	@RequestMapping(value = "/issued.html")
 	public String issued() {
 		return "document/inner/issued";
 
 	}
 
+	/**
+	 * 已办
+	 * @return
+	 */
 	@RequestMapping(value = "/havetodo.html")
 	public String haveToto() {
 		return "document/inner/haveTodo";
 
 	}
 
+	/**
+	 * 接收文档
+	 * @return
+	 */
 	@RequestMapping(value = "/receive.html")
 	public String receive() {
 		return "document/inner/receive";
 
 	}
 
-	@RequestMapping(value = "/pigeonhole.html")
+	/**
+	 * 归档文档
+	 * @return
+	 */
+	@RequestMapping(value = "/pigeonhole/index.html")
 	public String pigeonholeIndex() {
 		return "document/pigeonhole/index";
 
@@ -233,11 +242,8 @@ public class DocumentController {
 			HttpServletResponse resp, HttpServletRequest request,
 			HttpSession session,
 			@RequestParam(value = "file", required = false) MultipartFile attach) {
-		User currentLoginUser = (User) session
-				.getAttribute(Constants.LOGIN_USER);
+		User currentLoginUser = (User) session .getAttribute(Constants.LOGIN_USER);
 
-		logger.debug(request.getParameter("serviceNo"));
-		
 		logger.debug(document);
 		if (currentLoginUser == null) {
 			return "notLogin";

@@ -469,12 +469,12 @@ $(function(){
 	/*$('#cc').calendar({
 	    current:new Date()
 	});*/
-	var date =new Date();
+	/*var date =new Date();
 	var year=date.getFullYear();
 	var month=date.getMonth();
 	var today=date.getDate();
 	
-	$("#creationDate").datebox("setValue",month+"/"+today+"/"+year);
+	$("#creationDate").datebox("setValue",month+"/"+today+"/"+year);*/
 	//initDocSource();
 	//$("#frmTb tr:even").css("background-color","#E9F2FB");
 	
@@ -482,24 +482,7 @@ $(function(){
 });
 
 
-//初始化文档来源   指公司？
-function initDocSource(){
-	$.ajax({
-		url:"company/findAll4Select",
-		type:"get",
-		dataType:"json",
-		success:function(list){
-			var $docSource=$("#docSource");
-			for(var i =0;i<list.length;i++){
-				$docSource.append("<option value='"+list[i].id+"'>"+list[i].text+"</option>");
-			}
-		}
-		
-		
-	});
-	
-	
-}
+
 
 		
 	

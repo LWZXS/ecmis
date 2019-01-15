@@ -63,11 +63,11 @@
 
 </head>
 <body class="easyui-layout">
-<div data-options="region:'north',title:'',split:false" style="height:44px; line-height: 42px" >
+<%--<div data-options="region:'north',title:'',split:false" style="height:44px; line-height: 42px" >
     <a href="${pageContext.request.contextPath}/document/inner.html" target="contentIframe" onclick="selectCurr(this);" class="easyui-linkbutton" option="innerFile" data-options="plain:true" style="margin:0 20px;">内部文档</a>|
     <a href="${pageContext.request.contextPath}/document/pigeonhole.html" target="contentIframe" onclick="selectCurr(this)" option="pigeonholeFile" class="easyui-linkbutton" data-options="plain:true" style="margin:0 20px;">归档文档</a>|
     <a href="${pageContext.request.contextPath}/document/system.html" target="contentIframe" onclick="selectCurr(this)" class="easyui-linkbutton" option="systemSet" data-options="plain:true" style="margin:0 20px;">系统设置</a>
-</div>
+</div>--%>
 <div data-options="region:'west',title:'发件管理',split:true" style="width:150px;">
     <p style="padding:5px;margin:0;">请选择您要的操作:</p>
     <ul class="LeftMenu">

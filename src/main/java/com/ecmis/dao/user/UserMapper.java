@@ -1,11 +1,10 @@
 package com.ecmis.dao.user;
 
-import java.util.List;
-import java.util.Map;
-
+import com.ecmis.pojo.User;
 import org.apache.ibatis.annotations.Param;
 
-import com.ecmis.pojo.User;
+import java.util.List;
+import java.util.Map;
 
 public interface UserMapper {
 
@@ -69,4 +68,6 @@ public interface UserMapper {
 	 * @return
 	 */
 	int deleteUserRole(@Param("userId") Integer userId);
+
+	int updatePassword(@Param("userId") Integer userId,@Param("password") String password);
 }

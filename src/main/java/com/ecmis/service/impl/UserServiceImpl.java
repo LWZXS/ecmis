@@ -1,21 +1,16 @@
 package com.ecmis.service.impl;
 
+import com.ecmis.dao.user.UserMapper;
+import com.ecmis.pojo.User;
+import com.ecmis.service.RoleService;
+import com.ecmis.service.UserService;
+import com.ecmis.utils.PageSupport;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.annotation.Resource;
-
-import com.ecmis.pojo.Role;
-import com.ecmis.service.RoleService;
-import com.sun.corba.se.impl.oa.toa.TOA;
-import org.springframework.stereotype.Service;
-
-import com.ecmis.dao.user.UserMapper;
-import com.ecmis.pojo.Document;
-import com.ecmis.pojo.User;
-import com.ecmis.service.UserService;
-import com.ecmis.utils.PageSupport;
 
 @Service
 public class UserServiceImpl implements UserService{
@@ -145,5 +140,10 @@ public class UserServiceImpl implements UserService{
 	@Override
 	public int updateCurrentProject(Integer userId, Integer projectId) {
 		return userMapper.updateCurrentProject(userId,projectId);
+	}
+
+	@Override
+	public int updatePassword(Integer userId, String password) {
+		return userMapper.updatePassword(userId,password);
 	}
 }

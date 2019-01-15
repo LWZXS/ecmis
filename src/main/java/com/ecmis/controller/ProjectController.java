@@ -1,28 +1,25 @@
 package com.ecmis.controller;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpSession;
-
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ecmis.pojo.Department;
+import com.ecmis.pojo.Project;
+import com.ecmis.pojo.User;
+import com.ecmis.service.ProjectService;
 import com.ecmis.utils.CommonTreeBean;
+import com.ecmis.utils.Constants;
+import com.ecmis.utils.JsonUtil;
+import com.ecmis.utils.PageSupport;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.ecmis.pojo.Project;
-import com.ecmis.pojo.User;
-import com.ecmis.service.ProjectService;
-import com.ecmis.utils.Constants;
-import com.ecmis.utils.JsonUtil;
-import com.ecmis.utils.PageSupport;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value="/project")
@@ -109,5 +106,50 @@ public class ProjectController {
 	public String add(){
 		return "project/addproject";
 		
+	}
+
+	@RequestMapping(value = "/addOrUpdate.json")
+	@ResponseBody
+	public String saveOrUpdate(Project project,HttpSession session){
+		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+		Map<String ,Object> map=new HashMap<>();
+		if (currentLoginUser==null){
+			map.put("result",false);
+			map.put("message","您还没有登录,或登录信息过期,请先登录!");
+			return JsonUtil.getJson(map);
+		}
+		if (project.getStatus()==null){
+			project.setStatus(1);
+		}
+		int count=0;
+		if (project.getProjectId()==null){
+			project.setCreationUser(currentLoginUser.getUserId());
+			count=projectService.add(project);
+			if (count>0){
+				map.put("result",true);
+				map.put("message","增加项目成功!");
+			}else {
+				map.put("result",false);
+				map.put("message","增加项目失败!");
+			}
+		}else {
+			project.setModifyUser(currentLoginUser.getUserId());
+			count=projectService.update(project);
+			if (count>0){
+				map.put("result",true);
+				map.put("message","修改项目成功!");
+			}else {
+				map.put("result",false);
+				map.put("message","修改项目失败!");
+			}
+		}
+		return JsonUtil.getJson(map);
+	}
+
+	@RequestMapping(value = "/checkProjectName.json")
+	@ResponseBody
+	public String checkProjectName(@RequestParam(value = "projectName") String projectName){
+		int count = projectService.findCheckProject(projectName);
+		return "{\"result\":"+count+"}";
 	}
 }

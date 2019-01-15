@@ -1,14 +1,12 @@
 package com.ecmis.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
-import org.springframework.stereotype.Service;
-
 import com.ecmis.dao.menu.MenuResourceMapper;
 import com.ecmis.pojo.MenuResource;
 import com.ecmis.service.MenuService;
+import org.springframework.stereotype.Service;
+
+import javax.annotation.Resource;
+import java.util.List;
 @Service
 public class MenuServiceImpl implements MenuService {
 	@Resource
@@ -47,13 +45,15 @@ public class MenuServiceImpl implements MenuService {
 	@Override
 	public List<MenuResource> findCurrentUserLevel1Menus(Integer userId) {
 		List<MenuResource> menus = menuMapper.getCurrentUserLevel1Menus(userId);
-		if (menus!=null && menus.size()>0){
+		/*if (menus!=null && menus.size()>0){
 			for (MenuResource menuResource:menus){
 				List<MenuResource> children = menuMapper.getCurrentUserLevel2Menus(userId, menuResource.getMenuId());
 				menuResource.setChildren(children);
 			}
-		}
-		return menus;
+		}*/
+		//return menus;
+
+		return setChildMenu(menus);
 	}
 	@Override
 	public List<MenuResource> findAdminLevel1Menus() {

@@ -54,7 +54,7 @@
             //alert("winWidth:"+winWidth+"---winHeight:"+winHeight);
             $('#projects').combobox({
                 onSelect: function(project){
-                    console.debug("gumy",project.id)
+                    //console.debug("gumy",project.id)
                     $.ajax({
                         url:"<%=request.getContextPath()%>/user/setCurrentProject.json",
                         data:{projectId:project.id},
@@ -71,6 +71,13 @@
            /* $('#tt').tree({
                 url:'/menu/findMenus.json'
             });*/
+            $("#modifyPwd").click(function () {
+
+                $("#modifyPwdFrm").form("clear");
+                $("#modify-password-dlg").dialog("open");
+
+
+            });
 
             //加载左侧tree
             $("#menuTree").tree({
@@ -103,7 +110,103 @@
                     }
                 }
             });
+
+            $("#old_password").textbox({
+               onChange:function (newValue,oldValue) {
+                    $.ajax({
+                        url:"${pageContext.request.contextPath}/user/checkPassword.json",
+                        type:"get",
+                        data:{password:newValue},
+                        dataType:"json",
+                        success:function (data) {
+                            if (data.result){
+                                $("#oldPasswordMsg").html("  密码正确!").css("color","green");
+                                $('#modifyBtn').linkbutton('enable')
+                                oldFlag=true;
+                            }else {
+                                $("#oldPasswordMsg").html("  旧密码不正确!").css("color","red");
+                                $('#modifyBtn').linkbutton('disable')
+                            }
+                        }
+                    });
+                }
+            })
+
+            $("#password").textbox({
+                onChange:function (newValue,oldValue) {
+                    if (checkPasswordReg.test(newValue)){
+                        $("#newPasswordMsg").html("  密码可用!").css("color","green");
+                        $('#modifyBtn').linkbutton('disable')
+                        newFlag=true;
+                        if ($("#rePassword").val()!=""){
+                            if ( newValue==$("#rePassword").val()){
+                                $("#rePasswordMsg").html("  两次密码输入正确!").css("color","green");
+                                $('#modifyBtn').linkbutton('enable');
+                                reFlag=true;
+                            }else{
+                                $("#rePasswordMsg").html("  两次密码输入不一致!").css("color","red");
+                                $('#modifyBtn').linkbutton('disable')
+                                reFlag=true;
+                            }
+                        }
+
+                    }else {
+                        $("#newPasswordMsg").html("  请输入4-16位的密码!").css("color","red");
+                        $('#modifyBtn').linkbutton('disable');
+                        newFlag=false;
+                    }
+                }
+            })
+            $("#rePassword").textbox({
+                onChange:function (newValue,oldValue) {
+                    var password = $("#password").val();
+                    if (password==newValue){
+                        $("#rePasswordMsg").html("  两次密码输入正确!").css("color","green");
+                        $('#modifyBtn').linkbutton('enable')
+                        reFlag=true;
+                    }else {
+                        $("#rePasswordMsg").html("  两次密码输入不一致!").css("color","red");
+                        $('#modifyBtn').linkbutton('disable')
+                        reFlag=false;
+                    }
+                }
+            })
+
+            $("#modifyBtn").click(function(){
+                //$.messager.progress();	// display the progress bar
+                if (newFlag && oldFlag && reFlag){
+                    $('#modifyPwdFrm').submit();
+                }
+            });
+            $('#modifyPwdFrm').form({
+                url:'${pageContext.request.contextPath}/user/updatePassword.json',
+                dataType : 'json',
+                onSubmit: function(){
+                    var isValid = $(this).form('validate');
+                    if (!isValid){
+                        //$.messager.progress('close');	// hide progress bar while the form is invalid
+                    }
+                    return isValid;	// return false will stop the form submission
+                    // return false to prevent submit;
+                },
+                success:function(data){
+                    //alert(data);
+                    var data = eval('(' + data + ')'); // change the JSON string to javascript object
+                    if(data.result){
+                        $('#ff').form('clear');
+                        $('#modify-password-dlg').dialog("close");
+                        //alert(data.message);
+                    }else{
+                        alert(data.message);
+                    }
+                    //$.messager.progress('close');
+                }
+            });
         });
+        var checkPasswordReg=/^\w{4,16}$/;
+        var oldFlag=false;
+        var newFlag=false;
+        var reFlag=false;
     </script>
 </head>
 <body>
@@ -116,8 +219,8 @@
                    data-options="plain:true,iconCls:'icon-reload-black'">刷新</a>
                 <!-- <a href="#" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-opinion-black'">意见反馈</a> -->
                 <!-- <a href="javascript:void(0);" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-key'">密码</a> -->
-				<a href="user/logout.do" class="easyui-linkbutton"
-                   data-options="plain:true,iconCls:'icon-logout14'">注销</a>
+				<a href="javascript:void(0);" id="modifyPwd" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-password'">密码</a>
+				<a href="user/logout.do" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-logout14'">注销</a>
 			</span>
         <div class="userInfo">
 				<span>
@@ -183,6 +286,51 @@
             </div>
         </div>
     </div>
+        <!-- 增加部门Dialog start-->
+        <div id="modify-password-dlg" class="easyui-dialog" closed="true" title="修改密码"
+             style="width:480px;height:280px;padding:10px;"
+             data-options="buttons:'#modify-password-buttons'">
+            <div style="margin:20px 0;"></div>
+            <div title="" style="width:440px;">
+                <div style="padding:10px 20px 20px 60px">
+                    <form id="modifyPwdFrm" method="post">
+                        <input name="deptId" value="" type="hidden" id="deptId"/>
+                        <table cellpadding="5">
+                            <tr>
+                                <td> 旧密码:</td>
+                                <td><input class="easyui-textbox" type="password" id="old_password" name="oldPassword"
+                                           data-options="required:true,missingMessage:'旧密码不能为空',invalidMessage:'输入格式不正确'"/>
+                                    <span id="oldPasswordMsg"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> 新密码:</td>
+                                <td><input class="easyui-textbox" type="password" id="password" name="newPassword"
+                                           data-options="required:true,missingMessage:'新密码不能为空',invalidMessage:'输入格式不正确'"/>
+                                    <span id="newPasswordMsg"></span>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td> 确认密码:</td>
+                                <td><input class="easyui-textbox" type="password" id="rePassword" name="rePassword"
+                                           data-options="required:true,missingMessage:'确认密码不能为空',invalidMessage:'输入格式不正确'"/>
+                                    <span id="rePasswordMsg"></span>
+                                </td>
+                            </tr>
+                        </table>
+                    </form>
+                    <div style="text-align:center;padding:5px">
+                        <a href="javascript:void(0)" style="width: 50px;" class="easyui-linkbutton" id="modifyBtn">提交</a>
+                        <a href="javascript:void(0)" style="width: 50px;" class="easyui-linkbutton" onclick="clearForm();">清除</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id="modify-password-buttons">
+            <a href="javascript:void(0)" class="easyui-linkbutton"
+               onclick="javascript:$('#modify-password-dlg').dialog('close')">关闭</a>
+        </div>
+        <!-- 增加部门Dialog end-->
 </div>
 </body>
 </html>

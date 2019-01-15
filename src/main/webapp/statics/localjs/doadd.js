@@ -443,19 +443,19 @@ $(function(){
 	/*$('#cc').calendar({
 	    current:new Date()
 	});*/
-	var date =new Date();
+	/*var date =new Date();
 	var year=date.getFullYear();
 	var month=date.getMonth();
-	var today=date.getDate();
+	var today=date.getDate();*/
 	
-	$("#creationDate").datebox("setValue",(month+1)+"/"+today+"/"+year);
-	initDocSource();
+	//$("#creationDate").datebox("setValue",(month+1)+"/"+today+"/"+year);
+	//initDocSource();
 	//$("#frmTb tr:even").css("background-color","#E9F2FB");
 })
 
 
 //初始化文档来源   指公司？
-function initDocSource(){
+/*function initDocSource(){
 	$.ajax({
 		url:"company/findAll4Select",
 		type:"get",
@@ -471,7 +471,7 @@ function initDocSource(){
 	});
 	
 	
-}
+}*/
 
 		
 	

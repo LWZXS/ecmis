@@ -54,7 +54,9 @@
 		<a href="javascript:void(0)" id="searchBtn" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-search1'">查询</a>
 		<br />
 		<a href="javascript:void(0)" id="add" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-add'">增加</a>
+<%--
 		<a href="javascript:void(0)" id="delete" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-delete16'">删除</a>
+--%>
 		<a href="javascript:void(0)" id="update" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-update'">修改</a>
 		<a href="javascript:void(0)" id="refresh" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-refresh'">刷新</a>
 		<%--<a href="javascript:void(0)" id="lock" class="easyui-linkbutton" data-options="plain:true,iconCls:'icon-lock16'">锁定</a>--%>
@@ -68,47 +70,65 @@
 <div>
 	<!-- 增加文档类型Dialog start-->
 	<div id="add-project-dlg" class="easyui-dialog" closed="true" title="增加项目"
-		 style="width:600px;height:380px;padding:10px;"
+		 style="width:520px;height:380px;padding:10px;"
 		 data-options="buttons:'#add-project-buttons'">
 		<div style="margin:20px 0;"></div>
-		<div title="" style="width:560px;">
+		<div title="" style="width:480px;">
 			<div style="padding:10px 60px 20px 60px">
-				<form id="ff" method="post" enctype="multipart/form-data" >
-					<input name="opr" value="add" type="hidden" id="opr"/>
+				<form id="ff" method="post">
+					<input name="projectId" value="" type="hidden" id="projectId"/>
+                    <input id="enableCheckName" value="false" type="hidden">
 					<table cellpadding="5">
 						<tr>
-							<td>编号:</td>
-							<td><input class="easyui-textbox"  style="width: 220px;" type="number" id="a_docTypeId"  name="docTypeId" data-options="required:true,missingMessage:'编号不能为空',invalidMessage:'输入格式不正确'"/><span id="maxChildId"></span></td>
+							<td>项目名称:</td>
+							<td><input class="easyui-textbox" style="width: 132px;" type="text" id="a_projectName"  name="projectName" data-options="required:true,missingMessage:'项目名称不能为空'"/><span id="projectNameMsg"></span></td>
 						</tr>
 						<tr>
-							<td>文档类型名称:</td>
-							<td><input class="easyui-textbox" style="width: 220px;" type="text" id="a_docTypeName"  name="docTypeName" data-options="required:true,missingMessage:'文档类型名称不能为空'"/></td>
-						</tr>
-						<tr>
-							<td><label for="a_parentTypeId">上级类型:</label></td>
+							<td><label for="a_builderId">建设方单位:</label></td>
 							<td>
-								<%--<select style="width: 132px;" class="easyui-combobox" data-options="valueField:'id',textField:'text',url:'dept/easyUiTree.json'" name="parentId" id="parentId">
+								<input id="a_builderId" name="builderId" style="width: 132px;" data-options="required:true,missingMessage:'建设方单位不能为空'"/>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="a_constructorId">施工方单位:</label></td>
+							<td>
+								<input id="a_constructorId" name="constructorId" style="width: 132px;" data-options="required:true,missingMessage:'施工方单位不能为空'"/>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="a_supervisorId">监理方单位:</label></td>
+							<td>
+								<input id="a_supervisorId" name="supervisorId" style="width: 132px;" data-options="required:true,missingMessage:'监理方单位不能为空'"/>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="a_chiefInspectorId">总监:</label></td>
+							<td>
+								<select id="a_chiefInspectorId" class="easyui-combobox" name="chiefInspectorId" style="width:132px;" data-options="required:true,missingMessage:'总监不能为空'"></select>
 
-                                </select>--%>
-								<input id="a_parentTypeId" name="parentTypeId" style="width: 220px;"/>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="a_supervisionEngineerId">监理工程师:</label></td>
+							<td>
+								<select id="a_supervisionEngineerId" class="easyui-combobox" name="supervisionEngineerId" style="width:132px;" data-options="required:true,missingMessage:'监理工程师不能为空'"></select>
+							</td>
+						</tr>
+						<tr>
+							<td><label for="a_clerkId">文员:</label></td>
+							<td>
+								<select id="a_clerkId" class="easyui-combobox" name="clerkId" style="width:132px;" data-options="required:true,missingMessage:'文员不能为空'"></select>
 							</td>
 						</tr>
 
 						<tr>
 							<td><label for="a_status">状态:</label></td>
 							<td>
-								<select class="easyui-combobox" panelHeight="auto" style="width: 220px;" name="status" id="a_status">
+								<select class="easyui-combobox" panelHeight="auto" style="width: 132px;" name="status" id="a_status">
 									<option value="1" selected>正常</option>
 									<option value="2">锁定</option>
 									<option value="3">删除</option>
 								</select>
-							</td>
-						</tr>
-						<tr>
-							<td>文档模板:</td>
-							<td width="212px" align="left">
-								<%--<input type="file" id="a_id" class="easyui-inputbox" name="file"/>--%>
-								<input class="easyui-filebox" id="file" name="file" data-options="prompt:'请选择文档...'" style="width: 220px;">
 							</td>
 						</tr>
 					</table>
@@ -142,131 +162,106 @@
             $('#add-project-dlg').dialog({
                 title: '增加项目'
             });
-            $('#ff').form('clear');
+            //$('#ff').form('clear');
+            clearForm();
             $("#opr").val("add");//增加
             $("#add-project-dlg").dialog("open");
+            $("#enableCheckName").val("true");
+            $('#a_projectName').textbox({
+                onChange:function (newValue,oldValue) {
+                    //alert(newValue+"===="+oldValue);
+                    if ($("#enableCheckName").val()=="true"){
+                        $.ajax({
+                            url:"${pageContext.request.contextPath}/project/checkProjectName.json",
+                            type:"get",
+                            data:{projectName:newValue},
+                            dataType:"json",
+                            success:function (data) {
+                                if (data.result>0){
+                                    $("#projectNameMsg").html("  项目名已存在!").css("color","red");
+                                    $('#addSmt').linkbutton('disable')
+                                }else {
+                                    $("#projectNameMsg").html("  项目名可以使用").css("color","green");
+                                    $('#addSmt').linkbutton('enable')
+                                }
+                            }
+                        });
+                    }
+                }
+            })
         });
 
         //修改
         $("#update").click(function () {
-            var documentType=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
+
+            var project=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
             $("#opr").val("update");
-            if (documentType){
+            if (project){
+                clearForm();//清空表单
                 $('#add-project-dlg').dialog({
                     title: '修改项目'
                 });
                 //
                 $("#add-project-dlg").dialog("open");
-                $('#a_docTypeId').textbox("setValue",documentType.docTypeId);
-                $('#a_docTypeId').textbox('textbox').attr('readonly',true);//只读
-                $('#a_docTypeName').textbox("setValue",documentType.docTypeName);
+                //$('#a_docTypeId').textbox('textbox').attr('readonly',true);//只读
+                $("#projectId").val(project.projectId);
+                $('#a_projectName').textbox("setValue",project.projectName);
+                $('#a_builderId').combobox("setValue",project.builder.companyId);
+                $('#a_constructorId').combobox("setValue",project.constructor.companyId);
+                $('#a_supervisorId').combobox("setValue",project.supervisor.companyId);
 
+                $('#a_chiefInspectorId,#a_supervisionEngineerId,#a_clerkId').combobox({
+                    url:'${pageContext.request.contextPath}/user/getUserByCompany.json?companyId='+project.supervisor.companyId,
+                    valueField:'userId',
+                    textField:'userName',
+                    onSelect: function(company) {
 
-                /*   var parentDocTypeId;
-                   var parentDocTypeName;
-                   $('#a_parentTypeId').combobox({
-                       onSelect:function (documentType) {
-                           parentDocTypeId=documentType.parentTypeId;
-                           parentDocTypeName=documentType.docTypeName;
-
-                       }
-                   });
-                   $('#a_parentTypeId').combobox("setValue",documentType.parentTypeId);
-                   $('#a_parentTypeId').combobox("loadData",[{
-                       "docTypeId":parentDocTypeId,
-                       "docTypeName":parentDocTypeName
-                   }]);
-*/
-                $('#a_parentTypeId').combobox("setValue",documentType.parentTypeId);
-                $('#a_parentTypeId').combobox("disable");
-                $('#a_status').combobox("setValue",documentType.status);
-
-                //$('#a_docTypeId').textbox('disable');
-                //$('#addSmt').linkbutton('enable')
-            }
-        });
-
-        //删除
-        $("#delete").click(function () {
-            //var row=$('#dg').datagrid('getChecked');//获得所有选中的checkbox,是一个数组
-            var documentType=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
-            var msg="是否确定删除 ["+documentType.docTypeName+"] ";
-            if (documentType.levelId!=4){
-                msg+="及其子文档类型???";
-            }
-            if (documentType && confirm(msg)){
-                $.ajax({
-                    url:"${pageContext.request.contextPath}/documentType/updateStatus.json",
-                    type:"get",
-                    data:{"docTypeId":documentType.docTypeId,"status":3},
-                    dataType:"json",
-                    success:function (data) {
-                        if (data.result==true){
-                            $('#dg').datagrid('reload');
-                        }
-                        alert(data.message);
-                    },
-                    error:function () {
-                        alert("操作出错!");
                     }
                 });
-            }
-        });
-        //锁定
-        $("#lock").click(function () {
-            var documentType=$('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
-            var msg="是否确定锁定 ["+documentType.docTypeName+"] ";
-            if (documentType.levelId!=4){
-                msg+="及其子文档类型???";
-            }
-            if (documentType && confirm(msg)){
-                $.ajax({
-                    url:"${pageContext.request.contextPath}/documentType/updateStatus.json",
-                    type:"get",
-                    data:{"docTypeId":documentType.docTypeId,"status":2},
-                    dataType:"json",
-                    success:function (data) {
-                        if (data.result==true){
-                            $('#dg').datagrid('reload');
-                        }
-                        alert(data.message);
-                    },
-                    error:function () {
-                        alert("操作出错!");
-                    }
-                });
-            }
-        });
+                $('#a_chiefInspectorId').combobox("setValue",project.chiefInspector.userId);
+                $('#a_supervisionEngineerId').combobox("setValue",project.supervisionEngineer.userId);
+                $('#a_clerkId').combobox("setValue",project.clerk.userId);
 
-        $('#a_docTypeId').textbox({
-            onChange:function (newValue,oldValue) {
-                //alert(newValue+"===="+oldValue);
-                if ($("#opr").val()=='add') {
-                    $.ajax({
-                        url:"${pageContext.request.contextPath}/documentType/checkId.json",
-                        type:"get",
-                        data:{docTypeId:newValue},
-                        dataType:"json",
-                        success:function (data) {
-                            if (data.result){
-                                $("#maxChildId").html("  当前编号已存在!").css("color","red");
-                                $('#addSmt').linkbutton('disable')
-                            }else {
-                                $("#maxChildId").html("编号可以使用").css("color","green");
-                                $('#addSmt').linkbutton('enable')
-                            }
+                $('#a_status').combobox("setValue",project.status);
+
+                $("#enableCheckName").val("true");
+                $('#a_projectName').textbox({
+                    onChange:function (newValue,oldValue) {
+                        //alert(newValue+"===="+oldValue);
+                        //如果项目名与之前的相同不验证
+                        if (newValue==project.projectName){
+                            $("#projectNameMsg").html("").css("color","green");
+                            $('#addSmt').linkbutton('enable')
+                            return;
                         }
-                    });
-                }
+                        if ($("#enableCheckName").val()=="true"){
+                            $.ajax({
+                                url:"${pageContext.request.contextPath}/project/checkProjectName.json",
+                                type:"get",
+                                data:{projectName:newValue},
+                                dataType:"json",
+                                success:function (data) {
+                                    if (data.result>0){
+                                        $("#projectNameMsg").html("  项目名已存在!").css("color","red");
+                                        $('#addSmt').linkbutton('disable')
+                                    }else {
+                                        $("#projectNameMsg").html("  项目名可以使用").css("color","green");
+                                        $('#addSmt').linkbutton('enable')
+                                    }
+                                }
+                            });
+                        }
+                    }
+                })
             }
-        })
+        });
 
         $("#addSmt").click(function(){
             //$.messager.progress();	// display the progress bar
             $('#ff').submit();
         });
         $('#ff').form({
-            url:'${pageContext.request.contextPath}/documentType/add.json',
+            url:'${pageContext.request.contextPath}/project/addOrUpdate.json',
             dataType : 'json',
             onSubmit: function(){
                 var isValid = $(this).form('validate');
@@ -281,7 +276,7 @@
                 var data = eval('(' + data + ')'); // change the JSON string to javascript object
                 if(data.result){
                     $('#ff').form('clear');
-                    $('#add-documentType-dlg').dialog("close");
+                    $('#add-project-dlg').dialog("close");
                     $('#dg').datagrid('reload');
                     //alert(data.message);
                 }else{
@@ -290,26 +285,39 @@
                 //$.messager.progress('close');
             }
         });
-        $('#a_parentTypeId').combobox({
-            url:'${pageContext.request.contextPath}/documentType/getParents.json',
-            valueField:'docTypeId',
-            textField:'docTypeName',
-            onSelect: function(documentType) {
-                //当选中则给levelId赋值,值为选中的levelId+1
-                //alert(documentType.levelId);
-                $("#levelId").val(documentType.levelId+1);
-                if(documentType.levelId==3){
-                    $('#file').filebox('enable')//启用文件域
-                }else{
-                    $('#file').filebox('disable')
-                }
-                $.ajax({
-                    url:"${pageContext.request.contextPath}/documentType/findChildMaxId.json",
-                    type:"get",
-                    data:{docTypeId:documentType.docTypeId},
-                    dataType:"json",
-                    success:function (data) {
-                        $("#maxChildId").html("  当前分类末编号:"+data.childMaxId).css("color","green");;
+        //加载建设方单位
+        $('#a_builderId').combobox({
+            url:'${pageContext.request.contextPath}/company/getByCompanyTypeId.json?companyTypeId=1',
+            valueField:'companyId',
+            textField:'companyName',
+            onSelect: function(company) {
+
+            }
+        });
+        //施工方单位
+        $('#a_constructorId').combobox({
+            url:'${pageContext.request.contextPath}/company/getByCompanyTypeId.json?companyTypeId=2',
+            valueField:'companyId',
+            textField:'companyName',
+            onSelect: function(company) {
+
+            }
+        });
+        //监理方单位
+        $('#a_supervisorId').combobox({
+            url:'${pageContext.request.contextPath}/company/getByCompanyTypeId.json?companyTypeId=3',
+            valueField:'companyId',
+            textField:'companyName',
+            onSelect: function(company) {
+                console.debug("gumy","select:company")
+				//加载总监,监理工程师,文员 /getUserByCompany.json
+                //总监
+                $('#a_chiefInspectorId,#a_supervisionEngineerId,#a_clerkId').combobox({
+                    url:'${pageContext.request.contextPath}/user/getUserByCompany.json?companyId='+company.companyId,
+                    valueField:'userId',
+                    textField:'userName',
+                    onSelect: function(company) {
+
                     }
                 });
             }
@@ -373,7 +381,7 @@
     function clearForm(){
         $('#ff').form('clear');
         $('#addSmt').linkbutton('enable')
-        $("#maxChildId").html("").css("color","green");
+        $("#projectNameMsg").html("").css("color","green");
     }
 
 </script>
