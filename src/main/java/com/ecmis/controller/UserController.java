@@ -504,4 +504,6 @@ public class UserController {
 
         return JsonUtil.getJson(map);
     }
+
+    //commit by 2019-1-15
 }
