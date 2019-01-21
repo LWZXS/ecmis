@@ -81,7 +81,7 @@
 
             //加载左侧tree
             $("#menuTree").tree({
-                url:'${pageContext.request.contextPath}/menu/findMenus.json',
+                url:'${pageContext.request.contextPath}/menu/currentUserMenus.json',
                 onClick:function(node){
                     if (node){
                         if($('#tt').tabs('exists',node.text)){

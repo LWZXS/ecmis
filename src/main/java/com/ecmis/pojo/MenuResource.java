@@ -1,11 +1,11 @@
 package com.ecmis.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 public class MenuResource implements Serializable{
 
@@ -35,6 +35,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Integer creationUser;
 	private Integer modifuUser;
 	private Integer status;
+	private Integer levelId;
 	@JSONField(format="yyyy-MM-dd")
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
@@ -43,11 +44,19 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	public List<MenuResource> children;
 	public MenuResource() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
+
+	public Integer getLevelId() {
+		return levelId;
+	}
+
+	public void setLevelId(Integer levelId) {
+		this.levelId = levelId;
+	}
+
 	public MenuResource(Integer menuId, String menuName, Integer parentMenuId,
-			String url, String icon, Integer creationUser, Integer modifuUser,
-			Integer status, Date creationDate, Date modifyDate) {
+						String url, String icon, Integer creationUser, Integer modifuUser,
+						Integer status, Date creationDate, Date modifyDate) {
 		super();
 		this.menuId = menuId;
 		this.menuName = menuName;

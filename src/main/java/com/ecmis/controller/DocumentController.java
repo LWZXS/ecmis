@@ -126,13 +126,12 @@ public class DocumentController {
 	@RequestMapping(value = "/pigeonhole/index.html")
 	public String pigeonholeIndex() {
 		return "document/pigeonhole/index";
-
 	}
+
 
 	@RequestMapping(value = "/system.html")
 	public String systemIndex() {
 		return "document/system/index";
-
 	}
 
 	@RequestMapping(value = "/add.html")
@@ -154,9 +153,10 @@ public class DocumentController {
 		if (user == null) {
 			return "redirect:/user/login.html?msg=P	lease_Login!";
 		}
-
 		return "document/inner/index";
 	}
+
+
 
 	/**
 	 * 通过Id查询文档 Rest风格

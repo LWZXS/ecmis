@@ -36,7 +36,7 @@ public class PrivilegeController {
         //所有可用的菜单
         List<MenuResource> menus = menuService.findAdminLevel1Menus();
         //查询当用户/角色的资源
-        List<MenuResource> menusByMaster = menuService.findMenusByMaster(masterId, masterType);
+        List<MenuResource> menusByMaster =menuService.findMenusByMaster(masterId,masterType);
         List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
 
         for (MenuResource menu : menus) {
@@ -45,15 +45,19 @@ public class PrivilegeController {
             attributesLevel1.put("url", menu.getUrl());
             attributesLevel1.put("icon", menu.getIcon());
             attributesLevel1.put("type", menu.getType());
-            if (menu.getType().equals("parent")){
-                attributesLevel1.put("isParent","true");
-            }
+            int checkedCount=0;
             for (MenuResource menuResource:menusByMaster){
                 if (menu.equals(menuResource)){
                     attributesLevel1.put("checked",true);
+                    checkedCount++;
                     break;
                 }
             }
+            if (menu.getType().equals("parent")){
+
+                attributesLevel1.put("isParent","true");
+            }
+
             tree.setAttributes(attributesLevel1);
             if(menu.getChildren()!=null){
                 List<CommonTreeBean> children=new ArrayList<CommonTreeBean>();

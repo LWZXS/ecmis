@@ -1,10 +1,9 @@
 package com.ecmis.dao.menu;
 
-import java.util.List;
-
+import com.ecmis.pojo.MenuResource;
 import org.apache.ibatis.annotations.Param;
 
-import com.ecmis.pojo.MenuResource;
+import java.util.List;
 
 public interface MenuResourceMapper {
 
@@ -25,7 +24,12 @@ public interface MenuResourceMapper {
 	public List<MenuResource> getCurrentUserLevel2Menus(@Param("userId") Integer userId,
 														@Param("parentMenuId")Integer parentMenuId);
 
-	public List<MenuResource> getAdminMenus();
+	List<MenuResource> getCurrentUserMenus(@Param("userId") Integer userId,@Param("parentMenuId") Integer parentMenuId);
 
-	List<MenuResource> getMenusByMaster(@Param("masterId")Integer masterId,@Param("masterType")String masterType);
+	List<MenuResource> getMenusByRole(@Param("roleId") Integer roleId);
+	List<MenuResource> getAdminMenus();
+	List<MenuResource> getAll();
+	List<MenuResource> getMenusByMaster(@Param("masterId")Integer masterId,@Param("masterType")String masterType,@Param("levelId")Integer levelId);
+
+
 }

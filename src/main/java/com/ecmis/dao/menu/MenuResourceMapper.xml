@@ -78,6 +78,9 @@
     <select id="getAdminMenus" resultType="menuResource">
 		select * from sys_menu where status =1 and  parentMenuId is null
     </select>
+    <select id="getAll" resultType="menuResource">
+		select * from sys_menu where status =1
+    </select>
 
 	<select id="getMenusByMaster" resultType="menuResource" flushCache="true">
 
@@ -86,6 +89,9 @@
 				select sm.* from sys_menu sm ,sys_privilege sp
 				where
 				sm.`menuId`=sp.`resourceId`
+				<if test="levelId!=null">
+					and sm.levelId=#{levelId}
+				</if>
 				and sp.status=1
 				and sm.status=1
 				and sp.`resourceType`='menu'
@@ -95,6 +101,9 @@
 			<otherwise>
 				SELECT sm.* FROM sys_menu sm ,sys_privilege sp
 				WHERE sp.`masterId`=#{masterId}
+				<if test="levelId!=null">
+					and sm.levelId=#{levelId}
+				</if>
 				and sp.status=1
 				and sm.status=1
 				AND sp.`masterType`='user'
@@ -109,5 +118,28 @@
 			</otherwise>
 		</choose>
 
+	</select>
+
+	<select id="getCurrentUserMenus" resultType="menuResource">
+		SELECT * FROM sys_menu WHERE STATUS=1
+		<choose>
+			<when test="parentMenuId!=null and parentMenuId!=0">
+				AND parentMenuId=#{parentMenuId}
+			</when>
+			<otherwise>
+				AND parentMenuId is null
+			</otherwise>
+		</choose>
+		AND menuId IN(
+		SELECT sp.resourceId FROM sys_privilege sp WHERE sp.masterId=#{userId} AND sp.masterType='user'
+		OR sp.`masterType`='role' AND sp.`masterId` IN(
+			SELECT roleId FROM sys_user_role sur WHERE sur.`userId`=#{userId})
+		)
+	</select>
+
+	<select id="getMenusByRole" resultType="menuResource">
+		SELECT * FROM sys_menu WHERE STATUS=1 AND menuId IN(
+			SELECT sp.`resourceId` FROM sys_privilege sp WHERE sp.`masterId`=#{roleId} AND sp.`masterType`='role'
+		)
 	</select>
 </mapper>

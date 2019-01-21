@@ -1,10 +1,8 @@
 package com.ecmis.service;
 
-import java.util.List;
-
-
 import com.ecmis.pojo.MenuResource;
-import org.apache.ibatis.annotations.Param;
+
+import java.util.List;
 
 public interface MenuService {
 	
@@ -24,5 +22,13 @@ public interface MenuService {
 
 	public List<MenuResource> findAdminLevel1Menus();
 
+
+	List<MenuResource> findCurrentUserMenus(Integer userId);
+
+	List<MenuResource> findMenusByRole(Integer roleId);
+
+
 	List<MenuResource> findMenusByMaster(Integer masterId, String masterType);
+
+
 }
