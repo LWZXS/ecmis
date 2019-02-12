@@ -1,17 +1,14 @@
 package com.ecmis.service.impl;
 
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.ecmis.dao.role.RoleMapper;
+import com.ecmis.pojo.Role;
+import com.ecmis.service.RoleService;
 import com.ecmis.service.UserService;
 import com.ecmis.utils.PageSupport;
 import org.springframework.stereotype.Service;
 
-import com.ecmis.dao.role.RoleMapper;
-import com.ecmis.pojo.Role;
-import com.ecmis.pojo.User;
-import com.ecmis.service.RoleService;
+import javax.annotation.Resource;
+import java.util.List;
 
 @Service
 public class RoleServiceImpl implements RoleService {
@@ -92,5 +89,10 @@ public class RoleServiceImpl implements RoleService {
 			throw new RuntimeException("该角色已分配给用户,不能锁定!");
 		}
 		return roleMapper.updateStatus(userId,roleId,status);
+	}
+
+	@Override
+	public int checkRoleName(String roleName) {
+		return roleMapper.checkRoleName(roleName);
 	}
 }

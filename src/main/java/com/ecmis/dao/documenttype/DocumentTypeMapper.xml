@@ -64,7 +64,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="getLikeName" parameterType="string" resultType="documentType">
-		select * from biz_documenttype where docTypeName like CONCAT('%',#{docTypeName},'%') and status=1 order by docTypeId
+		select * from biz_documenttype where docTypeName like CONCAT('%',#{docTypeName},'%') and status=1 order by status, docTypeId
 	</select>
 	
 	<resultMap type="documentType" id="types">
@@ -94,7 +94,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         <if test="docTypeName!=null and docTypeName!=''">
             and bd.docTypeName like concat('%',#{docTypeName},'%')
         </if>
-		order by docTypeId,status
+		order by status, docTypeId
 		limit #{startRow},#{pageSize}
 	</select>
 

@@ -1,231 +1,100 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%
-String path = request.getContextPath();
-String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
+<%--
+  Created by IntelliJ IDEA.
+  User: gumuyun
+  Date: 2018/11/29
+  Time: 18:14
+  To change this template use File | Settings | File Templates.
+--%>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
-<html>
-  <head>
-    <base href="<%=basePath%>">
-    
-    <title>用户登录</title>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en">
+<head>
 
-	<jsp:include page="/WEB-INF/jsp/title.jsp"></jsp:include>	
+	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/pages/js/jquery.min.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/pages/js/wangsheng.js"></script>
+	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/pages/js/base64.js"></script>
+	<link type="text/css" rel="stylesheet" href="<%=request.getContextPath() %>/statics/pages/css/login.css"/>
+	<link type="text/css" rel="stylesheet" href="<%=request.getContextPath() %>/statics/pages/css/password3.css" charset="utf-8">
+	<link href="<%=request.getContextPath() %>/statics/pages/css/wrap.css" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath() %>/statics/pages/css/content.css" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath() %>/statics/pages/css/icon.css" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath() %>/statics/pages/css/easyui.css" rel="stylesheet" type="text/css"/>
+	<link href="<%=request.getContextPath() %>/statics/pages/css/zTreeStyle.css" rel="stylesheet" type="text/css"/>
+	<link type="text/css" rel="stylesheet" href="<%=request.getContextPath() %>/statics/pages/css/password3.css" charset="utf-8"/>
+
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
-	<meta http-equiv="expires" content="0">    
-	<meta http-equiv="keywords" content="keyword1,keyword2,keyword3">
-	<meta http-equiv="description" content="This is my page">
-	<!-- 文档模式  -->
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	
-	<style type="text/css">
-		*{
-			margin: 0;
-			padding: 0;
-			font-size: 12px;
-		}
-		body {
-			background-color: #E8EBF0;
-		}
-		
-		.content{
-			width: 940px;
-			height: 600px;
-			margin: auto auto;
-			background-color: #fff;
-		}
-		
-		.content .title{
-			margin-left: 20px;
-		}
-		.content .title .login2new{
-			margin-left: 210px;
-		}
-		.content .bg_img{
-			width: 600px;
-			margin: 0 auto;
-		}
-		
-		.content .loginBar .login_left{
-			margin-left: 20px;
-		}
-		.loginBar>div{
-			float: left;
-		}
-		
-		.content .loginBar .login_right{
-			margin-top: 14px;
-			margin-left:40px;
-			background-color: #F2F5F8;
-			width: 450px;
-			height: 180px;
-			
-		}
-		.content .loginBar .login_right>div{
-			float: left;
-		}
-		.input{
-			background-color: #FAFFBD;
-			height: 27px;
-			width: 220px;
-		}
-		.content .loginBar .login_right>div tr{
-			margin: 5px 0px
-		}
-		.rememberPwd input,.rememberPwd label{
-			vertical-align: middle;
-		}
-		#rememberPwd{
-			margin-top: 2px;
-		}
-		footer{
-			width:210px;
-			margin: 0 auto;
-			line-height: 28px;
-		}
-		.clear{
-			display: block;
-			content: '';
-			clear: both;
-			
-		}
-		
-		
-	</style>
-	
-	
-  <script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.min.js"></script>
-  <script type="text/javascript">
-  	var win;
-  	function getParent(win){
-  		if(win.parent){
-  			win=win.parent;
-  			return getParent();
-  		}
-  		
-  	}
-  	
-  	
-  	$(function(){
-  		var winHeight;
-  		if (window.innerHeight){
-			winHeight = window.innerHeight;
-  		}else if ((document.body) && (document.body.clientHeight)){
-			winHeight = document.body.clientHeight;
-  		}
-  		
-  		//alert(winHeight); 
-  		$(".content").css("margin-top",winHeight>600?(winHeight-600)/2+"px":"0px");
-  		
-  		$("#submit").click(function(){
-  			var loginNameEle=document.getElementById("loginName");
-  			var loginPwdEle=document.getElementById("loginPwd");
-  			if(loginNameEle.validity.valueMissing){
-  				loginNameEle.setCustomValidity("用户名不能为空!");
-  			}else if(loginNameEle.validity.patternMismatch){
-  				loginNameEle.setCustomValidity("请输入4-16位英文和数字组合!");
-  			}else{
-  				loginNameEle.setCustomValidity("");
-  			}
-  			
-  			if(loginPwdEle.validity.valueMissing){
-  				loginPwdEle.setCustomValidity("密码不能为空!");
-  			}else if(loginPwdEle.validity.patternMismatch){
-  				loginPwdEle.setCustomValidity("请输入4-16位英文和数字组合!");
-  			}else{
-  				loginPwdEle.setCustomValidity("");
-  			}
-  		});
-  	
-  	});
-  	
-  	window.onresize=function(){
-  		var winHeight;
-  		if (window.innerHeight){
-			winHeight = window.innerHeight;
-  		}else if ((document.body) && (document.body.clientHeight)){
-			winHeight = document.body.clientHeight;
-  		}
-  		//alert(winHeight); 
-  		$(".content").css("margin-top",winHeight>600?(winHeight-600)/2+"px":"0px");
-  	
-  	};
-  	
-  
-	
-  </script>
-  </head>
-  
-  <body>
-    <div class="content">
-    	<div class="title">
-    		<img src="<%=request.getContextPath() %>/statics/css/loginimages/logo.jpg"/>
-    		<img class="login2new" src="<%=request.getContextPath() %>/statics/css/loginimages/logo2new.jpg" width="246px"/>
-    	</div>
-    	<div class="bg_img">
-    		<img src="<%=request.getContextPath() %>/statics/css/loginimages/big_logo.png"/>
-    	</div>
-    	<div class="loginBar">
-    	
-    		<div class="login_left">
-    			<img src="<%=request.getContextPath() %>/statics/css/loginimages/lodingtips.png"/>
-    		</div>
-    		<div class="login_right">
-	    		<div>
-	    			<img src="<%=request.getContextPath() %>/statics/css/loginimages/login_left.png"/>
-	    		</div>
-    			<div>
-    				<form action="user/dologin.html" id="loginFrm" method="post">
-	    				<table cellpadding="0" cellspacing="10">
-	    					<tr>
-	    						<td>
-	    							<label for="loginName">用户名：</label>
-	    						</td>
-	    						<td>
-	    							<input class="input" id="loginName" name="loginName" value="${param.loginName }" pattern="[0-9a-zA-Z]{4,16}" required placeholder="请输入4-16位英文和数字" />
-	    						</td>
-	    					</tr>
-	    					<tr>
-	    						<td>
-	    							<label for="loginPwd">密码：</label>
-	    						</td>
-	    						<td>
-	    							<input class="input" id="loginPwd" type="password" name="password" value="${param.password }" pattern="[0-9a-zA-Z]{4,16}" required placeholder="请输入4-16位英文和数字" />
-	    						</td>
-	    					</tr>
-	    					<tr>
-	    						<td colspan="2">
-	    							<span id="msg" style="color: red;">${msg }</span>
-	    						</td>
-	    					</tr>
-	    					<tr>
-	    						<td>
-	    							
-	    						</td>
-	    						<td class="rememberPwd">
-	    							<input type="checkbox" name="rememberPwd" value="true" id="rememberPwd" />&nbsp;&nbsp;<label for="rememberPwd">记住密码</label>
-	    						</td>
-	    					</tr>
-	    					<tr>
-	    						
-	    						<td colspan="2" align="center">
-	    							<input id="submit" type="image" src="<%=request.getContextPath() %>/statics/css/loginimages/landing_dl.png" />
-	    							&nbsp;&nbsp;
-	    							<img src="<%=request.getContextPath() %>/statics/css/loginimages/landing_collection.png" />
-	    						</td>
-	    					
-	    					</tr>
-	    				</table>
-    				</form>
-    			</div>
-    		</div>
-    	</div>
-    	<footer class="clear">
-    		版权所有：广东天安工程监理有限公司
-    	</footer>
-    </div>
-	
-  </body>
+	<meta http-equiv="expires" content="0">
+	<meta http-equiv="X-UA-Compatible" content="edge">
+	<script type="text/javascript">
+        var mykey = null;
+        $(function () {
+            mykey = $.rsa.getKeyPair($("#pubexp").val(), "", $("#pubmod").val())
+            $("#username0").mailAutoComplete();
+            function immediately() {
+                var element = document.getElementById("mytext");
+                if ("\v" == "v") {//判断IE
+                    element.onpropertychange = webChange;
+                } else {//非IE
+                    element.addEventListener("input", webChange, false);
+                }
+                function webChange() {
+                    if (element.value) {
+                        document.getElementById("test").innerHTML = element.value
+                    }
+                    ;
+                }
+            }
+        });
+
+        function changeUserName(val) {
+            if (val.indexOf("@", 0) != -1) {
+                $("#username0").mailAutoComplete('display', true);
+            } else {
+                $("#username0").mailAutoComplete('display', false);
+            }
+        }
+	</script>
+	<title>项目管理系统</title>
+</head>
+<body onload="javascript:clearCookies();">
+<div class="login_box">
+	<div class="logo">
+		<div class="logo-filed-login-page-title">
+			项目管理系统
+		</div>
+	</div>
+	<div class="center_box">
+		<div class="inputbox">
+			<div class="cardlogin">
+
+			</div>
+			<form id="fm1"
+				  action="${pageContext.request.contextPath}/user/dologin.html"
+				  method="post">
+				<li class="userfield" style="margin-top:65px;line-height:26px;" >
+					&nbsp;&nbsp;用户名:&nbsp;&nbsp;<input id="loginName" type="text" pattern="[0-9a-zA-Z]{4,16}" required placeholder="请输入4-16位英文和数字" name="loginName" style="width: 138px;"/>
+				</li>
+				<li class="passwordfield" style="line-height:26px; ">
+					&nbsp;&nbsp;密&nbsp;&nbsp;&nbsp;码:&nbsp;&nbsp;<input id="password" type="password" pattern="[0-9a-zA-Z]{4,16}" required placeholder="请输入4-16位英文和数字" name="password" style="width: 138px;"/>
+				</li>
+				<li class="login">
+					<input style="background:url(<%=request.getContextPath() %>/statics/pages/images/6_24.png);width:199px;height:29px;"
+						   type="submit"
+						   value=""/>
+				</li>
+				<li style="margin-top:5px;" id="nameMsg" >
+					<p style="text-align: center;color:red;">${msg }</p>
+				</li>
+			</form>
+		</div>
+	</div>
+
+</div>
+<div class="login_info">
+	<hr class="hr_class"/>
+	Copyright&copy;2017 <%--天安监理公司版权所有--%>
+</div>
+</body>
 </html>

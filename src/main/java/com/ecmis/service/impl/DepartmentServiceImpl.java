@@ -3,7 +3,9 @@ package com.ecmis.service.impl;
 import com.ecmis.dao.department.DepartmentMapper;
 import com.ecmis.exception.DeleteEntityException;
 import com.ecmis.pojo.Department;
+import com.ecmis.pojo.DepartmentType;
 import com.ecmis.service.DepartmentService;
+import com.ecmis.service.DepartmentTypeService;
 import com.ecmis.service.UserService;
 import com.ecmis.utils.PageSupport;
 import org.springframework.stereotype.Service;
@@ -18,8 +20,16 @@ public class DepartmentServiceImpl implements DepartmentService {
     private DepartmentMapper departmentMapper;
     @Resource
     private UserService userService;
+
+    @Resource
+    private DepartmentTypeService departmentTypeService;
     @Override
     public int add(Department department) {
+
+        if (department.getParentId()!=null && department.getParentId()!=0){
+            Department parentDept = departmentMapper.getById(department.getParentId());
+            department.setDeptName(parentDept.getDeptName()+"_"+department.getDeptName());
+        }
         return departmentMapper.add(department);
     }
 
@@ -64,6 +74,19 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         if (totalCount>0){
             List<Department> list = departmentMapper.getByDeptNameAndStatusAsPage(deptName, status, pageSupport.getStartRow(), pageSize);
+            if (list!=null){
+                for (Department dept:list){
+                    if (dept.getParentId()!=null){
+                        Department parentDept = departmentMapper.getById(dept.getParentId());
+                        dept.setParentDept(parentDept);
+                    }
+                    if (dept.getDeptTypeId()!=null){
+                        DepartmentType departmentType = departmentTypeService.findById(dept.getDeptTypeId());
+                        dept.setDepartmentType(departmentType);
+                    }
+
+                }
+            }
             pageSupport.setList(list);
         }
 

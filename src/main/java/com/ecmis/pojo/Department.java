@@ -26,58 +26,11 @@ public class Department {
 
     private Integer sortNumber;
 
-    public Integer getSortNumber() {
-        return sortNumber;
-    }
-
-    public void setSortNumber(Integer sortNumber) {
-        this.sortNumber = sortNumber;
-    }
-
     private String companyName;
+
     private String deptTypeName;
     private String parentDeptName;
-
     private String statusName;
-
-    public String getCompanyName() {
-        return companyName;
-    }
-
-    public void setCompanyName(String companyName) {
-        this.companyName = companyName;
-    }
-
-    public String getDeptTypeName() {
-        return deptTypeName;
-    }
-
-    public void setDeptTypeName(String deptTypeName) {
-        this.deptTypeName = deptTypeName;
-    }
-
-    public String getParentDeptName() {
-        return parentDeptName;
-    }
-
-    public void setParentDeptName(String parentDeptName) {
-        this.parentDeptName = parentDeptName;
-    }
-
-    public String getStatusName() {
-        return statusName;
-    }
-
-    public void setStatusName() {
-
-        if (status==1){
-            this.statusName ="正常";
-        }else if (status==2){
-            this.statusName ="锁定";
-        }else if (status==3){
-            this.statusName ="删除";
-        }
-    }
 
     /**
      * 所属公司
@@ -92,10 +45,19 @@ public class Department {
      * 父级部门
      */
     private Department parentDept;
+
     /**
      * 组只机构类型
      */
+    private String departmentTypeName;
+    /**
+     * 父级部门名称
+     */
+    private String parentName;
     private DepartmentType departmentType;
+
+
+
     public Integer getCompanyId() {
         return companyId;
     }
@@ -111,8 +73,6 @@ public class Department {
     public void setCompany(Company company) {
         this.company = company;
     }
-
-
 
     public Department getParentDept() {
         return parentDept;
@@ -138,15 +98,6 @@ public class Department {
         this.children = children;
     }
 
-    /**
-     * 组只机构类型
-     */
-    private String departmentTypeName;
-    /**
-     * 父级部门名称
-     */
-    private String parentName;
-
     public String getDepartmentTypeName() {
         return departmentTypeName;
     }
@@ -165,7 +116,6 @@ public class Department {
 
     public Department() {
     }
-
     public Integer getDeptId() {
         return deptId;
     }
@@ -239,6 +189,52 @@ public class Department {
         setStatusName();
     }
 
+    public Integer getSortNumber() {
+        return sortNumber;
+    }
+
+    public void setSortNumber(Integer sortNumber) {
+        this.sortNumber = sortNumber;
+    }
+
+    public String getCompanyName() {
+        return companyName;
+    }
+
+    public void setCompanyName(String companyName) {
+        this.companyName = companyName;
+    }
+
+    public String getDeptTypeName() {
+        return deptTypeName;
+    }
+
+    public void setDeptTypeName(String deptTypeName) {
+        this.deptTypeName = deptTypeName;
+    }
+
+    public String getParentDeptName() {
+        return parentDeptName;
+    }
+
+    public void setParentDeptName(String parentDeptName) {
+        this.parentDeptName = parentDeptName;
+    }
+
+    public String getStatusName() {
+        return statusName;
+    }
+
+    public void setStatusName() {
+
+        if (status==1){
+            this.statusName ="正常";
+        }else if (status==2){
+            this.statusName ="锁定";
+        }else if (status==3){
+            this.statusName ="删除";
+        }
+    }
 
     @Override
     public String toString() {

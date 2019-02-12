@@ -118,7 +118,6 @@ function getSelectedType(source,targetId,targetText,dialogObj){
 		alert("请选择子项！");
 		return;
 	}
-	
 	if (node){
 		var text = node.text;
 		var id = node.id;

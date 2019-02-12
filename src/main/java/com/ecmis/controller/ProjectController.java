@@ -2,14 +2,18 @@ package com.ecmis.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
+import com.ecmis.exception.NotLoginException;
+import com.ecmis.pojo.Company;
 import com.ecmis.pojo.Project;
 import com.ecmis.pojo.User;
+import com.ecmis.service.CompanyService;
 import com.ecmis.service.ProjectService;
 import com.ecmis.utils.CommonTreeBean;
 import com.ecmis.utils.Constants;
 import com.ecmis.utils.JsonUtil;
 import com.ecmis.utils.PageSupport;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -27,6 +31,8 @@ public class ProjectController {
 
 	@Resource
 	private ProjectService projectService;
+	@Resource
+	private CompanyService companyService;
 	
 	@RequestMapping(value="/selectProject")
 	@ResponseBody
@@ -110,7 +116,7 @@ public class ProjectController {
 
 	@RequestMapping(value = "/addOrUpdate.json")
 	@ResponseBody
-	public String saveOrUpdate(Project project,HttpSession session){
+	public String saveOrUpdate(Project project,@RequestParam(value = "companyId") Integer[] companyIds,HttpSession session){
 		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
 		Map<String ,Object> map=new HashMap<>();
 		if (currentLoginUser==null){
@@ -124,7 +130,7 @@ public class ProjectController {
 		int count=0;
 		if (project.getProjectId()==null){
 			project.setCreationUser(currentLoginUser.getUserId());
-			count=projectService.add(project);
+			count=projectService.add(project,companyIds);
 			if (count>0){
 				map.put("result",true);
 				map.put("message","增加项目成功!");
@@ -151,5 +157,43 @@ public class ProjectController {
 	public String checkProjectName(@RequestParam(value = "projectName") String projectName){
 		int count = projectService.findCheckProject(projectName);
 		return "{\"result\":"+count+"}";
+	}
+
+
+	@RequestMapping(value = "/getProjectByCurrentUserCompany.json")
+	@ResponseBody
+	public String getProjectByCurrentUserCompany(HttpSession session){
+		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+		if (currentLoginUser==null){
+			throw new NotLoginException("您还没有登录,或登录信息过期,请先登录!");
+		}
+		Integer companyId = currentLoginUser.getCompanyId();
+		Company company = companyService.findById(companyId);
+		List<Project> projects = projectService.findProjectByCompany(company.getCompanyId(), company.getCompanyTypeId());
+		return JsonUtil.getJson(projects);
+	}
+
+	@RequestMapping(value = "/getProjectByFlowType.json")
+	@ResponseBody
+	public String getProjectByFlowType(Integer flowTypeId,HttpSession session){
+		User currentLoginUser = (User) session.getAttribute(Constants.LOGIN_USER);
+		if (currentLoginUser==null){
+			throw new NotLoginException("您还没有登录,或登录信息过期,请先登录!");
+		}
+		List<Project> list = projectService.findProjectByFlowTypeId(flowTypeId, currentLoginUser);
+		return JsonUtil.getJson(list);
+	}
+
+	@ExceptionHandler({NotLoginException.class})
+	public String handlerNotLogin(NotLoginException ex){
+		Map<String ,Object> map=new HashMap<>();
+		map.put("result",false);
+		map.put("message",ex.getMessage());
+		return JsonUtil.getJson(map);
+	}
+
+	@RequestMapping(value = "/jeasyui.html")
+	public String jeasyui(){
+		return "admin/project/jeasyui";
 	}
 }

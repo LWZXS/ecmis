@@ -1,10 +1,9 @@
 package com.ecmis.dao.company;
 
-import java.util.List;
-
+import com.ecmis.pojo.Company;
 import org.apache.ibatis.annotations.Param;
 
-import com.ecmis.pojo.Company;
+import java.util.List;
 
 public interface CompanyMapper {
 
@@ -22,4 +21,13 @@ public interface CompanyMapper {
 	public List<Company> getAll();
 
 	List<Company> getByType(@Param("companyTypeId")Integer companyTypeId);
+
+	Company getByUser(@Param("userId")Integer userId);
+
+	List<Company> getByPage(@Param("companyName")String companyName,@Param("status")Integer status,@Param("startRow")Integer startRow,@Param("pageSize")Integer pageSize);
+	int count(@Param("companyName")String companyName,@Param("status")Integer status);
+
+	int checkCompanyName(@Param("companyName")String companyName);
+
+	int updateStatus(@Param("modifyUser")Integer modifyUser,@Param("status")Integer status,@Param("companyId")Integer companyId);
 }

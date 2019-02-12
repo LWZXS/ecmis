@@ -1,14 +1,14 @@
 package com.ecmis.service;
 
 import com.ecmis.pojo.Project;
+import com.ecmis.pojo.User;
 import com.ecmis.utils.PageSupport;
-import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
 public interface ProjectService {
 
-public int add(Project project);
+	int add(Project project,Integer[] companyIds);
 	
 	public int delete(Integer projectId);
 	
@@ -24,5 +24,11 @@ public int add(Project project);
 	
 	public int findCountByCondition(String projectName);
 
-	int findCheckProject(@Param("projectName") String projectName);
+	int findCheckProject(String projectName);
+
+	List<Project> findProjectByCompany(Integer companyId,Integer companyTypeId);
+
+	List<Project> findProjectByFlowTypeId(Integer flowTypeId,User user);
+
+
 }

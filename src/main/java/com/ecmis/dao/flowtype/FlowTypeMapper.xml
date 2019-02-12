@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.flowtype.FlowTypeMapper">
+	<select id="getAll" resultType="flowType">
+        select * from biz_flow_type where status=1
+    </select>
+	<select id="getById" resultType="flowType">
+        select * from biz_flow_type where status=1 and flowTypeId=#{flowTypeId}
+    </select>
+</mapper>

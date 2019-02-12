@@ -1,10 +1,9 @@
 package com.ecmis.dao.role;
 
-import java.util.List;
-
+import com.ecmis.pojo.Role;
 import org.apache.ibatis.annotations.Param;
 
-import com.ecmis.pojo.Role;
+import java.util.List;
 
 
 public interface RoleMapper {
@@ -32,4 +31,6 @@ public interface RoleMapper {
 	int getMaxSortNumber();
 
 	int updateStatus(@Param("userId")Integer userId,@Param("roleId")Integer roleId,@Param("status")Integer status);
+
+	int checkRoleName(@Param("roleName")String roleName);
 }

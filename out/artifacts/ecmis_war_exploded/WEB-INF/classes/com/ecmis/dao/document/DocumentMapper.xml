@@ -195,7 +195,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			<if test="status!=null">
 				and status=#{status}
 			</if> 
-		 ORDER BY creationDate DESC
+		 ORDER BY status, creationDate DESC
 		 LIMIT #{startRow},#{pageSize}
 		
 	</select>
@@ -424,7 +424,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 					AND bd.creationDate BETWEEN #{startTime} AND #{endTime} 
 				</if>
 			</trim> 
-			ORDER BY bd.creationDate DESC
+			ORDER BY bd.status, bd.creationDate DESC
 			LIMIT #{startRow},#{pageSize}
 	</select>
 	<!-- 已办 2017-12-28 -->
@@ -458,7 +458,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		<if test="userId!=null">
 			and bp.`userId`=#{userId}
 		</if>
-		 ORDER BY creationDate DESC
+		 ORDER BY status, creationDate DESC
 		 LIMIT #{startRow},#{pageSize}
 	</select>
 	<!-- 获得分发人数 -->
@@ -492,7 +492,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				AND creationDate BETWEEN #{startTime} AND #{endTime} 
 			</if> 
 		</trim>
-		ORDER BY creationDate DESC 
+		ORDER BY status,creationDate DESC
 		LIMIT #{startRow},#{pageSize}
 	</select>
 	<!-- 草稿数 -->
@@ -567,7 +567,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
 			</if>
 		</trim>
-		 ORDER BY creationDate DESC
+		 ORDER BY status, creationDate DESC
 		 LIMIT #{startRow},#{pageSize}
 	</select>
 	
@@ -611,7 +611,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				and bd.creationDate BETWEEN #{startTime} AND #{endTime} 
 			</if>
 		</trim>
-		 ORDER BY creationDate DESC
+		 ORDER BY status, creationDate DESC
 		 LIMIT #{startRow},#{pageSize}
 	</select>
 	<select id="getIssuedCount" resultType="int">

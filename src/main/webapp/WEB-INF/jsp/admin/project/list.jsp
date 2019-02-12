@@ -22,12 +22,13 @@
 	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/icon.css" type="text/css"></link>
 
 	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/demo.css" type="text/css"></link>
-
+<%--	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/css/jquery-ui.min.css" type="text/css"/>--%>
 	<link rel="stylesheet" href="<%=request.getContextPath() %>/statics/localcss/common.css" type="text/css"></link>
 
 	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.min.js"></script>
 
 	<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery.easyui.min.js"></script>
+	<%--<script type="text/javascript" src="<%=request.getContextPath() %>/statics/js/jquery-ui.min.js"></script>--%>
 	<style type="text/css">
 		*{
 			margin: 0;
@@ -70,10 +71,10 @@
 <div>
 	<!-- 增加文档类型Dialog start-->
 	<div id="add-project-dlg" class="easyui-dialog" closed="true" title="增加项目"
-		 style="width:520px;height:380px;padding:10px;"
+		 style="width:680px;height:480px;padding:10px;"
 		 data-options="buttons:'#add-project-buttons'">
 		<div style="margin:20px 0;"></div>
-		<div title="" style="width:480px;">
+		<div title="" style="width:640px;">
 			<div style="padding:10px 60px 20px 60px">
 				<form id="ff" method="post">
 					<input name="projectId" value="" type="hidden" id="projectId"/>
@@ -81,50 +82,20 @@
 					<table cellpadding="5">
 						<tr>
 							<td>项目名称:</td>
-							<td><input class="easyui-textbox" style="width: 132px;" type="text" id="a_projectName"  name="projectName" data-options="required:true,missingMessage:'项目名称不能为空'"/><span id="projectNameMsg"></span></td>
+							<td><input class="easyui-textbox" style="width: 280px;" type="text" id="a_projectName"  name="projectName" data-options="required:true,missingMessage:'项目名称不能为空'"/><span id="projectNameMsg"></span></td>
 						</tr>
 						<tr>
-							<td><label for="a_builderId">建设方单位:</label></td>
-							<td>
-								<input id="a_builderId" name="builderId" style="width: 132px;" data-options="required:true,missingMessage:'建设方单位不能为空'"/>
+							<td>参与单位:</td>
+							<td >
+								<input id="companyId" name="companyId" style="width: 280px;" data-options="required:true,missingMessage:'单位名不能为空',multiple:true"/>
 							</td>
 						</tr>
-						<tr>
-							<td><label for="a_constructorId">施工方单位:</label></td>
-							<td>
-								<input id="a_constructorId" name="constructorId" style="width: 132px;" data-options="required:true,missingMessage:'施工方单位不能为空'"/>
-							</td>
-						</tr>
-						<tr>
-							<td><label for="a_supervisorId">监理方单位:</label></td>
-							<td>
-								<input id="a_supervisorId" name="supervisorId" style="width: 132px;" data-options="required:true,missingMessage:'监理方单位不能为空'"/>
-							</td>
-						</tr>
-						<tr>
-							<td><label for="a_chiefInspectorId">总监:</label></td>
-							<td>
-								<select id="a_chiefInspectorId" class="easyui-combobox" name="chiefInspectorId" style="width:132px;" data-options="required:true,missingMessage:'总监不能为空'"></select>
 
-							</td>
-						</tr>
-						<tr>
-							<td><label for="a_supervisionEngineerId">监理工程师:</label></td>
-							<td>
-								<select id="a_supervisionEngineerId" class="easyui-combobox" name="supervisionEngineerId" style="width:132px;" data-options="required:true,missingMessage:'监理工程师不能为空'"></select>
-							</td>
-						</tr>
-						<tr>
-							<td><label for="a_clerkId">文员:</label></td>
-							<td>
-								<select id="a_clerkId" class="easyui-combobox" name="clerkId" style="width:132px;" data-options="required:true,missingMessage:'文员不能为空'"></select>
-							</td>
-						</tr>
 
 						<tr>
 							<td><label for="a_status">状态:</label></td>
 							<td>
-								<select class="easyui-combobox" panelHeight="auto" style="width: 132px;" name="status" id="a_status">
+								<select class="easyui-combobox" panelHeight="auto" style="width: 280px;" name="status" id="a_status">
 									<option value="1" selected>正常</option>
 									<option value="2">锁定</option>
 									<option value="3">删除</option>
@@ -149,10 +120,25 @@
     function fixWidth(percent){
         return document.body.clientWidth * percent ;//根据自身情况更改
     }
+    var i=1;
     $(function(){
         //查看
+		/*$("#add-company").click(function () {
+			var $newTr = $(".company:first").clone();
+            $("#company").after($newTr);
+            $newTr.show();
+        });*/
 
+        /*加载公司--jeasyui*/
+        $('#companyId').combobox({
+            url: '${pageContext.request.contextPath}/company/findAll4Select',
+            valueField: 'id',
+            textField: 'text'
+        });
 
+        $("#sub-company").click(function () {
+            $(this).parents("tr").remove();
+        });
         //刷新
         $("#refresh").click(function () {
             $('#dg').datagrid('reload');
@@ -161,9 +147,11 @@
         $("#add").click(function(){
             $('#add-project-dlg').dialog({
                 title: '增加项目'
+
             });
             //$('#ff').form('clear');
             clearForm();
+            $('#a_status').combobox("setValue",1);
             $("#opr").val("add");//增加
             $("#add-project-dlg").dialog("open");
             $("#enableCheckName").val("true");
@@ -373,10 +361,9 @@
             });
         });
 
-
-
-
     });
+
+
 
     function clearForm(){
         $('#ff').form('clear');

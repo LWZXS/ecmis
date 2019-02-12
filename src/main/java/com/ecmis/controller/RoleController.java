@@ -2,7 +2,6 @@ package com.ecmis.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ecmis.pojo.Department;
 import com.ecmis.pojo.Role;
 import com.ecmis.pojo.User;
 import com.ecmis.service.RoleService;
@@ -75,7 +74,7 @@ public class RoleController {
             count=roleService.update(role);
             msg="修改角色";
         }else {
-            if (roleService.count(role.getRoleName(),null)>0){
+            if (roleService.checkRoleName(role.getRoleName())>0){
                 map.put("result","false");
                 map.put("message","角色名已经存在!");
                 return JsonUtil.getJson(map);

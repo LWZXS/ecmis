@@ -5,27 +5,28 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 <mapper namespace="com.ecmis.dao.project.ProjectMapper">
 	<select id="getByUserId" parameterType="int" resultType="project">
-		SELECT * FROM biz_project
-		WHERE 
-			`chiefInspectorId`=#{userId} OR 
-			`deputyDirectorId`=#{userId} OR
-			`clerkId`=#{userId} OR 
-			`supervisionEngineerId`=#{userId} 
-			AND STATUS=1 
-		ORDER BY projectId desc
+		SELECT bp.* FROM biz_project bp,biz_company_project bpc,biz_company bc,sys_user su
+		WHERE bp.`projectId`=bpc.`projectId` AND bc.`companyId`=bpc.`companyId` AND su.`companyId`=bc.`companyId` AND su.`userId`=#{userId}
+		ORDER BY bp.status,bp.creationDate desc
 	</select>
 	
 	<select id="getAll" resultType="project">
-		select * from biz_project ORDER BY projectId desc
+		select * from biz_project ORDER BY status,creationDate desc
 	</select>
 	
 	<select id="getById" parameterType="int" resultType="project">
 		select * from biz_project where projectId=#{projectId} 
 	</select>
 	
-	<insert id="add" parameterType="project">
-		INSERT INTO `biz_project` (`projectName`,`constructorId`,`builderId`,`supervisorId`,`chiefInspectorId`,`deputyDirectorId`,`supervisionEngineerId`,`clerkId`,`creationUser`,`creationDate`,`status`)
-						VALUES(#{projectName},#{constructorId},#{builderId},#{supervisorId},#{chiefInspectorId},#{deputyDirectorId},#{supervisionEngineerId},#{clerkId},#{creationUser},now(),#{status})
+	<insert id="add" parameterType="project" useGeneratedKeys="true" keyProperty="projectId">
+		INSERT INTO biz_project(`projectName`,`creationUser`,`creationDate`)VALUES(#{projectName},#{creationUser},now())
+	</insert>
+
+	<insert id="addProjectAndCompany">
+		INSERT INTO biz_company_project(`companyId`,`projectId`) VALUES
+		<foreach collection="companyIds" item="companyId" separator=",">
+			(#{companyId},#{projectId})
+		</foreach>
 	</insert>
 	
 	<delete id="delete" parameterType="int">
@@ -35,13 +36,6 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<update id="update" parameterType="project">
 		UPDATE `biz_project` SET 
 			`projectName`=#{projectName},
-			`constructorId`=#{constructorId},
-			`builderId`=#{builderId},
-			`supervisorId`=#{supervisorId},
-			`chiefInspectorId`=#{chiefInspectorId},
-			`deputyDirectorId`=#{deputyDirectorId},
-			`supervisionEngineerId`=#{supervisionEngineerId},
-			`clerkId`=#{clerkId},
 			`modifyUser`=#{modifyUser},
 			`modifyDate`=now(),
 			`status`=#{status} 
@@ -49,15 +43,17 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		
 	</update>
 	
-	<select id="getByCondition" resultMap="projectDetail">
+	<select id="getByCondition" resultType="project">
 		select * from biz_project
 		<trim prefix="where" prefixOverrides="and|or">
 			<if test="projectName!=null and projectName!=''">
 				and projectName like concat('%',#{projectName!=},'%')
 			</if>
 		</trim>
+		ORDER BY status,creationDate desc
 		limit #{startRow},#{pageSize}
 	</select>
+
 	<select id="getCountByCondition" resultType="int">
 		select count(1) from biz_project
 		<trim prefix="where" prefixOverrides="and|or">
@@ -67,15 +63,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		</trim>
 	</select>
 
-	<select id="getByCondition1" resultMap="projectDetail1">
-		SELECT bp.*,bcb.`companyName` builderName ,bcc.`companyName` constructorName,bcs.`companyName` supervisorName,
-		suc.`userName` chiefInspectorName,susu.`userName` supervisionEngineerName,sucl.`userName` clerkName
-		FROM `biz_project` bp,`biz_company` bcb ,`biz_company` bcc,`biz_company` bcs,
-		sys_user suc,sys_user susu,sys_user sucl
-		WHERE bp.`builderId`=bcb.`companyId` AND bp.`constructorId` =bcc.`companyId`
-		AND bp.`supervisorId`=bcs.`companyId` AND bp.`chiefInspectorId`=suc.`userId`
-		AND bp.`supervisionEngineerId` =susu.`userId` AND bp.`clerkId`=sucl.`userId`
+	<select id="getByCondition1" resultType="project">
+		select * from biz_project
 	</select>
+
 	<resultMap id="projectDetail1" type="project">
 		<id column="projectId" property="projectId" javaType="int"/>
 		<result property="projectName" column="projectName"/>
@@ -132,5 +123,10 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 
 	<select id="getCheckProject" resultType="int" parameterType="String">
 		select count(1) from biz_project where projectName=#{projectName}
+	</select>
+
+	<select id="getProjectByCompany" resultType="project">
+		select bp.* from biz_project bp,biz_company_project bpc,biz_company bc
+		where bp.`projectId`=bpc.`projectId` and bc.`companyId`=bpc.`companyId` and bc.`companyId`=#{companyId}
 	</select>
 </mapper>

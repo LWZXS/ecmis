@@ -1,8 +1,9 @@
 package com.ecmis.service;
 
-import java.util.List;
-
 import com.ecmis.pojo.Company;
+import com.ecmis.utils.PageSupport;
+
+import java.util.List;
 
 public interface CompanyService {
 
@@ -19,4 +20,15 @@ public interface CompanyService {
 	public List<Company> findAllAndUsers();
 
 	List<Company> findByType(Integer companyTypeId);
+
+	Company findByUser(Integer userId);
+
+	PageSupport<Company> findByPage(String companyName, Integer status, Integer pageIndex, Integer pageSize);
+
+	int count(String companyName,Integer status);
+
+	int checkCompanyName(String companyName);
+
+	int updateStatus(Integer modifyUser, Integer status, Integer companyId);
+
 }

@@ -38,11 +38,12 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 				and sdt.deptTypeName like concat('%',#{deptTypeName},'%')
 			</if>
 		</trim>
+		order by status
 		limit #{startRow},#{page}
 	</select>
 
 	<select id="getAll" resultType="departmentType">
-		select * from sys_dept_type
+		select * from sys_dept_type order by status
 	</select>
 
 	<select id="count" resultType="int">

@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.project.ProjectMapper">
+	<select id="getByUserId" parameterType="int" resultType="project">
+		SELECT * FROM biz_project
+		WHERE 
+			`chiefInspectorId`=#{userId} OR 
+			`deputyDirectorId`=#{userId} OR
+			`clerkId`=#{userId} OR 
+			`supervisionEngineerId`=#{userId} 
+			AND STATUS=1 
+		ORDER BY projectId desc
+	</select>
+	
+	<select id="getAll" resultType="project">
+		select * from biz_project ORDER BY projectId desc
+	</select>
+	
+	<select id="getById" parameterType="int" resultType="project">
+		select * from biz_project where projectId=#{projectId} 
+	</select>
+	
+	<insert id="add" parameterType="project">
+		INSERT INTO `biz_project` (`projectName`,`constructorId`,`builderId`,`supervisorId`,`chiefInspectorId`,`deputyDirectorId`,`supervisionEngineerId`,`clerkId`,`creationUser`,`creationDate`,`status`)
+						VALUES(#{projectName},#{constructorId},#{builderId},#{supervisorId},#{chiefInspectorId},#{deputyDirectorId},#{supervisionEngineerId},#{clerkId},#{creationUser},now(),#{status})
+	</insert>
+	
+	<delete id="delete" parameterType="int">
+		delete from biz_project where projectId=#{projectId}
+	</delete>
+	
+	<update id="update" parameterType="project">
+		UPDATE `biz_project` SET 
+			`projectName`=#{projectName},
+			`constructorId`=#{constructorId},
+			`builderId`=#{builderId},
+			`supervisorId`=#{supervisorId},
+			`chiefInspectorId`=#{chiefInspectorId},
+			`deputyDirectorId`=#{deputyDirectorId},
+			`supervisionEngineerId`=#{supervisionEngineerId},
+			`clerkId`=#{clerkId},
+			`modifyUser`=#{modifyUser},
+			`modifyDate`=now(),
+			`status`=#{status} 
+		where `projectId`=#{projectId}
+		
+	</update>
+	
+	<select id="getByCondition" resultMap="projectDetail">
+		select * from biz_project
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="projectName!=null and projectName!=''">
+				and projectName like concat('%',#{projectName!=},'%')
+			</if>
+		</trim>
+		limit #{startRow},#{pageSize}
+	</select>
+	<select id="getCountByCondition" resultType="int">
+		select count(1) from biz_project
+		<trim prefix="where" prefixOverrides="and|or">
+			<if test="projectName!=null and projectName!=''">
+				and projectName like concat('%',#{projectName},'%')
+			</if>
+		</trim>
+	</select>
+
+	<select id="getByCondition1" resultMap="projectDetail1">
+		SELECT bp.*,bcb.`companyName` builderName ,bcc.`companyName` constructorName,bcs.`companyName` supervisorName,
+		suc.`userName` chiefInspectorName,susu.`userName` supervisionEngineerName,sucl.`userName` clerkName
+		FROM `biz_project` bp,`biz_company` bcb ,`biz_company` bcc,`biz_company` bcs,
+		sys_user suc,sys_user susu,sys_user sucl
+		WHERE bp.`builderId`=bcb.`companyId` AND bp.`constructorId` =bcc.`companyId`
+		AND bp.`supervisorId`=bcs.`companyId` AND bp.`chiefInspectorId`=suc.`userId`
+		AND bp.`supervisionEngineerId` =susu.`userId` AND bp.`clerkId`=sucl.`userId`
+	</select>
+	<resultMap id="projectDetail1" type="project">
+		<id column="projectId" property="projectId" javaType="int"/>
+		<result property="projectName" column="projectName"/>
+		<result property="builderName" column="builderName"/>
+		<result property="constructorName" column="constructorName"/>
+		<result property="supervisorName" column="supervisorName"/>
+		<result property="chiefInspectorName" column="chiefInspectorName"/>
+		<result property="supervisionEngineerName" column="supervisionEngineerName"/>
+		<result property="clerkName" column="clerkName"/>
+		<result property="status" column="status"/>
+		<association property="builder" javaType="company">
+			<id property="companyId" column="builderId"/>
+			<result property="companyName" column="builderName"/>
+		</association>
+		<association property="constructor" javaType="company">
+			<id property="companyId" column="constructorId"/>
+			<result property="companyName" column="constructorName"/>
+		</association>
+		<association property="supervisor" javaType="company">
+			<id property="companyId" column="supervisorId"/>
+			<result property="companyName" column="supervisorName"/>
+		</association>
+		<association property="chiefInspector" javaType="user">
+			<id property="userId" column="chiefInspectorId"/>
+			<result property="userName" column="chiefInspectorName"/>
+		</association>
+		<association property="supervisionEngineer" javaType="user">
+			<id property="userId" column="supervisionEngineerId"/>
+			<result property="userName" column="supervisionEngineerName"/>
+		</association>
+		<association property="clerk" javaType="user">
+			<id property="userId" column="clerkId"/>
+			<result property="userName" column="clerkName"/>
+		</association>
+	</resultMap>
+
+	<resultMap type="project" id="projectDetail">
+		<id column="projectId" property="projectId" javaType="int"/>
+		<!-- 建设方 -->
+		<association property="builder" select="com.ecmis.dao.company.CompanyMapper.getById" column="builderId"></association>
+		<!-- 施工方 -->
+		<association property="constructor" select="com.ecmis.dao.company.CompanyMapper.getById" column="constructorId"></association>
+		<!-- 监理方 -->
+		<association property="supervisor" select="com.ecmis.dao.company.CompanyMapper.getById" column="supervisorId"></association>
+		<!-- 总监 -->
+		<association property="chiefInspector" select="com.ecmis.dao.user.UserMapper.getById" column="chiefInspectorId"></association>
+		<!-- 副总监 -->
+		<association property="deputyDirector" select="com.ecmis.dao.user.UserMapper.getById" column="deputyDirectorId"></association>
+		<!-- 监理工程师 -->
+		<association property="supervisionEngineer" select="com.ecmis.dao.user.UserMapper.getById" column="supervisionEngineerId"></association>
+		<!-- 文员 -->
+		<association property="clerk" select="com.ecmis.dao.user.UserMapper.getById" column="clerkId"></association>
+	</resultMap>
+
+	<select id="getCheckProject" resultType="int" parameterType="String">
+		select count(1) from biz_project where projectName=#{projectName}
+	</select>
+
+	<select id="getProjectByCompany" resultType="project">
+		SELECT bp.* FROM biz_project bp ,biz_company bc,biz_company_project bcp WHERE bcp.`projectId`=bp.`projectId` AND bc.`companyId`=bcp.`companyId` AND bc.`companyTypeId`=#{companyTypeId} AND bc.`companyId`=#{companyId};
+	</select>
+</mapper>

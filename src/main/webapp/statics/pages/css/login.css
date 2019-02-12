@@ -24,7 +24,7 @@ a:link,a:visited{ text-decoration:none;}
 .logo {
 	width:950px;
 	border:none; 
-	background:url(../images/logo_2_14.png) no-repeat;
+	background:url(../images/logo.png) no-repeat;
 	margin:0 auto;
 	margin-top:-70px;
 	position:relative;
@@ -33,7 +33,7 @@ a:link,a:visited{ text-decoration:none;}
 .logo1 {
 	width:950px;
 	border:none; 
-	background:url(../images/logo_2_14.png) no-repeat;
+	background:url(../images/logo.png) no-repeat;
 	margin:0 auto;
 	margin-top:-70px;
 	position:relative;
@@ -98,7 +98,7 @@ input[type="button"],input[type="reset"] { background:url('../images/form_btn.gi
 	height:50px;
 	font-size:25px;
 	line-height:20px;
-	text-align:right;
+	text-align:center;
 	color:black;
 	font-family:微软雅黑;
 	margin-bottom:20px;

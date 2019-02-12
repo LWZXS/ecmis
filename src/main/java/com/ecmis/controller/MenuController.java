@@ -148,7 +148,6 @@ public class MenuController {
 		String json=JSON.toJSONString(rootList,SerializerFeature.DisableCircularReferenceDetect,
 				SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteMapNullValue,
 				SerializerFeature.WriteNullListAsEmpty,SerializerFeature.WriteNullBooleanAsFalse);
-		logger.debug(json);
 		return json;
 	}
 

@@ -59,14 +59,15 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</resultMap>
 
 	<select id="getById" parameterType="int" resultType="department">
-		select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName,
-				csd.deptId as c_deptId,csd_deptName as c_deptName,csd.parentId as c_parentId
+		<!--select sd.*,sdt.deptTypeName,bc.companyName,psd.deptName as parentDeptName,
+				csd.deptId as c_deptId,csd.deptName as c_deptName,csd.parentId as c_parentId
 			from sys_department sd ,sys_dept_type sdt ,biz_company bc ,sys_department psd,sys_department csd
 			where sd.deptId=#{deptId}
 			and sd.parentId=psd.deptId
 			and sd.deptTypeId=sdt.deptTypeId
 			and sd.parentId=psd.deptId
-			and sd.deptId=csd.parentId
+			and sd.deptId=csd.parentId-->
+			select * from sys_department where deptId=#{deptId}
 	</select>
 
 	<select id="getAll" resultType="department">
@@ -80,28 +81,39 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 		order by sortNumber
 	</select>
 
+
+	<resultMap id="dept1" type="department">
+		<id property="deptId" column="deptId"/>
+		<result property="deptName" column="deptName"/>
+		<result property="status" column="status"/>
+		<result property="companyName" column="companyName"/>
+		<result property="parentId" column="parentId"/>
+		<result property="deptTypeId" column="deptTypeId"/>
+		<association property="departmentType" javaType="departmentType" column="deptTypeId" select="com.ecmis.dao.departmenttype.DepartmentTypeMapper.getById"/>
+		<association property="parentDept" javaType="department" column="parentId" select="com.ecmis.dao.department.DepartmentMapper.getById"/>
+
+	</resultMap>
+
 	<select id="getByDeptNameAndStatusAsPage" resultType="department">
-		SELECT sd.*,psd.`deptName` as parentDeptName,sdt.`deptTypeName`,bc.`companyName` FROM
-		sys_department sd,sys_department psd ,sys_dept_type sdt,biz_company bc
-		WHERE sd.`parentId`=psd.`deptId`
-		AND sd.`deptTypeId`=sdt.`deptTypeId`
-		AND sd.`companyId`=bc.`companyId`
-        <choose>
-            <when test="status!=null">
-                and sd.status=#{status}
-            </when>
-            <when test="status!=null and status==3">
-                and sd.status=3
-            </when>
-            <otherwise>
-                and sd.status!=3
-            </otherwise>
-        </choose>
-		<if test="deptName!=null and deptName!=''">
-			and sd.deptName like concat('%',#{deptName},'%')
-		</if>
-		ORDER BY sd.`creationDate` DESC
-		limit #{startRow},#{page}
+		SELECT sd.*,bc.companyName companyName FROM sys_department sd,biz_company bc
+		<trim prefix="WHERE sd.companyId=bc.companyId">
+			<choose>
+				<when test="status!=null">
+					and sd.status=#{status}
+				</when>
+				<when test="status!=null and status==3">
+					and sd.status=3
+				</when>
+				<otherwise>
+					and sd.status!=3
+				</otherwise>
+			</choose>
+			<if test="deptName!=null and deptName!=''">
+				and sd.deptName like concat('%',#{deptName},'%')
+			</if>
+		</trim>
+		ORDER BY sd.status, sd.`creationDate` DESC
+		limit #{startRow},#{pageSize}
 	</select>
 
 	<select id="count" resultType="int">

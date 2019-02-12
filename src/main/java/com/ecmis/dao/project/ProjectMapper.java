@@ -9,7 +9,9 @@ import java.util.List;
 public interface ProjectMapper {
 
 	
-	public int add(Project project);
+	int add(Project project);
+
+	int addProjectAndCompany(@Param("projectId")Integer projectId,@Param("companyIds")Integer[] companyIds);
 	
 	public int delete(@Param("projectId") Integer projectId);
 	
@@ -19,12 +21,14 @@ public interface ProjectMapper {
 	
 	public List<Project> getAll();
 	
-	public List<Project> getByUserId(@Param("userId") Integer userId);
+	List<Project> getByUserId(@Param("userId") Integer userId);
 	
 	public List<Project> getByCondition(@Param("projectName") String projectName, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize);
-	public List<Project> getByCondition1(@Param("projectName") String projectName, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize);
+	//public List<Project> getByCondition1(@Param("projectName") String projectName, @Param("startRow") Integer startRow, @Param("pageSize") Integer pageSize);
 
 	public int getCountByCondition(@Param("projectName") String projectName);
 
 	int getCheckProject(@Param("projectName") String projectName);
+
+	List<Project> getProjectByCompany(@Param("companyId")Integer companyId);
 }

@@ -121,7 +121,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 						</tr>
 						<tr>
 							<td width="132px" align="center"><label for="a_bronDate">生日:</label></td>
-							<td><input class="easyui-datebox" id="a_bronDate" type="text" name="bronDate"/></td>
+							<td><input class="easyui-datebox" id="a_bronDate" type="text" name="bronDate" data-options="required:true,missingMessage:'生日不能为空',invalidMessage:'输入格式不正确'"/></td>
 							<td width="132px" align="center">头像:</td>
 							<td width="212px" align="center">
 								<%--<input type="file" id="a_id" class="easyui-inputbox" name="file"/>--%>
@@ -383,8 +383,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
                     if(data.result){
 			    		$("#adduser-dlg").dialog("close");
                         $('#dg').datagrid('reload');
+                    }else {
+                        alert(data.message);
                     }
-					alert(data.message);
 					//
 					
 					//$.messager.progress('close');	

@@ -10,7 +10,7 @@
 <head>
     <base href="<%=basePath%>">
 
-    <title>天安监理</title>
+    <title>项目管理系统</title>
     <link rel="shortcut icon" href="<%=request.getContextPath() %>/statics/css/images/logo32px.png">
     <link rel="apple-touch-icon" href="<%=request.getContextPath() %>/statics/css/images/images/logo57px.png">
     <link rel="apple-touch-icon" sizes="72x72"
@@ -52,11 +52,13 @@
                 winWidth = document.body.clientWidth;
             }
             //alert("winWidth:"+winWidth+"---winHeight:"+winHeight);
-            $('#projects').combobox({
+
+            //项目
+           /* $('#projects').combobox({
                 onSelect: function(project){
                     //console.debug("gumy",project.id)
                     $.ajax({
-                        url:"<%=request.getContextPath()%>/user/setCurrentProject.json",
+                        url:"/user/setCurrentProject.json",
                         data:{projectId:project.id},
                         dataType:"json",
                         success:function (data) {
@@ -66,7 +68,7 @@
                         }
                     })
                 }
-            });
+            });*/
 
            /* $('#tt').tree({
                 url:'/menu/findMenus.json'
@@ -234,16 +236,16 @@
 					</strong>
 				</span>
             <span>
-					<strong>当前项目:
+					<%--<strong>当前项目:
 						    <input id="projects" class="easyui-combobox" name="projectId"
                                    data-options="valueField:'id',textField:'text',url:'<%=request.getContextPath()%>/project/easyUiTree.json'">
-					</strong>
+					</strong>--%>
 				</span>
         </div>
     </div>
     <%--南--%>
     <div data-options="region:'south',title:'',split:false" style="height:36px;background-color: #E1E7F1;">
-        <div align="center" style="line-height: 34px;">版权所有:广东天安工程监理有限公司</div>
+        <div align="center" style="line-height: 34px;"><%--版权所有:广东天安工程监理有限公司--%></div>
     </div>
     <%--<div data-options="region:'east',title:'East',split:true" style="width:100px;"></div>--%>
     <%--西--%>

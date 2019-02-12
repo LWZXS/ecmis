@@ -2,7 +2,6 @@ package com.ecmis.controller;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.ecmis.pojo.Company;
 import com.ecmis.pojo.Department;
 import com.ecmis.pojo.User;
 import com.ecmis.service.DepartmentService;
@@ -12,7 +11,6 @@ import com.ecmis.utils.JsonUtil;
 import com.ecmis.utils.PageSupport;
 import org.apache.log4j.Logger;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -52,8 +50,8 @@ public class DepartmentController {
     public Object getDepartmentsAsEasyUITree(@RequestParam(value = "companyId",required = false) Integer companyId){
         List<Department> list = departmentService.findByCompanyId(companyId);
         List<CommonTreeBean> rootList=new ArrayList<CommonTreeBean>();
-        CommonTreeBean defaultBean=new CommonTreeBean(0, "请选择", "open", null);
-        rootList.add(defaultBean);
+       /* CommonTreeBean defaultBean=new CommonTreeBean(0, "请选择", "open", null);
+        rootList.add(defaultBean);*/
         if(list!=null && list.size()>0){
             for (Department dept : list) {
                 CommonTreeBean cb=new CommonTreeBean(dept.getDeptId(), dept.getDeptName(), "close", null);
@@ -91,22 +89,22 @@ public class DepartmentController {
         logger.debug("部门:"+department);
         Map<String,Object> map=new HashMap<>();
         if (currentLoginUser==null){
-            map.put("result","false");
+            map.put("result",true);
             map.put("message","您还没有登录,或登录信息过期,请先登录!");
             return getJson(map);
         }
-        if (department.getParentId()==null){
+       /* if (department.getParentId()==null){
             map.put("result","false");
             map.put("message","请选择上级部门!");
             return getJson(map);
-        }
+        }*/
         if (department.getCompanyId()==null){
-            map.put("result","false");
+            map.put("result",false);
             map.put("message","请选择所属公司!");
             return getJson(map);
         }
         if (department.getDeptTypeId()==null){
-            map.put("result","false");
+            map.put("result",false);
             map.put("message","请选择组织类型!");
             return getJson(map);
         }
@@ -114,6 +112,9 @@ public class DepartmentController {
             department.setStatus(1);
         }
         int count=0;
+        if (department.getStatus()==null){
+            department.setStatus(1);
+        }
         if (department.getDeptId()==null){
             department.setCreateUser(currentLoginUser.getUserId());
             count = departmentService.add(department);
@@ -123,10 +124,10 @@ public class DepartmentController {
         }
 
         if (count>0){
-            map.put("result","true");
+            map.put("result",true);
             map.put("message","操作成功!");
         }else {
-            map.put("result","false");
+            map.put("result",false);
             map.put("message","操作失败!");
         }
         return getJson(map);

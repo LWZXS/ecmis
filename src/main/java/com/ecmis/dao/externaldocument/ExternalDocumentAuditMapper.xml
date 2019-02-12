@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ecmis.dao.externaldocument.ExternalDocumentAuditMapper">
+
+	<insert id="add" parameterType="externalDocumentAudit" keyProperty="auditId" useGeneratedKeys="true">
+        INSERT INTO biz_external_document_audit(auditor,auditType,auditCompany,documentId,creationUser,creationDate,STATUS)
+        VALUES(#{auditor},#{auditType},#{auditCompany},#{documentId},#{creationUser},now(),1);
+    </insert>
+
+    <update id="updateDocumentId" parameterType="int">
+        update biz_external_document_audit set documentId=#{documentId} where auditId=#{auditId}
+    </update>
+</mapper>

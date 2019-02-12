@@ -131,7 +131,7 @@
                             <td>
                                 <select class="easyui-combobox" panelHeight="auto" style="width:132px;" name="status"
                                         id="a_status">
-                                    <option value="1">正常</option>
+                                    <option value="1" selected>正常</option>
                                     <option value="2">锁定</option>
                                     <option value="3">删除</option>
                                 </select>
@@ -204,10 +204,7 @@
         //修改
         $("#update").click(function () {
             var dept = $('#dg').datagrid('getSelected');//返回第一个选中的行或者 null。
-
-
             if (dept) {
-
                 $('#adddept-dlg').dialog({
                     title: '修改部门'
                 });
@@ -249,6 +246,8 @@
 
         $("#addDeptSmt").click(function () {
             //$.messager.progress();	// display the progress bar
+
+
             $('#ff').submit();
         });
         $('#ff').form({
@@ -262,11 +261,9 @@
                 return isValid;	// return false will stop the form submission
                 // return false to prevent submit;
             },
-
             success: function (data) {
-
                 var data = eval('(' + data + ')'); // change the JSON string to javascript object
-                if (data.result) {
+                if (data.result==true) {
                     $('#ff').form('clear');
                     $("#adddept-dlg").dialog("close");
                     $('#dg').datagrid('reload');
@@ -325,8 +322,23 @@
                 {field: 'ck', checkbox: true},
                 {field: 'deptId', title: '部门编号', width: 10, align: 'center', resizable: true},
                 {field: 'deptName', title: '部门名称', width: 40, align: 'left', resizable: true},
-                {field: 'deptTypeName', title: '组织类型', width: 40, align: 'left', resizable: true},
-                {field: 'parentDeptName', title: '上级部门', width: 20, align: 'left', resizable: true},
+                {field: 'parentDept', title: '上级部门', width: 20, align: 'left', resizable: true,
+                    formatter: function(parentDept,dept,index){
+                        if (parentDept!=null){
+                            return parentDept.deptName;
+                        } else {
+                            return "";
+                        }
+                    }},
+                {field: 'companyName', title: '所属公司', width: 20, align: 'left', resizable: true},
+                {field: 'departmentType', title: '组织类型', width: 20, align: 'left', resizable: true,
+                    formatter: function(departmentType,dept,index){
+                        if (departmentType!=null){
+                            return departmentType.deptTypeName;
+                        } else {
+                            return "";
+                        }
+                    }},
                 {field: 'statusName', title: '状态', width: 10, align: 'center'}
             ]]
         });
@@ -351,6 +363,7 @@
                 title: '增加部门'
             });
             $('#ff').form('clear');
+            $('#a_status').combobox('setValue',1);
             $("#adddept-dlg").dialog("open");
             //$("#adddept-dlg").panel("move",{top:($(window).height()-380-250) * 0.5});
 

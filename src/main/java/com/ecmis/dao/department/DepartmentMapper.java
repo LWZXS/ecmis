@@ -1,6 +1,5 @@
 package com.ecmis.dao.department;
 
-import com.ecmis.pojo.Company;
 import com.ecmis.pojo.Department;
 import org.apache.ibatis.annotations.Param;
 
@@ -20,7 +19,7 @@ public interface DepartmentMapper {
 	public List<Department> getByDeptNameAndStatusAsPage(@Param("deptName")String deptName,
 														 @Param("status")Integer status,
 														 @Param("startRow")Integer startRow,
-														 @Param("page")Integer page);
+														 @Param("pageSize")Integer pageSize);
 	public List<Department> getAll();
 
 	public List<Department> getByCompanyId(@Param("companyId")Integer companyId);

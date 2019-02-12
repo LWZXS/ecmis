@@ -36,6 +36,7 @@ public class Constants {
 	public static final String DOCUMENT_TYPE_PATH="statics" + File.separator +"file"+ File.separator + "word";
 	//public static final String INNER_DOCUMENT_PATH="/ecmis/statics/file/";
 	public static final String INNER_DOCUMENT_PATH=File.separator+"statics" + File.separator +"file"+ File.separator;
-	
+	public static final String EXTERNAL_DOCUMENT_PATH=File.separator+"statics" + File.separator +"file"+ File.separator+"external"+ File.separator;
+
 	
 }

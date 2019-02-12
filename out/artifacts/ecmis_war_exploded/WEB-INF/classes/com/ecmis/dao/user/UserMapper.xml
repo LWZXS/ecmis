@@ -122,6 +122,7 @@
 		<if test="userName!=null and userName!=''">
 			and su.userName like concat('%',#{userName},'%')
 		</if>
+		order by su.status,su.creationDate desc
         limit #{startRow},#{pageSize}
     </select>
 
@@ -146,10 +147,10 @@
     </select>
     <!-- 连接查询某项目的分发人 -->
     <select id="getPublishRange" parameterType="int" resultType="user">
-		SELECT su.* FROM sys_user su ,biz_publish_range bp WHERE su.userId=bp.`userId` AND bp.`documentId`=#{documentId}
+		SELECT su.* FROM sys_user su ,biz_publish_range bp WHERE su.userId=bp.`userId` AND bp.`documentId`=#{documentId} order by su.status,su.creationDate desc
 	</select>
     <select id="getJointTrial" parameterType="int" resultType="user">
-		SELECT su.* FROM sys_user su ,biz_joint_trial bj WHERE su.userId=bj.`userId` AND bj.`documentId`=#{documentId}
+		SELECT su.* FROM sys_user su ,biz_joint_trial bj WHERE su.userId=bj.`userId` AND bj.`documentId`=#{documentId} order by su.status,su.creationDate desc
 	</select>
 
     <select id="getUserCountByDeptId" parameterType="int" resultType="int">

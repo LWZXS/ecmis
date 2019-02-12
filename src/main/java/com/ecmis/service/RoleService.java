@@ -1,9 +1,9 @@
 package com.ecmis.service;
 
-import java.util.List;
-
 import com.ecmis.pojo.Role;
 import com.ecmis.utils.PageSupport;
+
+import java.util.List;
 
 public interface RoleService {
 
@@ -25,4 +25,7 @@ public interface RoleService {
 	int count(String roleName, Integer status);
 
 	PageSupport<Role> findByDeptNameAndStatusAsPage(String roleName,Integer status,Integer pageIndex,Integer pageSize);
+
+	int checkRoleName(String roleName);
+
 }

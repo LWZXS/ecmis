@@ -1,4 +1,4 @@
-<%@ page language="java" import="java.util.*,com.zhuozhengsoft.pageoffice.*" pageEncoding="utf-8"%>
+%@ page language="java" import="java.util.*,com.zhuozhengsoft.pageoffice.*" pageEncoding="utf-8"%>
 <%
 FileSaver fs=new FileSaver(request,response);
 String id=request.getParameter("id");

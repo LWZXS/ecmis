@@ -19,7 +19,7 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 			`companyName`=#{companyName},
 			`address`=#{address},
 			`telphone`=#{telphone},
-			`modifuUser`=#{modifuUser},
+			`modifyUser`=#{modifyUser},
 			`modifyDate`=#{modifyDate},
 			`companyTypeId`=#{companyTypeId},
 			`status`=#{status}
@@ -31,11 +31,11 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	</select>
 	
 	<select id="getAll" resultType="company">
-		select * from `biz_company` where status=1 order by creationDate desc
+		select * from `biz_company` where status=1 order by status, creationDate desc
 	</select>
 	
 	<select id="getAllAndUsers" resultMap="companyUsers">
-		select * from `biz_company` where status=1 order by creationDate desc
+		select * from `biz_company` where status=1 order by status,creationDate desc
 	</select>
 	
 	<!-- 加载公司时加载公司的用户 -->
@@ -47,4 +47,42 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 	<select id="getByType" resultType="company">
 		select * from biz_company where companyTypeId=#{companyTypeId}
 	</select>
+
+	<select id="getByUser" parameterType="int" resultType="company">
+		select bc.* from biz_company bc,sys_user su where bc.companyId=su.companyId and su.userId=#{userId}
+	</select>
+
+	<select id="getByPage" resultType="company">
+		SELECT bc.*,bct.companyTypeName companyTypeName FROM biz_company bc,biz_company_type bct
+		WHERE bc.companyTypeId=bct.companyTypeId
+		 <if test="status!=null">
+			 and bc.STATUS=#{status}
+		 </if>
+		 <if test="companyName!=null and companyName!=''">
+			 AND bc.companyName like concat('%',#{companyName},'%')
+		 </if>
+        order by status, bc.creationDate desc
+		limit #{startRow},#{pageSize}
+	</select>
+
+	<select id="count" resultType="int">
+        SELECT count(1) FROM biz_company
+        <trim prefix="where" prefixOverrides="and|or">
+            <if test="status!=null">
+                STATUS=#{status}
+            </if>
+            <if test="companyName!=null and companyName!=''">
+                AND companyName like concat('%',#{companyName},'%')
+            </if>
+        </trim>
+	</select>
+
+	<select id="checkCompanyName" resultType="int">
+		 SELECT count(1) FROM biz_company where companyName =#{companyName}
+	</select>
+
+	<update id="updateStatus">
+		update biz_company set status=#{status},modifyDate=now(),modifyUser=#{modifyUser} where companyId=#{companyId}
+
+	</update>
 </mapper>

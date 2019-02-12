@@ -1,9 +1,9 @@
 package com.ecmis.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 import java.util.Date;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 public class CompletionFiling implements Serializable{
 
@@ -48,7 +48,6 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Integer checkUser;
 	
 	private Integer creationUser;
-	private Integer modifuUser;
 	private Integer status;
 	@JSONField(format="yyyy-MM-dd")
 	private Date creationDate;
@@ -56,162 +55,165 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private Date modifyDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date bronDate;
-	
-	
-	
-	public CompletionFiling() {
-		super();
-		// TODO Auto-generated constructor stub
-	}
-	public CompletionFiling(Integer filingId, String filingName,
-			Integer directoryId, Integer typeId, Integer indate,
-			Integer secrecyLevel, String anotherNum, Integer copiesNum,
-			Date startDate, Date endDate, String remark, Integer filingCompany,
-			Integer turnCompany, Integer checkUser, Integer creationUser,
-			Integer modifuUser, Integer status, Date creationDate,
-			Date modifyDate, Date bronDate) {
-		super();
-		this.filingId = filingId;
-		this.filingName = filingName;
-		this.directoryId = directoryId;
-		this.typeId = typeId;
-		this.indate = indate;
-		this.secrecyLevel = secrecyLevel;
-		this.anotherNum = anotherNum;
-		this.copiesNum = copiesNum;
-		this.startDate = startDate;
-		this.endDate = endDate;
-		this.remark = remark;
-		this.filingCompany = filingCompany;
-		this.turnCompany = turnCompany;
-		this.checkUser = checkUser;
-		this.creationUser = creationUser;
-		this.modifuUser = modifuUser;
-		this.status = status;
-		this.creationDate = creationDate;
-		this.modifyDate = modifyDate;
-		this.bronDate = bronDate;
-	}
+	private Integer modifyUser;
+
 	public Integer getFilingId() {
 		return filingId;
 	}
+
 	public void setFilingId(Integer filingId) {
 		this.filingId = filingId;
 	}
+
 	public String getFilingName() {
 		return filingName;
 	}
+
 	public void setFilingName(String filingName) {
 		this.filingName = filingName;
 	}
+
 	public Integer getDirectoryId() {
 		return directoryId;
 	}
+
 	public void setDirectoryId(Integer directoryId) {
 		this.directoryId = directoryId;
 	}
+
 	public Integer getTypeId() {
 		return typeId;
 	}
+
 	public void setTypeId(Integer typeId) {
 		this.typeId = typeId;
 	}
+
 	public Integer getIndate() {
 		return indate;
 	}
+
 	public void setIndate(Integer indate) {
 		this.indate = indate;
 	}
+
 	public Integer getSecrecyLevel() {
 		return secrecyLevel;
 	}
+
 	public void setSecrecyLevel(Integer secrecyLevel) {
 		this.secrecyLevel = secrecyLevel;
 	}
+
 	public String getAnotherNum() {
 		return anotherNum;
 	}
+
 	public void setAnotherNum(String anotherNum) {
 		this.anotherNum = anotherNum;
 	}
+
 	public Integer getCopiesNum() {
 		return copiesNum;
 	}
+
 	public void setCopiesNum(Integer copiesNum) {
 		this.copiesNum = copiesNum;
 	}
+
 	public Date getStartDate() {
 		return startDate;
 	}
+
 	public void setStartDate(Date startDate) {
 		this.startDate = startDate;
 	}
+
 	public Date getEndDate() {
 		return endDate;
 	}
+
 	public void setEndDate(Date endDate) {
 		this.endDate = endDate;
 	}
+
 	public String getRemark() {
 		return remark;
 	}
+
 	public void setRemark(String remark) {
 		this.remark = remark;
 	}
+
 	public Integer getFilingCompany() {
 		return filingCompany;
 	}
+
 	public void setFilingCompany(Integer filingCompany) {
 		this.filingCompany = filingCompany;
 	}
+
 	public Integer getTurnCompany() {
 		return turnCompany;
 	}
+
 	public void setTurnCompany(Integer turnCompany) {
 		this.turnCompany = turnCompany;
 	}
+
 	public Integer getCheckUser() {
 		return checkUser;
 	}
+
 	public void setCheckUser(Integer checkUser) {
 		this.checkUser = checkUser;
 	}
+
 	public Integer getCreationUser() {
 		return creationUser;
 	}
+
 	public void setCreationUser(Integer creationUser) {
 		this.creationUser = creationUser;
 	}
-	public Integer getModifuUser() {
-		return modifuUser;
-	}
-	public void setModifuUser(Integer modifuUser) {
-		this.modifuUser = modifuUser;
-	}
+
 	public Integer getStatus() {
 		return status;
 	}
+
 	public void setStatus(Integer status) {
 		this.status = status;
 	}
+
 	public Date getCreationDate() {
 		return creationDate;
 	}
+
 	public void setCreationDate(Date creationDate) {
 		this.creationDate = creationDate;
 	}
+
 	public Date getModifyDate() {
 		return modifyDate;
 	}
+
 	public void setModifyDate(Date modifyDate) {
 		this.modifyDate = modifyDate;
 	}
+
 	public Date getBronDate() {
 		return bronDate;
 	}
+
 	public void setBronDate(Date bronDate) {
 		this.bronDate = bronDate;
 	}
-	
-	
+
+	public Integer getModifyUser() {
+		return modifyUser;
+	}
+
+	public void setModifyUser(Integer modifyUser) {
+		this.modifyUser = modifyUser;
+	}
 }

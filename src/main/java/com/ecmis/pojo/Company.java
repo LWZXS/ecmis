@@ -1,10 +1,10 @@
 package com.ecmis.pojo;
 
+import com.alibaba.fastjson.annotation.JSONField;
+
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-
-import com.alibaba.fastjson.annotation.JSONField;
 
 public class Company implements Serializable{
 
@@ -26,14 +26,29 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private String telphone;
 	
 	private Integer creationUser;
-	private Integer modifuUser;
+	private Integer modifyUser;
 	private Integer status;
 	@JSONField(format="yyyy-MM-dd")
 	private Date creationDate;
 	@JSONField(format="yyyy-MM-dd")
 	private Date modifyDate;
 	private Integer companyTypeId;
-
+	private String companyTypeName;
+	private String statusName;
+	public String getStatusName() {
+		return statusName;
+	}
+	public void setStatusName() {
+		if(status!=null){
+			if(status.equals(1)){
+				this.statusName ="正常";
+			}else if(status.equals(2)){
+				this.statusName = "锁定";
+			}else if(status.equals(3)){
+				this.statusName = "删除";
+			}
+		}
+	}
 	public Integer getCompanyTypeId() {
 		return companyTypeId;
 	}
@@ -43,11 +58,20 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	}
 
 	private List<User> users;
+
+	public String getCompanyTypeName() {
+		return companyTypeName;
+	}
+
+	public void setCompanyTypeName(String companyTypeName) {
+		this.companyTypeName = companyTypeName;
+	}
+
 	public Company() {
 		super();
 	}
 	public Company(Integer companyId, String companyName, String address,
-			String telphone, Integer creationUser, Integer modifuUser,
+			String telphone, Integer creationUser, Integer modifyUser,
 			Integer status, Date creationDate, Date modifyDate) {
 		super();
 		this.companyId = companyId;
@@ -55,7 +79,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 		this.address = address;
 		this.telphone = telphone;
 		this.creationUser = creationUser;
-		this.modifuUser = modifuUser;
+		this.modifyUser = modifyUser;
 		this.status = status;
 		this.creationDate = creationDate;
 		this.modifyDate = modifyDate;
@@ -90,17 +114,18 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	public void setCreationUser(Integer creationUser) {
 		this.creationUser = creationUser;
 	}
-	public Integer getModifuUser() {
-		return modifuUser;
+	public Integer getModifyUser() {
+		return modifyUser;
 	}
-	public void setModifuUser(Integer modifuUser) {
-		this.modifuUser = modifuUser;
+	public void setModifyUser(Integer modifuUser) {
+		this.modifyUser = modifyUser;
 	}
 	public Integer getStatus() {
 		return status;
 	}
 	public void setStatus(Integer status) {
 		this.status = status;
+		setStatusName();
 	}
 	public Date getCreationDate() {
 		return creationDate;

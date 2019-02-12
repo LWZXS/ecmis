@@ -11,8 +11,8 @@
         </table>
         <div id="tb" style="padding:2px 5px;">
             <form action="" id="searchFrm">
-                开始时间: <input class="easyui-datebox" style="width:110px" name="startTime">
-                结束时间: <input class="easyui-datebox" style="width:110px" name="endTime">
+                开始时间: <input class="easyui-datebox" style="width:110px" name="startDate">
+                结束时间: <input class="easyui-datebox" style="width:110px" name="endDate">
                 文档名称: <input style="height: 22px;" class="easyui-textbox" id="documentName" name="documentName" type="search"
                        placeholder="文档名称...">
                 状态:
@@ -28,7 +28,7 @@
         <script type="text/javascript">
             $(function(){
                 $('#dg').datagrid({
-                    url:'${pageContext.request.contextPath}/document/list',
+                    url:'${pageContext.request.contextPath}/document/external/list.json',
                     queryParams: {
                         rows:10,
                         page:1,
@@ -44,37 +44,21 @@
                         window.location.href='${pageContext.request.contextPath}/document/view/'+rowData.documentId+'/list';
                     },
                     columns:[[
-                        {field:'documentName',title:'文档名称', width:260,align:'left',resizable:true},
-                        {field:'company',title:'来源', width:180,align:'left',resizable:true,
+                        {field:'documentName',title:'文档名称', width:120,align:'left',resizable:true},
+                        {field:'company',title:'施工方公司', width:120,align:'left',resizable:true
+                          /*  ,
                             formatter: function(value,row,index){
                                 if (row.company){
                                     return row.company.companyName;
                                 } else {
                                     return value;
                                 }
-                            }
+                            }*/
                         },
-                        {field:'creationUser',title:'创建人', width:60,align:'center',resizable:true,
-                            formatter: function(value,row,index){
-                                if (row.creator){
-                                    return row.creator.userName;
-                                } else {
-                                    return value;
-                                }
-                            }
-                        },
-                        {field:'creationDate',title:'创建日期', width:100,align:'center',resizable:true},
-                        {field:'subjectTermName',title:'主题词', width:150,align:'left',resizable:true},
-                        {field:'attachment',title:'附件', width:180,align:'left',resizable:true},
-                        {field:'documentStatus',title:'状态', width:50,align:'center',
-                            formatter: function(value,row,index){
-                                if (row.documentStatus){
-                                    return row.documentStatus.docStatusName;
-                                } else {
-                                    return value;
-                                }
-                            }
-                        }
+                        {field:'creationUser',title:'创建人', width:60,align:'center',resizable:true},
+                        {field:'creationDate',title:'创建日期', width:80,align:'center',resizable:true},
+                        {field:'attachment',title:'附件', width:220,align:'left',resizable:true},
+                        {field:'status',title:'状态', width:50,align:'center'}
                     ]]
                 });
 
@@ -88,7 +72,7 @@
                     s=s.substring(0, s.length-1);
 
                     $('#dg').datagrid({
-                        url:'${pageContext.request.contextPath}/document/list?'+s,
+                        url:'${pageContext.request.contextPath}/document/external/list.json?'+s,
                         queryParams: s
                     });
                 });

@@ -33,7 +33,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	private String icon;
 	private String type;
 	private Integer creationUser;
-	private Integer modifuUser;
+	private Integer modifyUser;
 	private Integer status;
 	private Integer levelId;
 	@JSONField(format="yyyy-MM-dd")
@@ -55,7 +55,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	}
 
 	public MenuResource(Integer menuId, String menuName, Integer parentMenuId,
-						String url, String icon, Integer creationUser, Integer modifuUser,
+						String url, String icon, Integer creationUser, Integer modifyUser,
 						Integer status, Date creationDate, Date modifyDate) {
 		super();
 		this.menuId = menuId;
@@ -64,7 +64,7 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 		this.url = url;
 		this.icon = icon;
 		this.creationUser = creationUser;
-		this.modifuUser = modifuUser;
+		this.modifyUser = modifyUser;
 		this.status = status;
 		this.creationDate = creationDate;
 		this.modifyDate = modifyDate;
@@ -105,11 +105,11 @@ modifyDate	modifyDate	datetime			FALSE	FALSE	FALSE
 	public void setCreationUser(Integer creationUser) {
 		this.creationUser = creationUser;
 	}
-	public Integer getModifuUser() {
-		return modifuUser;
+	public Integer getModifyUser() {
+		return modifyUser;
 	}
-	public void setModifuUser(Integer modifuUser) {
-		this.modifuUser = modifuUser;
+	public void setModifyUser(Integer modifyUser) {
+		this.modifyUser = modifyUser;
 	}
 	public Integer getStatus() {
 		return status;
